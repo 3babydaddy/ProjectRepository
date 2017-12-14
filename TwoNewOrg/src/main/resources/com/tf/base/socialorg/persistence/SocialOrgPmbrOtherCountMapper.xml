@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tf.base.socialorg.persistence.SocialOrgPmbrOtherCountMapper" >
+  <resultMap id="BaseResultMap" type="com.tf.base.socialorg.domain.SocialOrgPmbrOtherCount" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="social_org_info_id" property="socialOrgInfoId" jdbcType="INTEGER" />
+    <result column="social_org_partymbr_info_id" property="socialOrgPartymbrInfoId" jdbcType="INTEGER" />
+    <result column="field_name" property="fieldName" jdbcType="VARCHAR" />
+    <result column="field_value" property="fieldValue" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    id, social_org_info_id, social_org_partymbr_info_id, field_name, field_value
+  </sql>
+</mapper>

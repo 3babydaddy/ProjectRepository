@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tf.base.unpublic.persistence.UnpublicOrgSponsorDeputyTypeMapper" >
+  <resultMap id="BaseResultMap" type="com.tf.base.unpublic.domain.UnpublicOrgSponsorDeputyType" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="unpublic_org_info_id" property="unpublicOrgInfoId" jdbcType="INTEGER" />
+    <result column="unpublic_org_sponsor_info_id" property="unpublicOrgSponsorInfoId" jdbcType="INTEGER" />
+    <result column="deputy_type" property="deputyType" jdbcType="VARCHAR" />
+    <result column="deputy_type_other" property="deputyTypeOther" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    id, unpublic_org_info_id, unpublic_org_sponsor_info_id, deputy_type, deputy_type_other
+  </sql>
+</mapper>

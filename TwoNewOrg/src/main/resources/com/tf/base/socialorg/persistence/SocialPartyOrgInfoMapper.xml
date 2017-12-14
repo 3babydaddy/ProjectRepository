@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tf.base.socialorg.persistence.SocialPartyOrgInfoMapper">
+  <resultMap id="BaseResultMap" type="com.tf.base.socialorg.domain.SocialPartyOrgInfo">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="orgName" />
+    <result column="partyInNum" jdbcType="VARCHAR" property="partyInNum" />
+    <result column="partyNotInNum" jdbcType="VARCHAR" property="partyNotInNum" />
+    <result column="nature" jdbcType="VARCHAR" property="nature" />
+    <result column="is_set_up_party_org" jdbcType="VARCHAR" property="isSetUpPartyOrg" />
+    <result column="absence_party_org_reasion" jdbcType="VARCHAR" property="absencePartyOrgReasion" />
+    <result column="party_org_form" jdbcType="VARCHAR" property="partyOrgForm" />
+    <result column="party_org_type" jdbcType="VARCHAR" property="partyOrgType" />
+    <result column="is_instructor" jdbcType="VARCHAR" property="isInstructor" />
+    <result column="instructor_name" jdbcType="VARCHAR" property="instructorName" />
+    <result column="instructor_unit" jdbcType="VARCHAR" property="instructorUnit" />
+    <result column="instructor_job" jdbcType="VARCHAR" property="instructorJob" />
+    <result column="party_org_time" jdbcType="TIMESTAMP" property="partyOrgTime" />
+    <result column="party_org_attachment" jdbcType="VARCHAR" property="partyOrgAttachment" />
+    <result column="party_org_name" jdbcType="VARCHAR" property="partyOrgName" />
+    <result column="party_org_tel" jdbcType="VARCHAR" property="partyOrgTel" />
+    <result column="subjection_party_name" jdbcType="VARCHAR" property="subjectionPartyName" />
+    <result column="subjection_party_id" jdbcType="INTEGER" property="subjectionPartyId" />
+    <result column="secretary_name" jdbcType="VARCHAR" property="secretaryName" />
+    <result column="secretary_birthday" jdbcType="DATE" property="secretaryBirthday" />
+    <result column="secretary_education" jdbcType="VARCHAR" property="secretaryEducation" />
+    <result column="secretary_source" jdbcType="VARCHAR" property="secretarySource" />
+    <result column="secretary_company" jdbcType="VARCHAR" property="secretaryCompany" />
+    <result column="is_board_officer" jdbcType="VARCHAR" property="isBoardOfficer" />
+    <result column="part_time_workers" jdbcType="INTEGER" property="partTimeWorkers" />
+    <result column="full_time_workers" jdbcType="INTEGER" property="fullTimeWorkers" />
+    <result column="stage_area" jdbcType="VARCHAR" property="stageArea" />
+    <result column="others_share_stage" jdbcType="VARCHAR" property="otherShareStage" />
+    <result column="community_share_stage" jdbcType="VARCHAR" property="communityShareStage" />
+    <result column="other_info" jdbcType="VARCHAR" property="otherInfo" />
+    <result column="is_party_into_school" jdbcType="VARCHAR" property="isPartyIntoSchool" />
+    <result column="parent_party_org_type" jdbcType="VARCHAR" property="parentPartyOrgType" />
+    <result column="creater" jdbcType="VARCHAR" property="creater" />
+    <result column="create_org" jdbcType="VARCHAR" property="createOrg" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, is_set_up_party_org, absence_party_org_reasion, party_org_form, party_org_type, 
+    is_instructor, instructor_name, instructor_unit, instructor_job, party_org_time, 
+    party_org_attachment, party_org_name, party_org_tel, subjection_party_name, subjection_party_id, 
+    secretary_name, secretary_birthday, secretary_education, secretary_source, secretary_company, 
+    is_board_officer, part_time_workers, full_time_workers, stage_area, others_share_stage, 
+    community_share_stage, other_info, is_party_into_school, parent_party_org_type, creater, 
+    create_org, create_time, status
+  </sql>
+  <select id="queryList" resultMap="BaseResultMap">
+  	<![CDATA[
+  		SELECT
+			o.id as orgId,o.name, o.nature,
+			oc.partymbr_group_in_socielorg_num as partyInNum,
+			oc.partymbr_in_socielorg_num as partyNotInNum, p.*
+		FROM
+			social_org_info o
+		LEFT JOIN social_party_org_info p ON o.social_party_org_id = p.id and p.status <> '0'
+		LEFT JOIN social_org_pmbr_count oc ON o.id = oc.social_org_info_id
+	]]>
+  	<where>
+  			o.status = '2' 
+  		<if test="params.partyOrgName != null and params.partyOrgName != ''">
+  			and p.party_org_name like CONCAT('%', #{params.partyOrgName}, '%')
+  		</if>
+  		<if test="params.partyOrgType != null and params.partyOrgType != ''">
+  			and p.party_org_type = #{params.partyOrgType}
+  		</if>
+  		<if test="params.partyOrgForm != null and params.partyOrgForm != ''">
+  			and p.party_org_form = #{params.partyOrgForm}
+  		</if>
+  		<if test="params.createOrg !=null and params.createOrg !='' ">
+  			and o.create_org = #{params.createOrg}
+  		</if>
+  	</where>
+  	order by p.create_time desc	
+  </select>
+</mapper>

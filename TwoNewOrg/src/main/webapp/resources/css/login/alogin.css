@@ -1,0 +1,140 @@
+﻿
+body
+{
+	margin: 0;
+	padding: 0;
+	font-size: 12px;
+	/* background: #214D90 url(../../images/login/bg.gif) repeat-x; */
+	background: #214D90 url(../../images/tf/bg.png) no-repeat;
+	font-family: '微软雅黑',Tahoma,Verdana;
+}
+ul
+{
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.Main
+{
+	
+	/* width: 740px;
+	height:460px; 
+	position: absolute;
+	top:50%;
+	left:50%;
+	margin-left:-370px;
+	margin-top: -230px;
+	background-color:#fff;
+	-moz-box-shadow: 2px 2px 1px #333; 
+	box-shadow: 2px 2px 1px #333;
+	
+	*/
+	width: 965px;
+	height:596px;
+	background:  url(../../images/tf/container.png) ;
+	position: absolute;
+	top:50%;
+	left:50%;
+	margin-left:-482px;
+	margin-top: -298px;
+}
+.left{
+  /* width: 280px;  
+  height: 460px;  
+  float: left;  */ 
+  width: 340px;  
+  height: 450px;  
+  float: left; 
+}
+.right{
+  /* position:relative;
+  height:370px;  
+  margin-left: 360px;  
+  padding: 40px 60px 50px 0px; */
+  position:relative;
+  height:450px;  
+  margin-left: 500px;  
+  padding: 90px 60px 50px 0px;
+}
+
+
+.login
+{
+	background: #fff;
+	width: 350px;
+	height: 350px;
+	z-index: 1200;
+}
+.login ul{
+	margin-top: 10px;
+}
+
+.login li{
+	color: #000;
+	font-size: 14px;
+	line-height: 35px;
+	height: 35px;
+}
+.login input.ipt{
+	border:#ddd solid 1px;
+	height: 30px;
+	width: 280px;
+	outline:none;
+	font-size: 14px;
+	color: #666;
+	padding: 1px 10px;
+}
+.login input.ipt:focus { 
+     outline: none;
+     /* background-color: transparent; */
+     border: #aaa solid 2px;
+     height: 30px;
+}
+
+
+.login span.txtCode
+{
+	width: 150px;
+	display: inline-block;
+}
+
+.login span.txtCode input{
+	width: 120px;
+}
+
+.login .code{
+	margin-left: 50px;
+	color: red;
+}
+
+.btn input
+{
+	/* margin-top:50px; */
+	margin-top:10px;
+	width: 302px;
+	height: 35px;
+	background: red;
+	color: #fff;
+	border: none;
+}
+.btn input:focus {
+	border: none;
+	 outline: none;
+}
+.bottom{
+	height: 70px;
+	overflow: hidden;
+	 text-align:center;
+	 margin-top: 5px;
+	 color: #fff;
+}
+#msg{
+	color: red;
+	display: inline-block;
+	text-align: center;
+	width: 300px;
+}
+
+.clear{
+	clear: both;
+}

@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tf.base.common.persistence.DataDictionaryMapper" >
+  <resultMap id="BaseResultMap" type="com.tf.base.common.domain.DataDictionary" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="dmm" property="dmm" jdbcType="VARCHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="value" property="value" jdbcType="VARCHAR" />
+    <result column="level" property="level" jdbcType="INTEGER" />
+    <result column="pdmm" property="pdmm" jdbcType="VARCHAR" />
+    <result column="remarks" property="remarks" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, dmm, code, value, level, pdmm, remarks
+  </sql>
+  
+  
+  
+  <select id="getIsExistsSame" parameterType="com.tf.base.common.domain.DataDictionary"  resultType="java.lang.Integer">
+  	select count(*) from data_dictionary
+  	<where>
+  	<if test="dmm != null and dmm != ''" >
+       and dmm = #{dmm,jdbcType=VARCHAR}
+     </if>
+     <if test="code != null and code != ''" >
+       and code = #{code,jdbcType=VARCHAR}
+     </if>
+     <if test="value != null and value != ''" >
+       and value = #{value,jdbcType=VARCHAR}
+     </if>
+     <if test="pdmm != null and pdmm != ''" >
+       and pdmm = #{pdmm,jdbcType=VARCHAR}
+     </if>
+     </where>
+  </select>
+  
+  
+  <select id="dynamicQuery" resultMap="BaseResultMap" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM data_dictionary
+    WHERE dmm = #{dmm,jdbcType=VARCHAR} 
+    AND  ( UPPER(code) LIKE CONCAT(#{inputTxt,jdbcType=VARCHAR},"%") OR UPPER(value) LIKE CONCAT(#{inputTxt,jdbcType=VARCHAR},"%")  )
+    
+  </select>
+  
+  
+   <select id="dynamicQueryList" resultMap="BaseResultMap" >
+    select 
+      <include refid="Base_Column_List" />
+    from data_dictionary
+      where dmm = #{dmm,jdbcType=VARCHAR} 
+  </select>
+  
+  
+  <select id="getMaxOrders" resultType="java.lang.Integer" >
+    select 
+      IFNULL(max(orders),0) as orders
+    from data_dictionary
+    where dmm = #{dmm,jdbcType=VARCHAR}   
+    <if test="pdmm != null and pdmm != ''" >
+       and pdmm = #{pdmm,jdbcType=VARCHAR}
+    </if>
+  </select>
+  
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from data_dictionary
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from data_dictionary
+    order by dmm,orders
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from data_dictionary
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tf.base.common.domain.DataDictionary" >
+    insert into data_dictionary (id, dmm, code, value, level, pdmm, remarks,orders)
+    values (#{id,jdbcType=INTEGER}, #{dmm,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, 
+            #{value,jdbcType=VARCHAR}, #{level,jdbcType=INTEGER}, #{pdmm,jdbcType=VARCHAR}, 
+            #{remarks,jdbcType=VARCHAR},#{orders,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.tf.base.common.domain.DataDictionary" >
+    insert into data_dictionary
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="dmm != null" >
+        dmm,
+      </if>
+      <if test="code != null" >
+        code,
+      </if>
+      <if test="value != null" >
+        value,
+      </if>
+      <if test="level != null" >
+        level,
+      </if>
+      <if test="pdmm != null" >
+        pdmm,
+      </if>
+      <if test="remarks != null" >
+        remarks,
+      </if>
+      <if test="orders != null" >
+        orders,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="dmm != null" >
+        #{dmm,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="value != null" >
+        #{value,jdbcType=VARCHAR},
+      </if>
+      <if test="level != null" >
+        #{level,jdbcType=INTEGER},
+      </if>
+      <if test="pdmm != null" >
+        #{pdmm,jdbcType=VARCHAR},
+      </if>
+      <if test="remarks != null" >
+        #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="orders != null" >
+        #{orders,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tf.base.common.domain.DataDictionary" >
+    update data_dictionary
+    <set >
+      <if test="dmm != null" >
+        dmm = #{dmm,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null" >
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="value != null" >
+        value = #{value,jdbcType=VARCHAR},
+      </if>
+      <if test="level != null" >
+        level = #{level,jdbcType=INTEGER},
+      </if>
+      <if test="pdmm != null" >
+        pdmm = #{pdmm,jdbcType=VARCHAR},
+      </if>
+      <if test="remarks != null" >
+        remarks = #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="orders != null" >
+        orders = #{orders,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tf.base.common.domain.DataDictionary" >
+    update data_dictionary
+    set dmm = #{dmm,jdbcType=VARCHAR},
+      code = #{code,jdbcType=VARCHAR},
+      value = #{value,jdbcType=VARCHAR},
+      level = #{level,jdbcType=INTEGER},
+      pdmm = #{pdmm,jdbcType=VARCHAR},
+      remarks = #{remarks,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  <select id="selectByCondition" parameterType="com.tf.base.basemanage.domain.DictionaryForm" 
+ 	resultType="com.tf.base.common.domain.DataDictionary">
+  	select * from data_dictionary
+  	<where>
+  	<if test="dmm != null and dmm != ''" >
+       and dmm = #{dmm,jdbcType=VARCHAR}
+     </if>
+     <if test="code != null and code != ''" >
+       and code = #{code,jdbcType=VARCHAR}
+     </if>
+     <if test="value != null and value != ''" >
+       and value = #{value,jdbcType=VARCHAR}
+     </if>
+     <if test="level != null and level != ''" >
+       and level = #{form.level,jdbcType=INTEGER}
+     </if>
+     <if test="pdmm != null and pdmm != ''" >
+       and pdmm = #{pdmm,jdbcType=VARCHAR}
+     </if>
+     <if test="remarks != null and remarks != ''" >
+       and remarks = #{remarks,jdbcType=VARCHAR}
+     </if>
+     </where>
+     ORDER BY dmm ASC,orders ASC,CODE ASC
+  </select>
+</mapper>

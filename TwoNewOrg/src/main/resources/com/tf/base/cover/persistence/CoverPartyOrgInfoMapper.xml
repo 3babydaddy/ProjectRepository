@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tf.base.cover.persistence.CoverPartyOrgInfoMapper">
+  <resultMap id="BaseResultMap" type="com.tf.base.cover.domain.CoverPartyOrgInfo">
+    <id column="cover_party_org_id" jdbcType="INTEGER" property="id" />
+    <result column="orgId" jdbcType="VARCHAR" property="orgId" />
+    <result column="name" jdbcType="VARCHAR" property="orgName" />
+    <result column="party_org_form" jdbcType="VARCHAR" property="partyOrgForm" />
+    <result column="party_org_type" jdbcType="VARCHAR" property="partyOrgType" />
+    <result column="is_instructor" jdbcType="VARCHAR" property="isInstructor" />
+    <result column="instructor_name" jdbcType="VARCHAR" property="instructorName" />
+    <result column="instructor_unit" jdbcType="VARCHAR" property="instructorUnit" />
+    <result column="instructor_job" jdbcType="VARCHAR" property="instructorJob" />
+    <result column="party_org_time" jdbcType="TIMESTAMP" property="partyOrgTime" />
+    <result column="party_org_attachment" jdbcType="VARCHAR" property="partyOrgAttachment" />
+    <result column="party_org_name" jdbcType="VARCHAR" property="partyOrgName" />
+    <result column="party_org_tel" jdbcType="VARCHAR" property="partyOrgTel" />
+    <result column="subjection_party_name" jdbcType="VARCHAR" property="subjectionPartyName" />
+    <result column="subjection_party_id" jdbcType="INTEGER" property="subjectionPartyId" />
+    <result column="secretary_name" jdbcType="VARCHAR" property="secretaryName" />
+    <result column="secretary_birthday" jdbcType="DATE" property="secretaryBirthday" />
+    <result column="secretary_education" jdbcType="VARCHAR" property="secretaryEducation" />
+    <result column="secretary_source" jdbcType="VARCHAR" property="secretarySource" />
+    <result column="secretary_company" jdbcType="VARCHAR" property="secretaryCompany" />
+    <result column="deputy_secretary_type" jdbcType="VARCHAR" property="deputySecretaryType" />
+    <result column="deputy_secretary_name" jdbcType="VARCHAR" property="deputySecretaryName" />
+    <result column="deputy_secretary_birthday" jdbcType="DATE" property="deputySecretaryBirthday" />
+    <result column="deputy_secretary_sex" jdbcType="VARCHAR" property="deputySecretarySex" />
+    <result column="deputy_secretary_education" jdbcType="VARCHAR" property="deputySecretaryEducation" />
+    <result column="deputy_secretary_is_full_time" jdbcType="VARCHAR" property="deputySecretaryIsFullTime" />
+    <result column="part_time_workers" jdbcType="INTEGER" property="partTimeWorkers" />
+    <result column="full_time_workers" jdbcType="INTEGER" property="fullTimeWorkers" />
+    <result column="is_oneself" jdbcType="VARCHAR" property="isOneself" />
+    <result column="stage_area" jdbcType="VARCHAR" property="stageArea" />
+    <result column="other_info" jdbcType="VARCHAR" property="otherInfo" />
+    <result column="creater" jdbcType="VARCHAR" property="creater" />
+    <result column="create_org" jdbcType="VARCHAR" property="createOrg" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    cover_party_org_id, party_org_form, party_org_type, 
+    is_instructor, instructor_name, instructor_unit, instructor_job, party_org_time, 
+    party_org_attachment, party_org_name, party_org_tel, subjection_party_name, subjection_party_id, 
+    secretary_name, secretary_birthday, secretary_education, secretary_source, secretary_company, 
+    deputy_secretary_type, deputy_secretary_name, deputy_secretary_birthday, deputy_secretary_sex, 
+    deputy_secretary_education, deputy_secretary_is_full_time, part_time_workers, full_time_workers, 
+    is_oneself, stage_area, other_info, creater, create_org, create_time, 
+    status
+  </sql>
+  
+  <select id="queryList" resultMap="BaseResultMap">
+  	<![CDATA[
+	  	SELECT p.* FROM cover_party_org_info p 
+	]]>
+  	<where>
+  	<![CDATA[
+  			p.status <> '0'
+  	]]>
+  		<if test="params.partyOrgName != null and params.partyOrgName != ''">
+  			and p.party_org_name like CONCAT('%', #{params.partyOrgName}, '%')
+  		</if>
+  		<if test="params.partyOrgType != null and params.partyOrgType != ''">
+  			and p.party_org_type = #{params.partyOrgType}
+  		</if>
+  		<if test="params.partyOrgForm != null and params.partyOrgForm != ''">
+  			and p.party_org_form = #{params.partyOrgForm}
+  		</if>
+  		<if test="params.createOrg !=null and params.createOrg !='' ">
+  			and p.create_org = #{params.createOrg}
+  		</if>
+  	</where>
+  	order by p.create_time desc
+  </select>
+  <select id="queryCoverOrgInfoList" resultType="com.tf.base.cover.domain.CoverOrgInfo">
+  	<![CDATA[	
+  		SELECT s.*
+			FROM
+			(SELECT
+				 DISTINCT uoi.id, uoi.name,
+					uoi.industry_type as industryType,
+					'' as nature,
+					uoi.create_org as createOrg, uoi.create_time,
+					'非公' as orgClass
+				FROM
+					unpublic_org_info uoi, unpublic_party_org_info upoi
+				WHERE
+					((uoi.unpublic_party_org_id = upoi.id and upoi.party_org_form = '3' and upoi.status = '2') or (uoi.unpublic_party_org_id is null))
+					and uoi.status = '2' 
+			UNION
+				SELECT
+					DISTINCT soi.id, soi.name,
+					'' as industryType,
+					soi.nature as nature,
+					soi.create_org as createOrg, soi.create_time,
+					'社会' as orgClass
+				FROM
+					social_org_info soi, social_party_org_info spoi
+				WHERE
+					((soi.social_party_org_id = spoi.id and spoi.party_org_form = '3' and spoi.status = '2') or (soi.social_party_org_id is null))
+					and soi.status = '2' 
+			) s
+		]]>
+			<where>
+				<if test="name !=null and name !='' ">
+		  			and s.name like CONCAT('%', #{name}, '%') 
+		  		</if>
+			</where>
+		order by s.create_time desc
+  </select>
+  <select id="queryCoverOrgInfoByExample" resultType="com.tf.base.cover.domain.CoverOrgInfo">
+  	<![CDATA[	
+  		SELECT s.*
+			FROM
+			(SELECT
+				 DISTINCT uoi.id, uoi.name,
+					uoi.industry_type as industryType,
+					'' as nature,
+					uoi.create_org as createOrg, uoi.create_time,
+					'非公' as orgClass
+				FROM
+					unpublic_org_info uoi
+				WHERE
+					uoi.cover_party_org_id = #{coverPartyOrgId}
+					and uoi.status = '2' 
+			UNION
+				SELECT
+					DISTINCT soi.id, soi.name,
+					'' as industryType,
+					soi.nature as nature,
+					soi.create_org as createOrg, soi.create_time,
+					'社会' as orgClass
+				FROM
+					social_org_info soi
+				WHERE
+					soi.cover_party_org_id = #{coverPartyOrgId}
+					and soi.status = '2' 
+			) s
+		]]>
+			<where>
+				<if test="name !=null and name !='' ">
+		  			and s.name like CONCAT('%', #{name}, '%') 
+		  		</if>
+			</where>
+		order by s.create_time desc
+  </select>
+</mapper>

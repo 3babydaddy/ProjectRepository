@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tf.base.socialorg.persistence.SocialOrgChargeInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.tf.base.socialorg.domain.SocialOrgChargeInfo" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="social_org_info_id" property="socialOrgInfoId" jdbcType="INTEGER" />
+    <result column="charge_name" property="chargeName" jdbcType="VARCHAR" />
+    <result column="charge_partymember_is" property="chargePartymemberIs" jdbcType="VARCHAR" />
+    <result column="charge_partyorg_secretary_is" property="chargePartyorgSecretaryIs" jdbcType="VARCHAR" />
+    <result column="charge_twodeputy_acommittee_is" property="chargeTwodeputyAcommitteeIs" jdbcType="VARCHAR" />
+    <result column="charge_twodeputy_acommittee_type" property="chargeTwodeputyAcommitteeType" jdbcType="VARCHAR" />
+    <result column="charge_twodeputy_acommittee_type_other" property="chargeTwodeputyAcommitteeTypeOther" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="creator" property="creator" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    id, social_org_info_id, charge_name, charge_partymember_is, charge_partyorg_secretary_is, 
+    charge_twodeputy_acommittee_is, charge_twodeputy_acommittee_type, charge_twodeputy_acommittee_type_other, 
+    create_time, creator
+  </sql>
+</mapper>
