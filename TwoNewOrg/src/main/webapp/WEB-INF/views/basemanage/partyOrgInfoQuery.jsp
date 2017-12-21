@@ -8,7 +8,7 @@
 	<script type="text/javascript" src="<c:url value='/resources/plugins/ztree/jquery.ztree.core-3.5.min.js'/>"></script>
 	<script type="text/javascript" src="<c:url value='/resources/plugins/ztree/jquery.ztree.excheck-3.5.min.js'/>"></script>
 	<script type="text/javascript" src="<c:url value='/resources/plugins/ztree/jquery.ztree.exedit-3.5.min.js'/>"></script>
-	<script type="text/javascript" src="<c:url value='/resources/js/basemanage/partyOrgInfoQuery.js?time=new Date()'/>"></script>
+	<script type="text/javascript" src="<c:url value='/resources/js/basemanage/partyOrgInfoQuery.js??version=${jsversion}'/>"></script>
 </head>
 <body>
 	<div class="easyui-panel" title="党组织查询" style="width:100%;">

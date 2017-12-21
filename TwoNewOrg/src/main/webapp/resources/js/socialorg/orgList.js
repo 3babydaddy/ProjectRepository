@@ -29,20 +29,21 @@ function loadData(){
 			rownumbers:true,
 			fitColumns : true,
 			striped : true,
-			singleSelect : true,
+			singleSelect : false,
 			remoteSort: true,
 			pagination:true,
 			nowrap:false,
 			columns : [ [
 			     {field :"id",hidden:true}
 			    ,{field :"ck",title :"选择",checkbox:true}
-				,{field :"createOrgTxt",title :"填报单位",width :"8%", align:"center",formatter:ifNullShowHeng}
+				,{field :"createOrgTxt",title :"填报单位",width :"8%", align:"center",formatter:ifNullShowHeng,sortable:true}
 				,{field :"name",title :"名称",width :"8%", align:"center",formatter:ifNullShowHeng}
 	            ,{field :"natureTxt",title :"性质",width :"7%", align:"center",formatter:ifNullShowHeng}   
 	            ,{field :"categoryTxt",title :"类别",width :"7%", align:"center",formatter:ifNullShowHeng}
 	            ,{field :"registerOrg",title :"注册机构",width :"10%", align:"center",formatter:ifNullShowHeng}
 	            ,{field :"businessDirectorOrg",title :"业务主管单位",width :"10%", align:"center",formatter:ifNullShowHeng}
 	            ,{field :"address",title :"住地",width :"10%", align:"center",formatter:ifNullShowHeng}
+	            ,{field :"creator",title :"创建人",width :"10%", align:"center",formatter:ifNullShowHeng}
 	            ,{field :"statusTxt",title :"状态",width :"10%", align:"center",formatter:ifNullShowHeng}
 	         ] ],
 	      onLoadSuccess : function(data) {
@@ -112,6 +113,20 @@ function loadData(){
 			handler: function(){partyMbrRow('look');}
 		}];
 	}
+	
+	var batchSwitch = $("#batchSwitch").val();
+	/**
+	 * 批量上报功能
+	 * 根据数据字典配置是否开启
+	 */
+	if(!isQuWeiDept && batchSwitch == "1"){
+		var batchReport = {
+				text:'批量上报',
+				iconCls: 'icon-ok',
+				handler: function(){batchReportFun();}
+			};
+		options.toolbar.push(batchReport);
+	}
 	$('#gridPanel').datagrid(options);
 	
 	
@@ -142,9 +157,11 @@ function addRow(){
  */
 function editRow(id){
 	var row = getCheckedRow();
-	if(row == null){
+	if(row.length != 1){
 		layer.alert('请选择一条记录！')
 		return;
+	}else{
+		row = row[0];
 	}
 	var id = row.id;
 	if(row.status == 2 || row.status == 5){
@@ -169,9 +186,11 @@ function editRow(id){
  */
 function lookRow(){
 	var row = getCheckedRow();
-	if(row == null){
+	if(row.length != 1){
 		layer.alert('请选择一条记录！')
 		return;
+	}else{
+		row = row[0];
 	}
 	var id = row.id;
 	var url = ctx + '/socialorg/orglook?id='+id;
@@ -182,9 +201,11 @@ function lookRow(){
 }
 function cancelRow(){
 	var row = getCheckedRow();
-	if(row == null){
+	if(row.length != 1){
 		layer.alert('请选择一条记录！')
 		return;
+	}else{
+		row = row[0];
 	}
 	var id = row.id;
 	if(row.status > 2 || row.status < 2){
@@ -200,9 +221,11 @@ function cancelRow(){
 
 function cancelReasonRow(){
 	var row = getCheckedRow();
-	if(row == null){
+	if(row.length != 1){
 		layer.alert('请选择一条记录！')
 		return;
+	}else{
+		row = row[0];
 	}
 	var id = row.id;
 	
@@ -218,24 +241,30 @@ function cancelReasonRow(){
 }
 
 function delRow(){
+	var partyOrgIds = "";
 	var row = getCheckedRow();
-	if(row == null){
+	if(row.length < 1){
 		layer.alert('请选择一条记录！')
 		return;
 	}
-	var id = row.id;
-	if(id==undefined){
-		return;
+	for(var i = 0; i < row.length; i++){
+		if(row[i].status == 1){
+			if(partyOrgIds == ""){
+				partyOrgIds = row[i].id;
+			}else{
+				partyOrgIds = partyOrgIds + ',' + row[i].id;
+			}
+		}else{
+			layer.alert('“'+row[i].name + '”不能进行删除操作！');
+			return;
+		}
 	}
-	if(row.status != 1){
-		layer.alert('“'+row.name + '”不能进行删除操作！');
-		return;
-	}
+	
 	layer.confirm('您确认想要删除记录吗？',function(){  
 		$.ajax({
     		url:ctx + '/socialorg/orgdelete',
     		data:{
-    			id:id
+    			partyOrgIds:partyOrgIds
     		},
     		type:'post',
     		dataType:'json',
@@ -255,9 +284,11 @@ function delRow(){
 
 function nocancel(){
 	var row = getCheckedRow();
-	if(row == null){
+	if(row.length != 1){
 		layer.alert('请选择一条记录！')
 		return;
+	}else{
+		row = row[0];
 	}
 	var id = row.id;
 	if(row.status != 3){
@@ -286,7 +317,7 @@ function nocancel(){
 
 function  cancelok(){
 	var partyOrgIds = "";
-	var row = $("#gridPanel").datagrid('getSelections');
+	var row = getCheckedRow();
 	if(row.length < 1){
 		layer.alert('请选择一条记录！')
 		return;
@@ -326,9 +357,11 @@ function  cancelok(){
 
 function partyMbrRow(method){
 	var row = getCheckedRow();
-	if(row == null){
+	if(row.length != 1){
 		layer.alert('请选择一条记录！')
 		return;
+	}else{
+		row = row[0];
 	}
 	var id = row.id;
 	if(row.status == 3){
@@ -351,7 +384,7 @@ function showPartyMbrList(id,method){
 
 function reportHigherRow(){
 	var partyOrgIds = "";
-	var row = $("#gridPanel").datagrid('getSelections');
+	var row = getCheckedRow();
 	if(row.length < 1){
 		layer.alert('请选择一条记录！')
 		return;
@@ -389,20 +422,29 @@ function reportHigherRow(){
 }
 
 function returnRow(){
+	var partyOrgIds = "";
 	var row = getCheckedRow();
-	if(row == null){
+	if(row.length < 1){
 		layer.alert('请选择一条记录！')
 		return;
 	}
-	var id = row.id;
-	if(row.status != 2 && row.status != 5){
-		layer.alert('“'+row.name + '”未进行上报，不能进行退回操作！');
-		return;
+	for(var i = 0; i < row.length; i++){
+		if(row[i].status == 2 || row[i].status == 5){
+			if(partyOrgIds == ""){
+				partyOrgIds = row[i].id;
+			}else{
+				partyOrgIds = partyOrgIds + ',' + row[i].id;
+			}
+		}else{
+			layer.alert('“'+row[i].name + '”未进行上报，不能进行退回操作！');
+			return;
+		}
 	}
+	
 	layer.confirm('您确认要退回操作吗？',function(){    
 		$.ajax({
 			url:ctx + '/socialorg/orgSetStatus',
-			data:{id:id , status:1},
+			data:{partyOrgIds:partyOrgIds , status:1},
 			type:'post',
 			dataType:'json',
 			success:function(result){
@@ -420,10 +462,50 @@ function returnRow(){
 }
 
 function getCheckedRow(){
-	var row = $("#gridPanel").datagrid('getSelected');
+	var row = $("#gridPanel").datagrid('getSelections');
 	return row;
 }
 
 function showDept(){
 	showDeptTree("createOrg","createOrgTxt");
+}
+
+function batchReportFun(){
+	var partyOrgIds = "";
+	var row = getCheckedRow();
+	if(row.length <= 1){
+		layer.alert('请至少选择2条记录！')
+		return;
+	}
+	
+	for(var i = 0; i < row.length; i++){
+		if(row[i].status == 1){
+			if(partyOrgIds == ""){
+				partyOrgIds = row[i].id;
+			}else{
+				partyOrgIds = partyOrgIds + ',' + row[i].id;
+			}
+		}else{
+			layer.alert('只能对临时保存的记录进行批量上报操作！');
+			return;
+		}
+	}
+	layer.confirm('请确保批量上报数据准确性，上报后无法修改，确认批量上报吗？',function(){
+		$.ajax({
+			url:ctx + '/socialorg/orgSetStatus',
+			data:{partyOrgIds:partyOrgIds , status:5},
+			type:'post',
+			dataType:'json',
+			success:function(result){
+				if(result.status ==1){
+					layer.alert(result.msg,function(i){
+						reloadData();
+						layer.close(i); // 关闭提示框
+					});
+				}
+				else
+					layer.alert(result.msg);
+			}
+		});
+	});
 }

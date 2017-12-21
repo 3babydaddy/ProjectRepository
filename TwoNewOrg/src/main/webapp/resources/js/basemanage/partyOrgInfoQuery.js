@@ -79,6 +79,10 @@ function editDepartment() {
     	 //alert("请选择部门");
     	 $.messager.alert("请选择部门");
      }else{
+    	 if(value=='30000' && !isQuWeiDept){
+    		 $.messager.alert("无权限修改！！");
+    		 return;
+    	 }
     	 window.location.href= '../basemanage/partyorginfomodify?depId=' + value;
      }
 //     if(confirm("确认删除 节点 -- " + treeNode.name + " 吗？"))

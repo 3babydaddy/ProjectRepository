@@ -90,6 +90,9 @@ public class PartyConstructionController {
 		
 		if(!baseService.isQuWeiDept()){
 			params.setCreateOrg(deptId);
+		}else{
+			//工委列表展示过滤掉党组织状态为正常；但还没有新建党建的数据
+			params.setIsQuWeiSign("1");
 		}
 		PageHelper.startPage(page, rows, true);
 		List<SocialPartyOrgBuilding> list = socialPartyOrgBuildingMapper.queryList(params);
@@ -106,12 +109,13 @@ public class PartyConstructionController {
 	 * @return
 	 */
 	@RequestMapping(value="/socialorg/partyconstructionlook",method=RequestMethod.GET)
-	public String orglook(String id, String partyOrgName, Model model)throws Exception{
+	public String orglook(String id, String nature, String partyOrgName, Model model)throws Exception{
 		Integer mainId = Integer.parseInt(id);
 		SocialPartyOrgBuilding main = socialPartyOrgBuildingMapper.selectByPrimaryKey(mainId);
 		
 		main.setPartyOrgName(new String(partyOrgName.getBytes("iso-8859-1"),"utf-8"));
 		model.addAttribute("main", main);
+		model.addAttribute("nature", nature);
 		editPage(model);
 		//查看日志
 		logService.saveLog(LOG_OPERATION_TYPE.VIEW.toString(), 
@@ -127,19 +131,21 @@ public class PartyConstructionController {
 	 * @return
 	 */
 	@RequestMapping(value="/socialorg/partyconstructionedit",method=RequestMethod.GET)
-	public String orgedit(String id, String partyOrgId, String partyOrgName, Model model)throws Exception{
+	public String orgedit(String id, String nature, String partyOrgId, String partyOrgName, Model model)throws Exception{
 		
 		if(!StringUtils.isEmpty(id)){
 			Integer mainId = Integer.parseInt(id);
 			SocialPartyOrgBuilding main = socialPartyOrgBuildingMapper.selectByPrimaryKey(mainId);
-			
+			main.setPartyOrgId(Integer.parseInt(partyOrgId)+"");
 			main.setPartyOrgName(new String(partyOrgName.getBytes("iso-8859-1"),"utf-8"));
 			model.addAttribute("main", main);
+			model.addAttribute("nature", nature);
 		}else{
 			SocialPartyOrgBuilding main = new SocialPartyOrgBuilding();
 			main.setPartyOrgId(Integer.parseInt(partyOrgId)+"");
 			main.setPartyOrgName(new String(partyOrgName.getBytes("iso-8859-1"),"utf-8"));
 			model.addAttribute("main", main);
+			model.addAttribute("nature", nature);
 		}
 		editPage(model);
 		return "socialorg/partyConstructionEdit"; 
@@ -199,11 +205,8 @@ public class PartyConstructionController {
 		String[] partyOrgArray = partyOrgIds.split(",");
 		for(int i = 0; i < partyOrgArray.length; i++){
 			if(partyOrgArray[i] != null && partyOrgArray[i].length() > 0){
-				SocialPartyOrgBuilding info = new SocialPartyOrgBuilding();
-				info.setId(Integer.parseInt(partyOrgArray[i]));
+				SocialPartyOrgBuilding info = socialPartyOrgBuildingMapper.selectByPrimaryKey(Integer.parseInt(partyOrgArray[i]));
 				info.setStatus(status);
-				//info.setUpdateTime(new Date());
-				//info.setUpdator(baseService.getUserName());
 				socialPartyOrgBuildingMapper.updateByPrimaryKeySelective(info);
 			}
 		}
@@ -218,11 +221,8 @@ public class PartyConstructionController {
 	@RequestMapping(value="/socialorg/partyConstructionSetStatus",method=RequestMethod.POST)
 	@ResponseBody
 	public Map<String,Object> orgSetStatus(Model model,String id,String status){
-		SocialPartyOrgBuilding info = new SocialPartyOrgBuilding();
-		info.setId(Integer.parseInt(id));
+		SocialPartyOrgBuilding info = socialPartyOrgBuildingMapper.selectByPrimaryKey(Integer.parseInt(id));
 		info.setStatus(status);
-		//info.setUpdateTime(new Date());
-		//info.setUpdator(baseService.getUserName());
 		socialPartyOrgBuildingMapper.updateByPrimaryKeySelective(info);
 		return returnMsg(1, "操作成功!");
 	}
@@ -236,10 +236,9 @@ public class PartyConstructionController {
 	@RequestMapping(value="/socialorg/partyconstructiondelete",method=RequestMethod.POST)
 	@ResponseBody
 	public Map<String,Object> orgdelete(Model model,String id){
-		SocialPartyOrgBuilding info = new SocialPartyOrgBuilding();
-		info.setId(Integer.parseInt(id));
-		info.setStatus("0");
 		try {
+			SocialPartyOrgBuilding info = socialPartyOrgBuildingMapper.selectByPrimaryKey(Integer.parseInt(id));
+			info.setStatus("0");
 			socialPartyOrgBuildingMapper.updateByPrimaryKeySelective(info);
 			//删除日志
 			logService.saveLog(LOG_OPERATION_TYPE.DELETE.toString(), 
@@ -381,18 +380,16 @@ public class PartyConstructionController {
 		try {
 			String[] partyOrgIdArray = partyOrgIds.split(",");
 			for(int i = 0; i < partyOrgIdArray.length; i++){
-				SocialPartyOrgBuilding main = new SocialPartyOrgBuilding();
-				main.setId(Integer.parseInt(partyOrgIdArray[i]));
+				SocialPartyOrgBuilding main = socialPartyOrgBuildingMapper.selectByPrimaryKey(Integer.parseInt(partyOrgIdArray[i]));
 				main.setStatus("4");//已撤销
-				//main.setUpdateTime(new Date());
-				//main.setUpdator(baseService.getUserName());
 				socialPartyOrgBuildingMapper.updateByPrimaryKeySelective(main);
+				
+				SocialPartyOrgInfo info = socialPartyOrgInfoMapper.selectByPrimaryKey(main.getSocialPartyOrgId()+"");
+//				//撤销审核通过日志
+				logService.saveLog(LOG_OPERATION_TYPE.MODIFY.toString(), 
+						logService.getDetailInfo("log.socialorg.cancelok",
+								baseService.getUserName(),info.getPartyOrgName()));
 			}
-//			SocialPartyOrgInfo info = socialPartyOrgInfoMapper.selectByPrimaryKey(main.getSocialPartyOrgId()+"");
-//			//撤销审核通过日志
-//			logService.saveLog(LOG_OPERATION_TYPE.MODIFY.toString(), 
-//					logService.getDetailInfo("log.socialorg.cancelok",
-//							baseService.getUserName(),info.getPartyOrgName()));
 			return returnMsg(1, "审核通过，撤销组织成功！");
 		} catch (Exception e) {
 			logger.debug("撤销审核通过社会组织信息时出现异常:{}", e.getMessage(),e);
@@ -408,8 +405,12 @@ public class PartyConstructionController {
 	private void editPage(Model model){
 		List<DataDictionary> yesNoList = dict.findByDmm(CommonConstants.YES_NO);
 		List<DataDictionary> annualSurveyList = dict.findByDmm(CommonConstants.ANNUAL_SURVEY);
+		List<DataDictionary> partyorgStatusList = dict.findByDmm(CommonConstants.UNPUBLIC_ORG_STATUS);
 		model.addAttribute("yesNoList", yesNoList);
 		model.addAttribute("annualSurveyList", annualSurveyList);
+		model.addAttribute("partyorgStatusList", partyorgStatusList);
+		model.addAttribute("createOrgName", baseService.getDeptNameById(baseService.getCurrentUserDeptId()));
+		model.addAttribute("createOrgId", baseService.getCurrentUserDeptId());
 	}
 	
 	

@@ -7,8 +7,9 @@
 </head>
 <body>
 	<div class="easyui-layout" style="width:100%;height:100%;" >
+		<input type="hidden" id="batchSwitch" value="${batchSwitch}"/>
 		<div data-options="region:'north'" class="easyui-panel" title="任务查询" style="width:100%;height: 170px;" align="center">
-		  <form id="queryForm" action="" name="queryForm" class="easyui-form" method="post" >		
+		  <form id="queryForm" action="" name="queryForm" class="easyui-form" style="margin-top:10px;" method="post" >		
 				<table cellpadding="5" border="0" cellspacing="0">
 					<colgroup>
 				 		<col width="100"/>
@@ -23,7 +24,7 @@
                     <td align="left"><input class="easyui-textbox" type="text" id="name" name="name" size=15/></td>
                     <td align="right">性　　质：</td>
                     <td align="left">
-                        <select class="easyui-combobox" id="nature" name="nature" style="width:130px;" data-options="editable:false">
+                        <select class="easyui-combobox" id="nature" name="nature" style="width:160px;" data-options="editable:false">
                             <option value="" >--请选择--</option>
                             <c:forEach var="it" items="${orgNatureList}">
 							<optgroup label="${it.key }">
@@ -36,17 +37,15 @@
                     </td>
                     <td align="right">类　　别：</td>
                     <td align="left">
-                        <select class="easyui-combobox" id="category" name="category" style="width:130px;" data-options="editable:false">
+                        <select class="easyui-combobox" id="category" name="category" style="width:160px;" data-options="editable:false">
                             <option value="" >--请选择--</option>
                             <c:forEach var="it" items="${orgCategoryList}">
                                <option value="${it.code}">${it.value}</option>
                             </c:forEach>
                         </select>
                     </td>
-                    
-                                                                   
-                    
                 </tr>
+                <tr style="height:5px;"></tr>
                 <tr>
                     <td align="right">登记机构：</td>
                     <td align= "left" ><input class="easyui-textbox" type="text" id="registerOrg" name="registerOrg" size=15/></td>    
@@ -54,25 +53,48 @@
                     <td align="left" ><input class="easyui-textbox" type="text" id="businessDirectorOrg" name="businessDirectorOrg" size=15></input></td> -->
                     <td align="right">住　　地：</td>
                     <td align="left" ><input class="easyui-textbox" type="text" id="address" name="address" size=15></input></td>
-                    <c:if test="${isQuWeiDept}">
-                    <td align="right">填报单位：</td>
-                    <td align= "left" >
-                    <input type="text" id="createOrgTxt" size=15 readonly="readonly" onclick="showDept();"/>
-                    <input type="hidden" id="createOrg" name="createOrg" />
-                    </td>
-                    </c:if>
-                </tr>
-                <tr>
-                	<td align="right">临时统计：</td>
+                    <td align="right">临时统计：</td>
                     <td align="left">
-                        <select id="otherCondition" class="easyui-combobox" name="otherCondition" style="width: 100px;">
+                        <select id="otherCondition" class="easyui-combobox" name="otherCondition" style="width: 160px;">
 								<option value="">-请选择-</option>
 								<c:forEach var="it" items="${otherConditionList}">
 	                               <option value="${it.code}">${it.value}</option>
 	                            </c:forEach>
 							</select>
                     </td>
-                    <td   align="right" colspan="6" style="margin-right: 15px;"><a href="javascript:void(0)"
+                </tr>
+                <tr style="height:5px;"></tr>
+                <tr>
+                    <c:if test="${isQuWeiDept}">
+                		<td align="right">填报单位：</td>
+	                    <td align= "left" >
+		                    <input type="text" id="createOrgTxt" size=15 readonly="readonly" onclick="showDept();" />
+		                    <input type="hidden" id="createOrg" name="createOrg" />
+	                    </td>
+                	</c:if>
+                	<c:if test="${!isQuWeiDept}">
+                		<td align="right">填报单位：</td>
+	                    <td align= "left" >
+		                    <input type="text" class="easyui-textbox" readonly="readonly" style="width:160px;" value="${createOrgName}" />
+	                    </td>
+                	</c:if>
+					<td align="right">状态：</td>
+                    <td align="left">
+                         <select class="easyui-combobox" id="status" name="status" style="width:160px;" data-options="editable:false">
+                            <option value="" >--请选择--</option>
+                            <c:forEach var="it" items="${partyorgStatusList}">
+                               <option value="${it.code}">${it.value}</option>
+                            </c:forEach>
+                        </select>
+                    </td>
+                    <td align="right">创建人：</td>
+                    <td align= "left" >
+	                    <input type="text" class="easyui-textbox" name="creator"  style="width:160px;"  />
+                    </td>
+                </tr>
+                <tr style="height:5px;"></tr>
+                <tr>
+                	 <td   align="right" colspan="6" style="margin-right: 15px;"><a href="javascript:void(0)"
                         class="easyui-linkbutton" icon="icon-search" id="searchBtn">查询</a></td>
                     <td align="right"></td>
                 </tr>

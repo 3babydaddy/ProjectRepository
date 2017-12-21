@@ -50,6 +50,7 @@ $(function(){
 	$("#searchBtn").click(function(){
 		reloadData();
 	});
+	
 });
 
 function getQueryParams() {
@@ -92,7 +93,9 @@ function loadData(){
 	            ,{field :"orgClass",title :"组织类别",width :"12%", align:"center"}
 	         ] ],
 	      onLoadSuccess : function(data) {
-
+	    	  if(data.total != 0){
+	    		  $('#gridPanel').datagrid('selectAll');
+	    	  }
 //	    	  $("a[name='editBtn']").linkbutton({text:'编辑'})
 	      }
 	};

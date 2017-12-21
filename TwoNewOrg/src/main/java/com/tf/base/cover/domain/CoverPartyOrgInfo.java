@@ -181,6 +181,12 @@ public class CoverPartyOrgInfo {
     private String instructorUnitTxt;
     @Transient
     private String secretaryCompanyTxt;
+    @Transient
+    private String secretarySourceTxt;
+    @Transient
+    private String changeList;
+    @Transient
+    private String deputySecretaryList;
 
     @Override
     public String toString() {
@@ -549,6 +555,30 @@ public class CoverPartyOrgInfo {
 
 	public void setSecretaryCompanyTxt(String secretaryCompanyTxt) {
 		this.secretaryCompanyTxt = secretaryCompanyTxt;
+	}
+
+	public String getSecretarySourceTxt() {
+		return secretarySourceTxt;
+	}
+
+	public void setSecretarySourceTxt(String secretarySourceTxt) {
+		this.secretarySourceTxt = secretarySourceTxt;
+	}
+
+	public String getChangeList() {
+		return changeList;
+	}
+
+	public void setChangeList(String changeList) {
+		this.changeList = changeList;
+	}
+
+	public String getDeputySecretaryList() {
+		return deputySecretaryList;
+	}
+
+	public void setDeputySecretaryList(String deputySecretaryList) {
+		this.deputySecretaryList = deputySecretaryList;
 	}
 
 

@@ -28,8 +28,23 @@ $(function(){
 			allSelectedText:'全部'
 		    };
 	$("#otherCondition").multiselect(set);
+	
+	$("#nature").on('change', function(){
+		eduactionSign();
+	});
+	eduactionSign();
 });
 
+function eduactionSign(){
+	var nature = $("#nature").val();
+	if(nature == "0201" || nature == "0204"){
+		document.getElementById("isIdeologicalPoliticalOrg").disabled=false;
+		document.getElementById("isMoralEducationOrg").disabled=false;
+	}else{
+		document.getElementById("isIdeologicalPoliticalOrg").disabled=true;
+		document.getElementById("isMoralEducationOrg").disabled=true;
+	}
+}
 
 function save(flag){
 	if(flag == 1){

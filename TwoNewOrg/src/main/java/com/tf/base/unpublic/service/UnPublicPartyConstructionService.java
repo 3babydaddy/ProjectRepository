@@ -46,9 +46,8 @@ public class UnPublicPartyConstructionService {
 		main.setCreateTime(new Date());
 		main.setYear(cal.get(Calendar.YEAR)+"");
 		unpulicPartyOrgBuildingMapper.insertSelective(main);
-		AttachmentCommonInfo attachmentCommonInfo = new AttachmentCommonInfo();
+		AttachmentCommonInfo attachmentCommonInfo = attachmentCommonInfoMapper.selectByPrimaryKey(main.getRectifyAtachementId());
 		attachmentCommonInfo.setMainTableId(main.getId());
-		attachmentCommonInfo.setId(main.getRectifyAtachementId());
 		attachmentCommonInfoMapper.updateByPrimaryKeySelective(attachmentCommonInfo);
 		
 	}
@@ -63,10 +62,11 @@ public class UnPublicPartyConstructionService {
 	 */
 	@Transactional
 	public void updateOrg(UnpulicPartyOrgBuilding main)throws Exception {
+		main.setCreater(baseService.getUserName());
+		main.setCreateTime(new Date());
 		unpulicPartyOrgBuildingMapper.updateByPrimaryKeySelective(main);
-		AttachmentCommonInfo attachmentCommonInfo = new AttachmentCommonInfo();
+		AttachmentCommonInfo attachmentCommonInfo = attachmentCommonInfoMapper.selectByPrimaryKey(main.getRectifyAtachementId());
 		attachmentCommonInfo.setMainTableId(main.getId());
-		attachmentCommonInfo.setId(main.getRectifyAtachementId());
 		attachmentCommonInfoMapper.updateByPrimaryKeySelective(attachmentCommonInfo);
 	}
 

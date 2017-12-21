@@ -86,34 +86,6 @@
 							</select>
 						</td>
 					</tr>
-				</table>
-		   </div>
-		</div>
-    	<div class="panel panel-info" id="divOne">
-		   <div class="panel-heading">
-		      <h3 class="panel-title">指导员或联络员信息</h3>
-		   </div>
-		   <div class="panel-body" align="center">
-				<table class="table table-bordered" cellpadding="2" border="0" cellspacing="0" >
-					<colgroup>
-				 		<col width="90" />
-				 		<col width="120"/>
-				 		<col width="100"/>
-				 		<col width="120"/>
-				 		<col width="90"/>
-				 		<col width="120"/>
-				 	</colgroup>
-					<tr>
-						<td style="text-align: right;"><font color="red">*</font>人员姓名：</td>
-						<td style="text-align: left;"><input class="form-control" name="instructorName" value="${main.instructorName }" maxlength="20"/></td>
-						<td style="text-align: right;"><font color="red">*</font>单位：</td>
-						<td align= "left" >
-		                    <input type="text" id="createOrgTxt" name="instructorUnitTxt"  size=15 onclick="showDept();" value="${main.instructorUnitTxt }" class="form-control"/>
-		                    <input type="hidden" id="instructorUnit" name="instructorUnit" value="${main.instructorUnit }" />
-	                    </td>
-						<td style="text-align: right;"><font color="red">*</font>职务：</td>
-						<td style="text-align: left;"><input class="form-control" name="instructorJob" value="${main.instructorJob }" maxlength="20"/></td>
-					</tr>
 					<tr>
 						<td style="text-align: right;"><font color="red">*</font>党组织成立时间：</td>
 						<td style="text-align: left;"><input class="form-control" type="text" onClick="WdatePicker({maxDate:'%y-%M-%d'})" name="partyOrgTimeTxt" value="${main.partyOrgTimeTxt }" maxlength="20"/></td>
@@ -126,7 +98,106 @@
 				</table>
 		   </div>
 		</div>
-		
+    	<div class="panel panel-info" id="divOne">
+		   <div class="panel-heading">
+		      <h3 class="panel-title">指导员或联络员信息</h3>
+		   </div>
+		   <div class="panel-body" align="center">
+				<table class="table table-bordered" cellpadding="2" border="0" cellspacing="0" >
+					<colgroup>
+				 	</colgroup>
+				 	<tr>
+						<td style="text-align: left;">
+							<c:if test="${instructList.size() == 0}">
+								<div class="form-inline" style="margin-top:5px;">
+									<label>人员姓名：</label>
+									<input class="form-control" name="instructorName" value="" maxlength="20"/>
+									<label>职务：</label>
+									<input class="form-control" name="instructorJob" value="" maxlength="20"/>
+									<label>单位：</label>
+				                       <select id="zhidaodanwei0" name="instructorUnitTxt" class="form-control"  multiple="multiple">
+										    <c:forEach var="it" items="${unitList}">
+										        <option value="${it.code }" >${it.value }</option>
+										    </c:forEach>
+									    </select>
+								</div>
+							</c:if>
+							<c:if test="${!empty main.id and instructList.size() > 0}">
+								<c:forEach items="${instructList }" var="e" varStatus="status">
+									<div class="form-inline" style="margin-top:5px;">
+										<label>人员姓名：</label>
+										<input class="form-control" name="instructorName" value="${e.instructorName }" maxlength="20"/>
+										<label>职务：</label>
+										<input class="form-control" name="instructorJob" value="${e.instructorJob }" maxlength="20"/>
+										<label>单位：</label>
+							               	<select id="zhidaodanwei${status.index }" name="instructorUnitTxt" class="form-control" multiple="multiple">
+											    <c:forEach var="it" items="${unitList}">
+											        <c:set var="tmpInstructorUnit" value=""/>
+													   <c:forEach items="${e.orgIdList }" var="t">
+														  <c:if test="${it.code == t}">
+														      <c:set var="tmpInstructorUnit" value='selected="selected"' />
+														  </c:if>
+													  </c:forEach>
+											        <option value="${it.code }" ${tmpInstructorUnit}>${it.value }</option>
+											    </c:forEach>
+										    </select>
+									</div>
+								</c:forEach>
+							</c:if>
+							<button type="button" id="add_operate_instructor" class="btn btn-primary btn-sm glyphicon glyphicon-plus"></button>
+						</td>
+					</tr>
+				</table>
+		   </div>
+		</div>
+		<div class="panel panel-info" id="divEight">
+		   <div class="panel-heading">
+		      <h3 class="panel-title">下级党组织信息</h3>
+		   </div>
+		   <div class="panel-body" align="center">
+				<table class="table table-bordered" cellpadding="2" border="0" cellspacing="0" >
+					<colgroup>
+				 	</colgroup>
+				 	<tr>
+						<td style="text-align: left;">
+							<c:if test="${lowerPartyList.size() == 0}">
+								<div class="form-inline" style="margin-top:5px;">
+									<label>名称：</label>
+									<input class="form-control" name="lowerPartyOrgName" value="" maxlength="20"/>
+									<label>类型：</label>
+									<select id="lowerPartyOrgType" name="lowerPartyOrgType" class="form-control">
+										<option value="">--请选择--</option>
+										<c:forEach var="it" items="${partyOrgClassList}">
+											<option value="${it.code }" >${it.value }</option>
+										</c:forEach>
+									</select>
+									<label>数量：</label>
+									<input class="form-control" name="lowerPartyOrgSum" value="" maxlength="20"/>
+								</div>
+							</c:if>
+							<c:if test="${!empty main.id and lowerPartyList.size() > 0}">
+								<c:forEach items="${lowerPartyList }" var="e" >
+									<div class="form-inline" style="margin-top:5px;">
+										<label>名称：</label>
+										<input class="form-control" name="lowerPartyOrgName" value="${e.lowerPartyOrgName }" maxlength="20"/>
+										<label>类型：</label>
+										<select id="lowerPartyOrgType" name="lowerPartyOrgType" class="form-control">
+											<option value="">--请选择--</option>
+											<c:forEach var="it" items="${partyOrgClassList}">
+												<option value="${it.code }" <c:if test="${e.lowerPartyOrgType == it.code }"> selected="selected"</c:if>>${it.value }</option>
+											</c:forEach>
+										</select>
+										<label>数量：</label>
+										<input class="form-control" name="lowerPartyOrgSum" value="${e.lowerPartyOrgSum}" maxlength="20"/>
+									</div>
+								</c:forEach>
+							</c:if>
+							<button type="button" id="add_operate_lowerParty" class="btn btn-primary btn-sm glyphicon glyphicon-plus"></button>
+						</td>
+					</tr>
+				</table>
+		   </div>
+		</div>
 		<div class="panel panel-info" id="divTwo">
 		   <div class="panel-heading">
 		      <h3 class="panel-title">党组织换届信息(允许录入多次)</h3>
@@ -143,17 +214,17 @@
 						
 							<c:if test="${changeDateList.size() == 0}">
 								<div class="form-inline" style="margin-top:5px;">
-									<input class="form-control" type="text" onClick="WdatePicker({maxDate:'%y-%M-%d'})" id="partymbrInUnpublicNum0" name="partymbrInUnpublicNum0" />
-									<label>换届相关附件</label><input class="form-control" type="text" id="filepartymbrUnderThirtyfiveNum0" name="filepartymbrUnderThirtyfiveNum0" onclick="showUpload(this,2)"/>
-									<input class="form-control" type="hidden" id="partymbrUnderThirtyfiveNum0" name="partymbrUnderThirtyfiveNum0" />
+									<input class="form-control" type="text" onClick="WdatePicker({maxDate:'%y-%M-%d'})" id="partymbrInUnpublicNum0" name="partymbrInUnpublicNum" />
+									<label>换届相关附件</label><input class="form-control" type="text" id="filepartymbrUnderThirtyfiveNum0" name="filepartymbrUnderThirtyfiveNum" onclick="showUpload(this,2)"/>
+									<input class="form-control" type="hidden" id="partymbrUnderThirtyfiveNum0" name="partymbrUnderThirtyfiveNum" />
 								</div>
 							</c:if>
 							<c:if test="${!empty main.id and changeDateList.size() > 0}">
 								<c:forEach items="${changeDateList }" var="e" varStatus="status">
 									<div class="form-inline" style="margin-top:5px;">
-										<input class="form-control" type="text" onClick="WdatePicker({maxDate:'%y-%M-%d'})" id="partymbrInUnpublicNum${status.index }" name="partymbrInUnpublicNum${status.index }" value="${e.changeTimeTxt }"/>
-										<label>换届相关附件</label><input class="form-control" type="text" id="filepartymbrUnderThirtyfiveNum${status.index }" name="filepartymbrUnderThirtyfiveNum${status.index }" value="${e.changeAttachmentName }" onclick="showUpload(this,2)"/>
-										<input class="form-control" type="hidden" id="partymbrUnderThirtyfiveNum${status.index }" name="partymbrUnderThirtyfiveNum${status.index }" value="${e.changeAttachmentId }"/>
+										<input class="form-control" type="text" onClick="WdatePicker({maxDate:'%y-%M-%d'})" id="partymbrInUnpublicNum${status.index }" name="partymbrInUnpublicNum" value="${e.changeTimeTxt }"/>
+										<label>换届相关附件</label><input class="form-control" type="text" id="filepartymbrUnderThirtyfiveNum${status.index }" name="filepartymbrUnderThirtyfiveNum" value="${e.changeAttachmentName }" onclick="showUpload(this,2)"/>
+										<input class="form-control" type="hidden" id="partymbrUnderThirtyfiveNum${status.index }" name="partymbrUnderThirtyfiveNum" value="${e.changeAttachmentId }"/>
 									</div>
 								</c:forEach>
 							</c:if>
@@ -239,7 +310,7 @@
 	                    </td>
 						<td style="text-align: right;"><font color="red">*</font>书记所在单位：</td>
 	                    <td align= "left" >
-		                    <input type="text" id="createOrgTxt" name="secretaryCompanyTxt" size=15  onclick="showDept1();" class="form-control" value="${main.secretaryCompanyTxt }" maxlength="50"/>
+		                    <input type="text" id="secretaryCompanyTxt" name="secretaryCompanyTxt" size=15  onclick="showDept1();" class="form-control" value="${main.secretaryCompanyTxt }" maxlength="50"/>
 		                    <input type="hidden" id="secretaryCompany" name="secretaryCompany" value="${main.secretaryCompany }" />
 	                    </td>
 					</tr>
@@ -258,75 +329,107 @@
 						<td style="text-align: left;">
 							<c:if test="${deputsecList.size() == 0}">
 								<div class="form-inline" style="margin-top:5px;">
-									<label>类型：</label><select name="deputySecretaryType0" class="form-control" >
-																<option value="">--请选择--</option>
-																<c:forEach var="it" items="${partyTypeList}">
-																<option value="${it.code }">${it.value }</option>
-															</c:forEach>
-													   </select>
-									<label>姓名：</label><input class="form-control" style="width:90px;" name="deputySecretaryName0" value=""/>							  
-									<label>出生日期：</label><input class="form-control" style="width:120px;" type='text' onClick="WdatePicker({maxDate:'%y-%M-%d'})" name="deputySecretaryBirthdayTxt0" value=""/>
-									<label>性别：</label><select  name="deputySecretarySex0" class="form-control" >
-															<option value="">--请选择--</option>
-															<c:forEach var="it" items="${genderList}">
-																<option value="${it.code }">${it.value }</option>
-															</c:forEach>
-														</select>
-									<label>学历：</label><select  name="deputySecretaryEducation0" class="form-control">
-															<option value="">--请选择--</option>
-															<c:forEach var="it" items="${finalEducationList}">
-																<option value="${it.code }" >${it.value }</option>
-															</c:forEach>
-														</select>
-									<label>是否是专职</label><select  name="deputySecretaryIsFullTime0" class="form-control">
-															<option value="">--请选择--</option>
-															<c:forEach var="it" items="${yesNoList}">
-																<option value="${it.code }" >${it.value }</option>
-															</c:forEach>
-														</select>	
-									<label>是否是理事会成员</label><select  name="isBoardOfficer0" class="form-control">
-															<option value="">--请选择--</option>
-															<c:forEach var="it" items="${yesNoList}">
-																<option value="${it.code }" >${it.value }</option>
-															</c:forEach>
-														</select>					  
+									<label style="width:90px;text-align: right;"><font style="font-weight:normal;">类型：</font></label>
+									<select name="deputySecretaryType" class="form-control" style="width:100px;">
+											<option value="">--请选择--</option>
+											<c:forEach var="it" items="${partyTypeList}">
+											<option value="${it.code }">${it.value }</option>
+										</c:forEach>
+								    </select>
+							 		<label style="width:90px;text-align: right;"><font style="font-weight:normal;">姓名：</font></label>
+							 		<input class="form-control" style="width:100px;" name="deputySecretaryName" value=""/>							  
+									<label style="width:90px;text-align: right;"><font style="font-weight:normal;">出生日期：</font></label>
+									<input class="form-control" style="width:100px;" type='text' onClick="WdatePicker({maxDate:'%y-%M-%d'})" name="deputySecretaryBirthdayTxt" value=""/>
+									<label style="width:90px;text-align: right;"><font style="font-weight:normal;">性别：</font></label>
+									<select  name="deputySecretarySex" class="form-control" style="width:100px;">
+										<option value="">--请选择--</option>
+										<c:forEach var="it" items="${genderList}">
+											<option value="${it.code }">${it.value }</option>
+										</c:forEach>
+									</select>
+									<label style="width:90px;text-align: right;"><font style="font-weight:normal;">学历：</font></label>
+									<select  name="deputySecretaryEducation" class="form-control" style="width:100px;">
+										<option value="">--请选择--</option>
+										<c:forEach var="it" items="${finalEducationList}">
+											<option value="${it.code }" >${it.value }</option>
+										</c:forEach>
+									</select>
+									<label style="width:90px;text-align: right;"><font style="font-weight:normal;">是否是专职：</font></label>
+									<select  name="deputySecretaryIsFullTime" class="form-control" style="width:100px;">
+										<option value="">--请选择--</option>
+										<c:forEach var="it" items="${yesNoList}">
+											<option value="${it.code }" >${it.value }</option>
+										</c:forEach>
+									</select>	
+									<label style="width:90px;text-align: right;"><font style="font-weight:normal;">是否是理事会<br/>成员：</font></label>
+									<select  name="isBoardOfficer" class="form-control" style="width:100px;">
+										<option value="">--请选择--</option>
+										<c:forEach var="it" items="${yesNoList}">
+											<option value="${it.code }" >${it.value }</option>
+										</c:forEach>
+									</select>
+									<c:if test="${nature eq '0201' or nature eq '0204'}">
+										<label style="width:90px;text-align: right;"><font style="font-weight:normal;">其它委员进入<br/>管理情况：</font></label>
+										<select  name="otherInfoManager" class="form-control" style="width:100px;">
+											<option value="">--请选择--</option>
+											<c:forEach var="it" items="${otherInfoManagerList}">
+												<option value="${it.code }" >${it.value }</option>
+											</c:forEach>
+										</select>
+									</c:if>					  
 								</div>
 							</c:if>
 							<c:if test="${!empty main.id and deputsecList.size() > 0}">
-								<c:forEach items="${deputsecList }" var="e" varStatus="status">
+								<c:forEach items="${deputsecList }" var="e" >
 									<div class="form-inline" style="margin-top:5px;">
-										<label>类型：</label><select name="deputySecretaryType${status.index }" class="form-control" >
-																<option value="">--请选择--</option>
-																<c:forEach var="it" items="${partyTypeList}">
-																<option value="${it.code }" <c:if test="${e.deputySecretaryType == it.code }"> selected="selected"</c:if>>${it.value }</option>
-															</c:forEach>
-													   </select>
-										<label>姓名：</label><input class="form-control" style="width:90px;" name="deputySecretaryName${status.index }" value="${e.deputySecretaryName }"/>							  
-										<label>出生日期：</label><input class="form-control" style="width:140px;" type='text' onClick="WdatePicker({maxDate:'%y-%M-%d'})" name="deputySecretaryBirthdayTxt${status.index }" value="${e.deputySecretaryBirthdayTxt }"/>
-										<label>性别：</label><select  name="deputySecretarySex${status.index }" class="form-control" >
-																<option value="">--请选择--</option>
-																<c:forEach var="it" items="${genderList}">
-																	<option value="${it.code }" <c:if test="${e.deputySecretarySex == it.code }"> selected="selected"</c:if>>${it.value }</option>
-																</c:forEach>
-															</select>
-										<label>学历：</label><select  name="deputySecretaryEducation${status.index }" class="form-control">
-																<option value="">--请选择--</option>
-																<c:forEach var="it" items="${finalEducationList}">
-																	<option value="${it.code }" <c:if test="${e.deputySecretaryEducation == it.code }"> selected="selected"</c:if>>${it.value }</option>
-																</c:forEach>
-															</select>
-										<label>是否是专职</label><select  name="deputySecretaryIsFullTime${status.index }" class="form-control">
-																<option value="">--请选择--</option>
-																<c:forEach var="it" items="${yesNoList}">
-																	<option value="${it.code }" <c:if test="${e.deputySecretaryIsFullTime == it.code }"> selected="selected"</c:if>>${it.value }</option>
-																</c:forEach>
-															</select>	
-										<label>是否是理事会成员</label><select  name="isBoardOfficer${status.index }" class="form-control">
-																<option value="">--请选择--</option>
-																<c:forEach var="it" items="${yesNoList}">
-																	<option value="${it.code }" <c:if test="${e.deputySecretaryIsFullTime == it.code }"> selected="selected"</c:if>>${it.value }</option>
-																</c:forEach>
-															</select>
+										<label style="width:90px;text-align: right;"><font style="font-weight:normal;">类型：</font></label>
+										<select name="deputySecretaryType" class="form-control" style="width:100px;">
+												<option value="">--请选择--</option>
+												<c:forEach var="it" items="${partyTypeList}">
+												<option value="${it.code }" <c:if test="${e.deputySecretaryType == it.code }"> selected="selected"</c:if>>${it.value }</option>
+											</c:forEach>
+									    </select>
+										<label style="width:90px;text-align: right;"><font style="font-weight:normal;">姓名：</font></label>
+										<input class="form-control" style="width:100px;" name="deputySecretaryName" value="${e.deputySecretaryName }"/>							  
+										<label style="width:90px;text-align: right;"><font style="font-weight:normal;">出生日期：</font></label>
+										<input class="form-control" style="width:100px;" type='text' onClick="WdatePicker({maxDate:'%y-%M-%d'})" name="deputySecretaryBirthdayTxt" value="${e.deputySecretaryBirthdayTxt }"/>
+										<label style="width:90px;text-align: right;"><font style="font-weight:normal;">性别：</font></label>
+										<select  name="deputySecretarySex" class="form-control"  style="width:100px;">
+											<option value="">--请选择--</option>
+											<c:forEach var="it" items="${genderList}">
+												<option value="${it.code }" <c:if test="${e.deputySecretarySex == it.code }"> selected="selected"</c:if>>${it.value }</option>
+											</c:forEach>
+										</select>
+										<label style="width:90px;text-align: right;"><font style="font-weight:normal;">学历：</font></label>
+										<select  name="deputySecretaryEducation" class="form-control" style="width:100px;">
+											<option value="">--请选择--</option>
+											<c:forEach var="it" items="${finalEducationList}">
+												<option value="${it.code }" <c:if test="${e.deputySecretaryEducation == it.code }"> selected="selected"</c:if>>${it.value }</option>
+											</c:forEach>
+										</select>
+										<label style="width:90px;text-align: right;"><font style="font-weight:normal;">是否是专职：</font></label>
+										<select  name="deputySecretaryIsFullTime" class="form-control" style="width:100px;">
+											<option value="">--请选择--</option>
+											<c:forEach var="it" items="${yesNoList}">
+												<option value="${it.code }" <c:if test="${e.deputySecretaryIsFullTime == it.code }"> selected="selected"</c:if>>${it.value }</option>
+											</c:forEach>
+										</select>	
+										<label style="width:90px;text-align: right;"><font style="font-weight:normal;">是否是理事会<br/>成员：</font></label>
+										<select  name="isBoardOfficer" class="form-control" style="width:100px;">
+											<option value="">--请选择--</option>
+											<c:forEach var="it" items="${yesNoList}">
+												<option value="${it.code }" <c:if test="${e.isBoardOfficer == it.code }"> selected="selected"</c:if>>${it.value }</option>
+											</c:forEach>
+										</select>
+										<c:if test="${nature eq '0201' or nature eq '0204'}">
+											<label style="width:90px;text-align: right;"><font style="font-weight:normal;">其它委员进入<br/>管理情况：</font></label>
+											<select  name="otherInfoManager" class="form-control" style="width:100px;">
+												<option value="">--请选择--</option>
+												<c:forEach var="it" items="${otherInfoManagerList}">
+														<option value="${it.code }" <c:if test="${e.otherInfoManager == it.code }"> selected="selected"</c:if>>${it.value }</option>
+												</c:forEach>
+											</select>
+										</c:if>
 									</div>
 								</c:forEach>
 							</c:if>
@@ -366,7 +469,7 @@
 						<td align="right" colspan="2" style="margin-right: 15px;">
 							<div align="right" border="false" >
 					    		<div class="btn-group">
-								  <button type="button" class="btn btn-primary" onclick="showPartyInfo(${orgIds})">查看党员详情页面</button>
+								  <button type="button" class="btn btn-primary" onclick="showPartyInfo('${orgIds}')">查看党员详情页面</button>
 								</div>
 					    	</div>
 						</td>
@@ -424,24 +527,26 @@
 					<tr>
 						<td style="text-align: right;"><font color="red">*</font>其他：</td>
 						<td style="text-align: left;"><input class="form-control" name="otherInfo" value="${main.otherInfo }"/></td>
-						<td style="text-align: right;"><font color="red">*</font>是否将党组织建设有关内容纳入学校章程：</td>
-						<td align= "left" >
-							<select id="isPartyIntoSchool" id="isPartyIntoSchool" name="isPartyIntoSchool" class="form-control" disabled="disabled">
-								<option value="">--请选择--</option>
-								<c:forEach var="it" items="${yesNoList}">
-									<option value="${it.code }" <c:if test="${main.isPartyIntoSchool == it.code }"> selected="selected"</c:if>>${it.value }</option>
-								</c:forEach>
-							</select>
-	                    </td>
-						<td style="text-align: right;"><font color="red">*</font>隶属上级党组织类别(学校特有)：</td>
-						<td align= "left" >
-							<select id="parentPartyOrgType" id="parentPartyOrgType" name="parentPartyOrgType" class="form-control" disabled="disabled">
-								<option value="">--请选择--</option>
-								<c:forEach var="it" items="${yesNoList}">
-									<option value="${it.code }" <c:if test="${main.parentPartyOrgType == it.code }"> selected="selected"</c:if>>${it.value }</option>
-								</c:forEach>
-							</select>
-	                    </td>
+						<c:if test="${nature eq '0201' or nature eq '0204'}">
+							<td style="text-align: right;"><font color="red">*</font>是否将党组织建设有关内容纳入学校章程：</td>
+							<td align= "left" >
+								<select id="isPartyIntoSchool" id="isPartyIntoSchool" name="isPartyIntoSchool" class="form-control">
+									<option value="">--请选择--</option>
+									<c:forEach var="it" items="${yesNoList}">
+										<option value="${it.code }" <c:if test="${main.isPartyIntoSchool == it.code }"> selected="selected"</c:if>>${it.value }</option>
+									</c:forEach>
+								</select>
+		                    </td>
+							<td style="text-align: right;"><font color="red">*</font>隶属上级党组织类别(学校特有)：</td>
+							<td align= "left" >
+								<select id="parentPartyOrgType" id="parentPartyOrgType" name="parentPartyOrgType" class="form-control">
+									<option value="">--请选择--</option>
+									<c:forEach var="it" items="${heightPartyOrgList}">
+										<option value="${it.code }" <c:if test="${main.parentPartyOrgType == it.code }"> selected="selected"</c:if>>${it.value }</option>
+									</c:forEach>
+								</select>
+		                    </td>
+		                </c:if>
 					</tr>
 				</table>
 		   </div>
@@ -452,8 +557,11 @@
 		<input type="hidden" id="subjectionPartyId" name="subjectionPartyId" value="${main.subjectionPartyId}" />
 		<input type="hidden" id="subjectionPartyName" name="subjectionPartyName" value="${main.subjectionPartyName }" />
 		<input type="hidden" id="id" name="id" value="${main.id }" />
-		<input type="hidden" id="nature" value="${nature}" />
-		<input type="hidden" id="changeTimeNum" name="changeTimeNum"/> 
+		<input type="hidden" id="changeList" name="changeList" /> 
+		<input type="hidden" id="deputySecretaryList" name="deputySecretaryList" /> 
+		<input type="hidden" id="instructList" name="instructList" /> 
+		<input type="hidden" id="lowerPartyList" name="lowerPartyList" /> 
+		<input type="hidden" id="instructSize" name="instructSize" value="${instructSize }" /> 
 		<input type="hidden" id="modular" name="modular" value="1" />
 		<input type="hidden" id="type" name="type" value="1" />
 	</form>

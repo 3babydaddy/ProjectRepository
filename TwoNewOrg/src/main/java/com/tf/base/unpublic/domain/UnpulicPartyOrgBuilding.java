@@ -135,6 +135,8 @@ public class UnpulicPartyOrgBuilding {
     private Integer reportHigher;
     @Transient
     private String statusTxt;
+    @Transient
+    private String isQuWeiSign;//1:是工委 2:否
     
 
     @Override
@@ -438,5 +440,13 @@ public class UnpulicPartyOrgBuilding {
 
 	public void setStatusTxt(String statusTxt) {
 		this.statusTxt = statusTxt;
+	}
+
+	public String getIsQuWeiSign() {
+		return isQuWeiSign;
+	}
+
+	public void setIsQuWeiSign(String isQuWeiSign) {
+		this.isQuWeiSign = isQuWeiSign;
 	}
 }

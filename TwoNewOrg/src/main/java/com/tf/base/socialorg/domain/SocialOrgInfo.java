@@ -121,6 +121,10 @@ public class SocialOrgInfo {
     private String createOrgTxt;
     @Transient
     private String otherCondition;
+    @Transient
+    private String isIdeologicalPoliticalOrgTxt;
+    @Transient
+    private String isMoralEducationOrgTxt;
 
     /**
      * 获取主键
@@ -480,6 +484,22 @@ public class SocialOrgInfo {
 
 	public void setIsMoralEducationOrg(String isMoralEducationOrg) {
 		this.isMoralEducationOrg = isMoralEducationOrg;
+	}
+
+	public String getIsIdeologicalPoliticalOrgTxt() {
+		return isIdeologicalPoliticalOrgTxt;
+	}
+
+	public void setIsIdeologicalPoliticalOrgTxt(String isIdeologicalPoliticalOrgTxt) {
+		this.isIdeologicalPoliticalOrgTxt = isIdeologicalPoliticalOrgTxt;
+	}
+
+	public String getIsMoralEducationOrgTxt() {
+		return isMoralEducationOrgTxt;
+	}
+
+	public void setIsMoralEducationOrgTxt(String isMoralEducationOrgTxt) {
+		this.isMoralEducationOrgTxt = isMoralEducationOrgTxt;
 	}
 
 }

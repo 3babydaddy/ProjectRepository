@@ -22,4 +22,12 @@
     -->
     id, dept_id, name, post, post_level, contact_tel, type, create_time, creator, del
   </sql>
+  
+  <select id="getUpdateCount" resultType="java.lang.Integer">
+  	select count(*) from dept_leader_info_tem where id = #{deptId}
+  </select>
+  
+  <select id="queryUpdateDeptInfo" resultMap="BaseResultMap">
+  	select * from dept_leader_info_tem where id = #{deptId}
+  </select>
 </mapper>

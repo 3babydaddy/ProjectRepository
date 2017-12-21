@@ -26,18 +26,22 @@
 	                    </td>
 	                    <td align="right">填报时间开始时间：</td>
 	                    <td align= "left">
-	                    	<input type="text" class="easyui-datebox" name="startTime" />
+	                    	<input type="text" class="form-control" name="startTime" style="width:160px;height:24px;" onClick="WdatePicker({maxDate:'%y-%M-%d'})" />
 	                    </td>
 	                    <td align="right">填报时间开始时间：</td>
 	                    <td align="left">
-	                    	<input type="text" class="easyui-datebox" name="endTime" />
+	                    	<input type="text" class="form-control" name="endTime" style="width:160px;height:24px;" onClick="WdatePicker({maxDate:'%y-%M-%d'})" />
 	                    </td>
 	                </tr>
 	                <tr style="height:5px;"></tr>
 	                <tr>
-	                    <td align="right" colspan="6" style="margin-right: 15px;">
+	                	<td align="right">年度：</td>
+	                    <td align="left">
+	                    	<input type="text" class="form-control" name="year" style="width:160px;height:24px;" onClick="WdatePicker({dateFmt:'yyyy'})" value="${year }" />
+	                    </td>
+	                    <td align="right" colspan="4" style="margin-right: 15px;">
 	                    	<a href="javascript:void(0)" class="easyui-linkbutton" icon="icon-search" id="searchBtn">查询</a>
-	                    	<a  class="easyui-linkbutton" icon="icon-excel_report1" id="exportExcelBtn">导出Excel</a>
+	                    	<a href="../file/exportUnpublicReport" class="easyui-linkbutton" icon="icon-excel_report1" id="exportExcelBtn">导出Excel</a>
 	                    </td>
 	                    <td align="right"></td>
 	                </tr>

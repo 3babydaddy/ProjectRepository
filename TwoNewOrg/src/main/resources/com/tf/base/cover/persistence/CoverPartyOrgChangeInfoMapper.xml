@@ -3,7 +3,7 @@
 <mapper namespace="com.tf.base.cover.persistence.CoverPartyOrgChangeInfoMapper">
   <resultMap id="BaseResultMap" type="com.tf.base.cover.domain.CoverPartyOrgChangeInfo">
     <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="social_party_org_id" jdbcType="INTEGER" property="socialPartyOrgId" />
+    <result column="cover_party_org_id" jdbcType="INTEGER" property="coverPartyOrgId" />
     <result column="change_time" jdbcType="TIMESTAMP" property="changeTime" />
     <result column="change_attachment_id" jdbcType="INTEGER" property="changeAttachmentId" />
     <result column="creater" jdbcType="VARCHAR" property="creater" />
@@ -11,10 +11,10 @@
     <result column="status" jdbcType="VARCHAR" property="status" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, social_party_org_id, change_time, change_attachment_id, creater, create_time, 
+    id, cover_party_org_id, change_time, change_attachment_id, creater, create_time, 
     status
   </sql>
   <update id="deleteChangeInfo">
-  	update social_party_org_change_info set status = '0' where social_party_org_id = #{partyOrgId}
+  	update cover_party_org_change_info set status = '0' where cover_party_org_id = #{partyOrgId}
   </update>
 </mapper>

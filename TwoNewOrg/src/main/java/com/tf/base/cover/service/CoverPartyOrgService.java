@@ -1,6 +1,7 @@
 package com.tf.base.cover.service;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.tf.base.common.service.BaseService;
 import com.tf.base.cover.domain.CoverOrgPmbrCount;
 import com.tf.base.cover.domain.CoverOrgPmbrInfo;
+import com.tf.base.cover.domain.CoverPartyOrgBuilding;
 import com.tf.base.cover.domain.CoverPartyOrgChangeInfo;
 import com.tf.base.cover.domain.CoverPartyOrgInfo;
 import com.tf.base.cover.persistence.CoverOrgPmbrInfoMapper;
+import com.tf.base.cover.persistence.CoverPartyOrgBuildingMapper;
 import com.tf.base.cover.persistence.CoverPartyOrgChangeInfoMapper;
 import com.tf.base.cover.persistence.CoverPartyOrgInfoMapper;
 import com.tf.base.socialorg.domain.SocialOrgInfo;
@@ -49,6 +52,8 @@ public class CoverPartyOrgService {
 	private UnpublicOrgInfoMapper unpublicOrgInfoMapper;
 	@Autowired
 	private SocialOrgInfoMapper socialOrgInfoMapper;
+	@Autowired
+	private CoverPartyOrgBuildingMapper coverPartyOrgBuildingMapper;
 	
 	/**
 	 * 新增党组织
@@ -75,17 +80,15 @@ public class CoverPartyOrgService {
 		coverPartyOrgInfoMapper.insertSelective(coverPartyOrgInfo);
 		for(CoverPartyOrgChangeInfo poci : pociList){
 			//把主表中的id赋值到换届和附件中
-			AttachmentCommonInfo attachmentCommonInfo = new AttachmentCommonInfo();
+			AttachmentCommonInfo attachmentCommonInfo = attachmentCommonInfoMapper.selectByPrimaryKey(poci.getChangeAttachmentId());
 			poci.setCoverPartyOrgId(coverPartyOrgInfo.getId());
-			attachmentCommonInfo.setId(poci.getChangeAttachmentId());
 			attachmentCommonInfo.setMainTableId(coverPartyOrgInfo.getId());
 			//更新换届的附件信息
 			attachmentCommonInfoMapper.updateByPrimaryKeySelective(attachmentCommonInfo);
 		}
 		//更新主表中的附件信息
-		AttachmentCommonInfo aCInfo = new AttachmentCommonInfo();
 		if(coverPartyOrgInfo.getPartyOrgAttachment() != null && coverPartyOrgInfo.getPartyOrgAttachment().length() > 0){
-			aCInfo.setId(Integer.valueOf(coverPartyOrgInfo.getPartyOrgAttachment()));
+			AttachmentCommonInfo aCInfo = attachmentCommonInfoMapper.selectByPrimaryKey(Integer.valueOf(coverPartyOrgInfo.getPartyOrgAttachment()));
 			aCInfo.setMainTableId(coverPartyOrgInfo.getId());
 			attachmentCommonInfoMapper.updateByPrimaryKeySelective(aCInfo);
 		}
@@ -126,17 +129,15 @@ public class CoverPartyOrgService {
 		coverPartyOrgInfoMapper.updateByPrimaryKeySelective(coverPartyOrgInfo);
 		for(CoverPartyOrgChangeInfo poci : pociList){
 			//把主表中的id赋值到换届和附件中
-			AttachmentCommonInfo attachmentCommonInfo = new AttachmentCommonInfo();
+			AttachmentCommonInfo attachmentCommonInfo = attachmentCommonInfoMapper.selectByPrimaryKey(poci.getChangeAttachmentId());
 			poci.setCoverPartyOrgId(coverPartyOrgInfo.getId());
-			attachmentCommonInfo.setId(poci.getChangeAttachmentId());
 			attachmentCommonInfo.setMainTableId(coverPartyOrgInfo.getId());
 			//更新换届的附件信息
 			attachmentCommonInfoMapper.updateByPrimaryKeySelective(attachmentCommonInfo);
 		}
 		//更新主表中的附件信息
-		AttachmentCommonInfo aCInfo = new AttachmentCommonInfo();
 		if(coverPartyOrgInfo.getPartyOrgAttachment() != null && coverPartyOrgInfo.getPartyOrgAttachment().length() > 0){
-			aCInfo.setId(Integer.valueOf(coverPartyOrgInfo.getPartyOrgAttachment()));
+			AttachmentCommonInfo aCInfo = attachmentCommonInfoMapper.selectByPrimaryKey(Integer.valueOf(coverPartyOrgInfo.getPartyOrgAttachment()));
 			aCInfo.setMainTableId(coverPartyOrgInfo.getId());
 			attachmentCommonInfoMapper.updateByPrimaryKeySelective(aCInfo);
 		}
@@ -285,4 +286,34 @@ public class CoverPartyOrgService {
 		}
 	}
 
+	/**
+	 * 党组织上报审核
+	 * @param id
+	 * @param remarks
+	 */
+	@Transactional
+	public void orgsSetStatus(String partyOrgIds,String status) {
+		Calendar cal = Calendar.getInstance(); 
+		String year = cal.get(Calendar.YEAR)+"";
+		String[] partyOrgArray = partyOrgIds.split(",");
+		for(int i = 0; i < partyOrgArray.length; i++){
+			if(partyOrgArray[i] != null && partyOrgArray[i].length() > 0){
+				CoverPartyOrgInfo info = coverPartyOrgInfoMapper.selectByPrimaryKey(Integer.parseInt(partyOrgArray[i]));
+				info.setStatus(status);
+				coverPartyOrgInfoMapper.updateByPrimaryKeySelective(info);
+				
+				Example exampleByCo = new Example(CoverPartyOrgBuilding.class);
+				exampleByCo.createCriteria().andEqualTo("coverPartyOrgId", Integer.parseInt(partyOrgArray[i])).andEqualTo("year", year);
+				List<CoverPartyOrgBuilding> dataList = coverPartyOrgBuildingMapper.selectByExample(exampleByCo);
+				if(dataList.size() == 0){
+					CoverPartyOrgBuilding coverPartyOrgBuilding = new CoverPartyOrgBuilding();
+					coverPartyOrgBuilding.setCoverPartyOrgId(Integer.parseInt(partyOrgArray[i]));
+					coverPartyOrgBuilding.setYear(year);
+					coverPartyOrgBuilding.setStatus("1");
+					coverPartyOrgBuildingMapper.insert(coverPartyOrgBuilding);
+				}
+			}
+		}
+	}
+	
 }

@@ -1,6 +1,7 @@
 package com.tf.base.socialorg.service;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -10,17 +11,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.tf.base.common.service.BaseService;
 import com.tf.base.socialorg.domain.SocialOrgInfo;
+import com.tf.base.socialorg.domain.SocialPartyOrgBuilding;
 import com.tf.base.socialorg.domain.SocialPartyOrgChangeInfo;
 import com.tf.base.socialorg.domain.SocialPartyOrgInfo;
 import com.tf.base.socialorg.persistence.SocialOrgInfoMapper;
+import com.tf.base.socialorg.persistence.SocialPartyOrgBuildingMapper;
 import com.tf.base.socialorg.persistence.SocialPartyOrgChangeInfoMapper;
 import com.tf.base.socialorg.persistence.SocialPartyOrgInfoMapper;
 import com.tf.base.unpublic.domain.AttachmentCommonInfo;
 import com.tf.base.unpublic.domain.CancelReasonInfo;
 import com.tf.base.unpublic.domain.DeputySecretaryInfo;
+import com.tf.base.unpublic.domain.LowerPartyOrg;
+import com.tf.base.unpublic.domain.PartyInstructorInfo;
 import com.tf.base.unpublic.persistence.AttachmentCommonInfoMapper;
 import com.tf.base.unpublic.persistence.CancelReasonInfoMapper;
 import com.tf.base.unpublic.persistence.DeputySecretaryInfoMapper;
+import com.tf.base.unpublic.persistence.LowerPartyOrgMapper;
+import com.tf.base.unpublic.persistence.PartyInstructorInfoMapper;
 
 import tk.mybatis.mapper.entity.Example;
 
@@ -41,6 +48,12 @@ public class PartyOrgService {
 	private DeputySecretaryInfoMapper deputySecretaryInfoMapper;
 	@Autowired
 	private CancelReasonInfoMapper cancelReasonInfoMapper;
+	@Autowired
+	private SocialPartyOrgBuildingMapper socialPartyOrgBuildingMapper;
+	@Autowired
+	private PartyInstructorInfoMapper partyInstructorInfoMapper;
+	@Autowired
+	private LowerPartyOrgMapper lowerPartyOrgMapper;
 	
 	/**
 	 * 新增党组织
@@ -52,7 +65,7 @@ public class PartyOrgService {
 	 */
 	@Transactional
 	public void addOrg(SocialPartyOrgInfo socialPartyOrgInfo, List<SocialPartyOrgChangeInfo> pociList, 
-			List<DeputySecretaryInfo> dsiList, String[] orgInfoArray)throws Exception {
+			List<DeputySecretaryInfo> dsiList, List<PartyInstructorInfo> instructList, List<LowerPartyOrg> lowerPartyOrgList, String[] orgInfoArray)throws Exception {
 		SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd" );
 		if(socialPartyOrgInfo.getPartyOrgTimeTxt() != null && socialPartyOrgInfo.getPartyOrgTimeTxt().length()>0){
 			socialPartyOrgInfo.setPartyOrgTime(sdf.parse(socialPartyOrgInfo.getPartyOrgTimeTxt()));
@@ -67,17 +80,15 @@ public class PartyOrgService {
 		socialPartyOrgInfoMapper.insertSelective(socialPartyOrgInfo);
 		for(SocialPartyOrgChangeInfo poci : pociList){
 			//把主表中的id赋值到换届和附件中
-			AttachmentCommonInfo attachmentCommonInfo = new AttachmentCommonInfo();
+			AttachmentCommonInfo attachmentCommonInfo = attachmentCommonInfoMapper.selectByPrimaryKey(poci.getChangeAttachmentId());
 			poci.setSocialPartyOrgId(socialPartyOrgInfo.getId());
-			attachmentCommonInfo.setId(poci.getChangeAttachmentId());
 			attachmentCommonInfo.setMainTableId(socialPartyOrgInfo.getId());
 			//更新换届的附件信息
 			attachmentCommonInfoMapper.updateByPrimaryKeySelective(attachmentCommonInfo);
 		}
 		//更新主表中的附件信息
-		AttachmentCommonInfo aCInfo = new AttachmentCommonInfo();
 		if(socialPartyOrgInfo.getPartyOrgAttachment() != null && socialPartyOrgInfo.getPartyOrgAttachment().length() > 0){
-			aCInfo.setId(Integer.valueOf(socialPartyOrgInfo.getPartyOrgAttachment()));
+			AttachmentCommonInfo aCInfo = attachmentCommonInfoMapper.selectByPrimaryKey(Integer.valueOf(socialPartyOrgInfo.getPartyOrgAttachment()));
 			aCInfo.setMainTableId(socialPartyOrgInfo.getId());
 			attachmentCommonInfoMapper.updateByPrimaryKeySelective(aCInfo);
 		}
@@ -86,8 +97,7 @@ public class PartyOrgService {
 			socialPartyOrgChangeInfoMapper.insertList(pociList);
 		}
 		for(int j = 0; j < orgInfoArray.length; j++){
-			SocialOrgInfo socialOrgInfo = new SocialOrgInfo();
-			socialOrgInfo.setId(Integer.valueOf(orgInfoArray[j]));
+			SocialOrgInfo socialOrgInfo = socialOrgInfoMapper.selectByPrimaryKey(Integer.valueOf(orgInfoArray[j]));
 			socialOrgInfo.setSocialPartyOrgId(socialPartyOrgInfo.getId()+"");
 			socialOrgInfoMapper.updateByPrimaryKeySelective(socialOrgInfo);
 		}
@@ -98,6 +108,23 @@ public class PartyOrgService {
 		}
 		if(dsiList.size() > 0){
 			deputySecretaryInfoMapper.insertList(dsiList);
+		}
+		//批量插入指导员信息
+		for(PartyInstructorInfo pInfo :instructList){
+			pInfo.setType("1");
+			pInfo.setPartyOrgId(socialPartyOrgInfo.getId());
+		}
+		if(instructList.size() > 0){
+			partyInstructorInfoMapper.insertList(instructList);
+		}
+		
+		//批量插入下级党组织信息
+		for(LowerPartyOrg lInfo : lowerPartyOrgList){
+			lInfo.setType("1");
+			lInfo.setPartyOrgId(socialPartyOrgInfo.getId());
+		}
+		if(lowerPartyOrgList.size() > 0){
+			lowerPartyOrgMapper.insertList(lowerPartyOrgList);
 		}
 		
 	}
@@ -112,7 +139,7 @@ public class PartyOrgService {
 	 */
 	@Transactional
 	public void updateOrg(SocialPartyOrgInfo socialPartyOrgInfo, List<SocialPartyOrgChangeInfo> pociList, 
-			List<DeputySecretaryInfo> dsiList)throws Exception {
+			List<DeputySecretaryInfo> dsiList, List<PartyInstructorInfo> instructList, List<LowerPartyOrg> lowerPartyOrgList)throws Exception {
 		SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd" );
 		if(socialPartyOrgInfo.getPartyOrgTimeTxt() != null && socialPartyOrgInfo.getPartyOrgTimeTxt().length()>0){
 			socialPartyOrgInfo.setPartyOrgTime(sdf.parse(socialPartyOrgInfo.getPartyOrgTimeTxt()));
@@ -123,17 +150,15 @@ public class PartyOrgService {
 		socialPartyOrgInfoMapper.updateByPrimaryKeySelective(socialPartyOrgInfo);
 		for(SocialPartyOrgChangeInfo poci : pociList){
 			//把主表中的id赋值到换届和附件中
-			AttachmentCommonInfo attachmentCommonInfo = new AttachmentCommonInfo();
+			AttachmentCommonInfo attachmentCommonInfo = attachmentCommonInfoMapper.selectByPrimaryKey(poci.getChangeAttachmentId());
 			poci.setSocialPartyOrgId(socialPartyOrgInfo.getId());
-			attachmentCommonInfo.setId(poci.getChangeAttachmentId());
 			attachmentCommonInfo.setMainTableId(socialPartyOrgInfo.getId());
 			//更新换届的附件信息
 			attachmentCommonInfoMapper.updateByPrimaryKeySelective(attachmentCommonInfo);
 		}
 		//更新主表中的附件信息
-		AttachmentCommonInfo aCInfo = new AttachmentCommonInfo();
 		if(socialPartyOrgInfo.getPartyOrgAttachment() != null && socialPartyOrgInfo.getPartyOrgAttachment().length() > 0){
-			aCInfo.setId(Integer.valueOf(socialPartyOrgInfo.getPartyOrgAttachment()));
+			AttachmentCommonInfo aCInfo = attachmentCommonInfoMapper.selectByPrimaryKey(Integer.valueOf(socialPartyOrgInfo.getPartyOrgAttachment()));
 			aCInfo.setMainTableId(socialPartyOrgInfo.getId());
 			attachmentCommonInfoMapper.updateByPrimaryKeySelective(aCInfo);
 		}
@@ -154,6 +179,25 @@ public class PartyOrgService {
 			deputySecretaryInfoMapper.insertList(dsiList);
 		}
 		
+		//批量插入指导员信息
+		partyInstructorInfoMapper.deleteInstructInfo(socialPartyOrgInfo.getId()+"");
+		for(PartyInstructorInfo pInfo :instructList){
+			pInfo.setType("1");
+			pInfo.setPartyOrgId(socialPartyOrgInfo.getId());
+		}
+		if(instructList.size() > 0){
+			partyInstructorInfoMapper.insertList(instructList);
+		}
+		
+		//批量插入下级党组织信息
+		lowerPartyOrgMapper.deleteLowerInfo(socialPartyOrgInfo.getId()+"");
+		for(LowerPartyOrg lInfo : lowerPartyOrgList){
+			lInfo.setType("1");
+			lInfo.setPartyOrgId(socialPartyOrgInfo.getId());
+		}
+		if(lowerPartyOrgList.size() > 0){
+			lowerPartyOrgMapper.insertList(lowerPartyOrgList);
+		}
 	}
 
 	/**
@@ -191,6 +235,36 @@ public class PartyOrgService {
 			for(AttachmentCommonInfo acInfo : dataFiles){
 				acInfo.setStatus(0);
 				attachmentCommonInfoMapper.updateByPrimaryKeySelective(acInfo);
+			}
+		}
+	}
+	
+	/**
+	 * 党组织上报审核
+	 * @param id
+	 * @param remarks
+	 */
+	@Transactional
+	public void orgsSetStatus(String partyOrgIds, String status) {
+		Calendar cal = Calendar.getInstance(); 
+		String year = cal.get(Calendar.YEAR)+"";
+		String[] partyOrgArray = partyOrgIds.split(",");
+		for(int i = 0; i < partyOrgArray.length; i++){
+			if(partyOrgArray[i] != null && partyOrgArray[i].length() > 0){
+				SocialPartyOrgInfo info = socialPartyOrgInfoMapper.selectByPrimaryKey(Integer.parseInt(partyOrgArray[i]));
+				info.setStatus(status);
+				socialPartyOrgInfoMapper.updateByPrimaryKeySelective(info);
+				//判断上报审核的党组织是否需要新增党建
+				Example exampleBySo = new Example(SocialPartyOrgBuilding.class);
+				exampleBySo.createCriteria().andEqualTo("socialPartyOrgId", Integer.parseInt(partyOrgArray[i])).andEqualTo("year", year);
+				List<SocialPartyOrgBuilding> dataFiles = socialPartyOrgBuildingMapper.selectByExample(exampleBySo);
+				if(dataFiles.size() == 0){
+					SocialPartyOrgBuilding socialPartyOrgBuilding = new SocialPartyOrgBuilding();
+					socialPartyOrgBuilding.setSocialPartyOrgId(Integer.parseInt(partyOrgArray[i]));
+					socialPartyOrgBuilding.setYear(year);
+					socialPartyOrgBuilding.setStatus("1");
+					socialPartyOrgBuildingMapper.insert(socialPartyOrgBuilding);
+				}
 			}
 		}
 	}

@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ include file="/WEB-INF/views/index/detailHeader.jsp"%>
+<%@ include file="/WEB-INF/views/index/include.jsp"%>
 <html >
 <head>
 	<title>部门主要领导信息</title>
@@ -8,7 +8,7 @@
 <body>
 	<div class="easyui-layout" style="width:100%;height:100%;" >
 		<div data-options="region:'north'" class="easyui-panel" title="任务查询" style="width:100%;height: 120px;" align="center">
-		  <form id="queryForm" action="" name="queryForm" class="easyui-form" method="post" >		
+		  <form id="queryForm" action="" name="queryForm" class="easyui-form" method="post" style="margin-top:5px;">		
 				<table cellpadding="5" border="0" cellspacing="0">
 					<colgroup>
 				 		<col width="100"/>
@@ -34,12 +34,13 @@
                     </td>
                     
                 </tr>
+                <tr style="height:5px;"></tr>
                 <tr>
                     <td align="right">联系方式：</td>
                     <td align= "left" ><input class="easyui-textbox" type="text" id="contactTel" name="contactTel" size=15/></td>    
                     <td align="right">类　　型：</td>
                     <td align="left">
-                        <select class="easyui-combobox" id="type" name="type" style="width:130px;" data-options="editable:false">
+                        <select class="easyui-combobox" id="type" name="type" style="width:160px;" data-options="editable:false">
                             <option value="" >--请选择--</option>
                             <c:forEach var="it" items="${leaderLevelList}">
                                <option value="${it.code}">${it.value}</option>

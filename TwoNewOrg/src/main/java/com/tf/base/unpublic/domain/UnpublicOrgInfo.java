@@ -197,6 +197,8 @@ public class UnpublicOrgInfo {
     
     @Column(name = "cover_party_org_id")
     private String coverPartyOrgId;
+    
+   
     /**
      * 填报单位
      */
@@ -856,6 +858,5 @@ public class UnpublicOrgInfo {
 	public void setIsHaveAddress(String isHaveAddress) {
 		this.isHaveAddress = isHaveAddress;
 	}
-
 
 }

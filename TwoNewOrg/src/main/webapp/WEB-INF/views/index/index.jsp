@@ -56,20 +56,31 @@
 
 	<div region="south" split="true" border="false" style="overflow: hidden; height: 40px; background: url(./resources/images/tf/footer.png) #7f99be repeat-x center 50%;
         line-height: 20px;color: #fff; font-family: Verdana, 微软雅黑,黑体"></div>
-    <script type="text/javascript">
-    	$(function(){
-    		calcWind();
-    	});
-    	
-    	$(window).resize(function() {
-    		calcWind();
-   		});
-    	
-    	function calcWind(){
-    		var w=  $(document).width();
-    		var sw = w - 230 - 50;
-    		$("#title").css("width",sw);
-    	}
-    </script>
+
+
+	<div id="mm" class="easyui-menu" style="width: 150px;">
+		<div id="mm-tabupdate" data-options="iconCls:'icon-reload'">刷新</div>
+		<div class="menu-sep" data-options="iconCls:''"></div>
+		<div id="mm-tabcloseall" data-options="iconCls:''">全部关闭</div>
+		<div id="mm-tabcloseother" data-options="iconCls:''">关闭其他</div>
+		<div class="menu-sep"></div>
+		<div id="mm-tabclose" data-options="iconCls:'icon-no'">关闭</div>
+	</div>
+
+	<script type="text/javascript">
+		$(function() {
+			calcWind();
+		});
+
+		$(window).resize(function() {
+			calcWind();
+		});
+
+		function calcWind() {
+			var w = $(document).width();
+			var sw = w - 230 - 50;
+			$("#title").css("width", sw);
+		}
+	</script>
 </body>
 </html>

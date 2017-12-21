@@ -3,6 +3,7 @@ package com.tf.base.unpublic.controller;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.tf.base.common.constants.CommonConstants;
@@ -35,6 +37,8 @@ import com.tf.base.common.utils.PageUtil;
 import com.tf.base.unpublic.domain.AttachmentCommonInfo;
 import com.tf.base.unpublic.domain.CancelReasonInfo;
 import com.tf.base.unpublic.domain.DeputySecretaryInfo;
+import com.tf.base.unpublic.domain.LowerPartyOrg;
+import com.tf.base.unpublic.domain.PartyInstructorInfo;
 import com.tf.base.unpublic.domain.QueryPmbrParams;
 import com.tf.base.unpublic.domain.UnpublicOrgInfo;
 import com.tf.base.unpublic.domain.UnpublicOrgPmbrCount;
@@ -44,6 +48,8 @@ import com.tf.base.unpublic.domain.UnpublicPartyOrgInfo;
 import com.tf.base.unpublic.persistence.AttachmentCommonInfoMapper;
 import com.tf.base.unpublic.persistence.CancelReasonInfoMapper;
 import com.tf.base.unpublic.persistence.DeputySecretaryInfoMapper;
+import com.tf.base.unpublic.persistence.LowerPartyOrgMapper;
+import com.tf.base.unpublic.persistence.PartyInstructorInfoMapper;
 import com.tf.base.unpublic.persistence.UnpublicOrgInfoMapper;
 import com.tf.base.unpublic.persistence.UnpublicOrgPmbrCountMapper;
 import com.tf.base.unpublic.persistence.UnpublicOrgPmbrInfoMapper;
@@ -82,6 +88,10 @@ public class UnPublicPartyOrgController {
 	private UnpublicOrgPmbrCountMapper unpublicOrgPmbrCountMapper;
 	@Autowired
 	private UnpublicOrgPmbrInfoMapper unpublicOrgPmbrInfoMapper;
+	@Autowired
+	private PartyInstructorInfoMapper partyInstructorInfoMapper;
+	@Autowired
+	private LowerPartyOrgMapper lowerPartyOrgMapper;
 	
 	/**
 	 * 初始化页面
@@ -109,6 +119,9 @@ public class UnPublicPartyOrgController {
 		logger.debug("当前登录用户部门ID:===========>" + deptId + " ,是否为区委部门?" + baseService.isQuWeiDept());
 		if(!baseService.isQuWeiDept()){
 			params.setCreateOrg(deptId);
+		}else{
+			//工委列表展示过滤掉组织状态为正常;但还没有新建党组织的数据
+			params.setIsQuWeiSign("1");
 		}
 		PageHelper.startPage(page, rows, true);
 		List<UnpublicPartyOrgInfo> list = unpublicPartyOrgInfoMapper.queryList(params);
@@ -128,6 +141,8 @@ public class UnPublicPartyOrgController {
 	public String orglook(String id,Model model){
 		List<UnpublicPartyOrgChangeInfo> changeDateList = new ArrayList<>();
 		List<DeputySecretaryInfo> deputsecList = new ArrayList<>();
+		List<PartyInstructorInfo> instructList = new ArrayList<>();
+		List<LowerPartyOrg> lowerPartyOrgList = new ArrayList<>();
 		SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd" );
 		Integer mainId = Integer.parseInt(id);
 		
@@ -139,7 +154,22 @@ public class UnPublicPartyOrgController {
 		unpublicPartyOrgInfo.setInstructorUnitTxt(baseService.getDeptNameById(unpublicPartyOrgInfo.getInstructorUnit()));
 		unpublicPartyOrgInfo.setSecretaryCompanyTxt(baseService.getDeptNameById(unpublicPartyOrgInfo.getSecretaryCompany()));
 		unpublicPartyOrgInfo.setBelongUnitTxt(baseService.getDeptNameById(unpublicPartyOrgInfo.getBelongUnit()));
+		//查询下级党组织的相关信息
+		Example exampleByLp = new Example(LowerPartyOrg.class);
+		exampleByLp.createCriteria().andEqualTo("partyOrgId", mainId).andEqualTo("type", 2).andEqualTo("status", 1);
+		lowerPartyOrgList = lowerPartyOrgMapper.selectByExample(exampleByLp);
 		
+		//查询指导人的相关信息
+		Example exampleByIn = new Example(PartyInstructorInfo.class);
+		exampleByIn.createCriteria().andEqualTo("partyOrgId", mainId).andEqualTo("type", 2).andEqualTo("status", 1);
+		instructList = partyInstructorInfoMapper.selectByExample(exampleByIn);
+		for(PartyInstructorInfo insInfo : instructList){
+			//该指导人员的下的组织
+			String insOrgs = insInfo.getInstructOrgs();
+			if(StringUtils.isNotEmpty(insOrgs)){
+				insInfo.setOrgIdList(Arrays.asList(insOrgs.split(",")));
+			}
+		}
 		//查看换届的相关信息
 		Example example = new Example(UnpublicPartyOrgChangeInfo.class);
 		example.createCriteria().andEqualTo("socialPartyOrgId", mainId).andEqualTo("status", 1);
@@ -180,11 +210,16 @@ public class UnPublicPartyOrgController {
 		}
 		String[] orgIdArray = orgIds1.split(",");
 		UnpublicOrgPmbrCount opcInfo = unpublicOrgPmbrCountMapper.getPmbrCount(orgIdArray);
+		this.convertData(orgIds1, orgNames, model);
 		model.addAttribute("main", unpublicPartyOrgInfo);
 		model.addAttribute("changeDateList", changeDateList);
 		model.addAttribute("deputsecList", deputsecList);
+		model.addAttribute("instructList", instructList);
+		model.addAttribute("instructSize", instructList.size());
+		model.addAttribute("lowerPartyList", lowerPartyOrgList);
 		model.addAttribute("orgNames", orgNames);
 		model.addAttribute("opcInfo", opcInfo);
+		model.addAttribute("orgIds", orgIds1);
 		
 		editPage(model);
 		
@@ -205,6 +240,8 @@ public class UnPublicPartyOrgController {
 	public String orgedit(String id, String orgIds, String orgNames, Model model)throws Exception{
 		List<UnpublicPartyOrgChangeInfo> changeDateList = new ArrayList<>();
 		List<DeputySecretaryInfo> deputsecList = new ArrayList<>();
+		List<PartyInstructorInfo> instructList = new ArrayList<>();
+		List<LowerPartyOrg> lowerPartyOrgList = new ArrayList<>();
 		SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd" );
 		if(!StringUtils.isEmpty(id)){
 			Integer mainId = Integer.parseInt(id);
@@ -217,7 +254,21 @@ public class UnPublicPartyOrgController {
 			unpublicPartyOrgInfo.setInstructorUnitTxt(baseService.getDeptNameById(unpublicPartyOrgInfo.getInstructorUnit()));
 			unpublicPartyOrgInfo.setSecretaryCompanyTxt(baseService.getDeptNameById(unpublicPartyOrgInfo.getSecretaryCompany()));
 			unpublicPartyOrgInfo.setBelongUnitTxt(baseService.getDeptNameById(unpublicPartyOrgInfo.getBelongUnit()));
-			
+			//查询下级党组织的相关信息
+			Example exampleByLp = new Example(LowerPartyOrg.class);
+			exampleByLp.createCriteria().andEqualTo("partyOrgId", mainId).andEqualTo("type", 2).andEqualTo("status", 1);
+			lowerPartyOrgList = lowerPartyOrgMapper.selectByExample(exampleByLp);
+			//查询指导人的相关信息
+			Example exampleByIn = new Example(PartyInstructorInfo.class);
+			exampleByIn.createCriteria().andEqualTo("partyOrgId", mainId).andEqualTo("type", 2).andEqualTo("status", 1);
+			instructList = partyInstructorInfoMapper.selectByExample(exampleByIn);
+			for(PartyInstructorInfo insInfo : instructList){
+				//该指导人员的下的组织
+				String insOrgs = insInfo.getInstructOrgs();
+				if(StringUtils.isNotEmpty(insOrgs)){
+					insInfo.setOrgIdList(Arrays.asList(insOrgs.split(",")));
+				}
+			}
 			//查看换届的相关信息
 			Example example = new Example(UnpublicPartyOrgChangeInfo.class);
 			example.createCriteria().andEqualTo("socialPartyOrgId", mainId).andEqualTo("status", 1);
@@ -257,21 +308,28 @@ public class UnPublicPartyOrgController {
 			}
 			String[] orgIdArray = orgIds1.split(",");
 			UnpublicOrgPmbrCount opcInfo = unpublicOrgPmbrCountMapper.getPmbrCount(orgIdArray);
+			this.convertData(orgIds1, orgNames1, model);
 			model.addAttribute("main", unpublicPartyOrgInfo);
 			model.addAttribute("changeDateList", changeDateList);
 			model.addAttribute("deputsecList", deputsecList);
+			model.addAttribute("instructList", instructList);
+			model.addAttribute("instructSize", instructList.size());
+			model.addAttribute("lowerPartyList", lowerPartyOrgList);
 			model.addAttribute("orgNames", orgNames1);
 			model.addAttribute("orgIds", orgIds1);
 			model.addAttribute("opcInfo", opcInfo);
 		}else{
 			String[] orgIdArray = orgIds.split(",");
 			UnpublicOrgPmbrCount opcInfo = unpublicOrgPmbrCountMapper.getPmbrCount(orgIdArray);
-			
+			this.convertData(orgIds, new String(orgNames.getBytes("iso-8859-1"),"utf-8"), model);
 			UnpublicPartyOrgInfo main = new UnpublicPartyOrgInfo();
 			model.addAttribute("main", main);
 			model.addAttribute("orgIds", orgIds);
 			model.addAttribute("changeDateList", changeDateList);
 			model.addAttribute("deputsecList", deputsecList);
+			model.addAttribute("instructList", instructList);
+			model.addAttribute("instructSize", instructList.size());
+			model.addAttribute("lowerPartyList", lowerPartyOrgList);
 			model.addAttribute("orgNames", new String(orgNames.getBytes("iso-8859-1"),"utf-8"));
 			model.addAttribute("opcInfo", opcInfo);
 		}
@@ -287,49 +345,61 @@ public class UnPublicPartyOrgController {
 	 */
 	@RequestMapping(value="/unpublic/partyorgedit",method=RequestMethod.POST)
 	@ResponseBody
-	public Map<String,Object> orgSave(String partyOrgIds, UnpublicPartyOrgInfo unpublicPartyOrgInfo, HttpServletRequest request, Model model)throws Exception{
+	public Map<String,Object> orgSave(String partyOrgIds, 
+						UnpublicPartyOrgInfo unpublicPartyOrgInfo, HttpServletRequest request, Model model)throws Exception{
 		List<UnpublicPartyOrgChangeInfo> pociList = new ArrayList<>();
 		List<DeputySecretaryInfo> dsiList = new ArrayList<>();
+		List<PartyInstructorInfo> instructList = new ArrayList<>();
+		List<LowerPartyOrg> lowerPartyOrgList = new ArrayList<>();
 		String msg = "";
 		String[] orgInfoArray = partyOrgIds.split(",");
 		SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd" );
-		//换届信息和党副信息
-		for(int i = 0; i < 8; i++){
-        	String changeTime = request.getParameter("partymbrInUnpublicNum"+i);
-        	String fileId = request.getParameter("partymbrUnderThirtyfiveNum"+i);
-        	if(changeTime != null && changeTime.length()>0 && fileId != null && fileId.length()>0){
-        		UnpublicPartyOrgChangeInfo changeInfo = new UnpublicPartyOrgChangeInfo();
-        		changeInfo.setChangeTime(sdf.parse(changeTime));
-        		changeInfo.setChangeAttachmentId(Integer.parseInt(fileId));
-        		changeInfo.setCreater(baseService.getUserName());
-        		changeInfo.setCreateTime(new Date());
-        		changeInfo.setStatus("1");
-        		pociList.add(changeInfo);
-        	}
-        	DeputySecretaryInfo deputySecretaryInfo = new DeputySecretaryInfo();
-        	String type = request.getParameter("deputySecretaryType"+i);
-        	String name = request.getParameter("deputySecretaryName"+i);
-        	String brithday = request.getParameter("deputySecretaryBirthdayTxt"+i);
-        	String sex = request.getParameter("deputySecretarySex"+i);
-        	String education = request.getParameter("deputySecretaryEducation"+i);
-        	String isFullTime = request.getParameter("deputySecretaryIsFullTime"+i);
-        	String isBoardOfficer = request.getParameter("isBoardOfficer"+i);
-        	if(name != null && name.length() > 0 && brithday != null && brithday.length() > 0){
-        		deputySecretaryInfo.setDeputySecretaryType(type);
-            	deputySecretaryInfo.setDeputySecretaryName(name);
-            	deputySecretaryInfo.setDeputySecretaryBirthday(sdf.parse(brithday));
-            	deputySecretaryInfo.setDeputySecretarySex(sex);
-            	deputySecretaryInfo.setDeputySecretaryEducation(education);
-            	deputySecretaryInfo.setDeputySecretaryIsFullTime(isFullTime);
-            	deputySecretaryInfo.setIsBoardOfficer(isBoardOfficer);
-            	deputySecretaryInfo.setCreateOrg(baseService.getCurrentUserDeptId());
-            	deputySecretaryInfo.setCreater(baseService.getUserName());
-            	deputySecretaryInfo.setCreateTime(new Date());
-            	deputySecretaryInfo.setStatus("1");
-            	dsiList.add(deputySecretaryInfo);
-        	}
-        	
-        }
+		
+		//下级党组织信息
+		if(!unpublicPartyOrgInfo.getLowerPartyList().isEmpty()){
+			lowerPartyOrgList = JSON.parseArray(unpublicPartyOrgInfo.getLowerPartyList(), LowerPartyOrg.class);
+			for(int i = 0; i < lowerPartyOrgList.size(); i++){
+				lowerPartyOrgList.get(i).setCreater(baseService.getUserName());
+				lowerPartyOrgList.get(i).setCreateTime(new Date());
+				lowerPartyOrgList.get(i).setCreateOrg(baseService.getCurrentUserDeptId());
+				lowerPartyOrgList.get(i).setStatus("1");
+			}
+		}
+		
+		//指导员信息
+		if(!unpublicPartyOrgInfo.getInstructList().isEmpty()){
+			instructList = JSON.parseArray(unpublicPartyOrgInfo.getInstructList(), PartyInstructorInfo.class);
+			for(int i = 0; i < instructList.size(); i++){
+				instructList.get(i).setCreater(baseService.getUserName());
+				instructList.get(i).setCreateTime(new Date());
+				instructList.get(i).setCreateOrg(baseService.getCurrentUserDeptId());
+				instructList.get(i).setStatus("1");
+			}
+		}
+		
+		//换届信息
+		if(!unpublicPartyOrgInfo.getChangeList().isEmpty()){
+			pociList = JSON.parseArray(unpublicPartyOrgInfo.getChangeList(), UnpublicPartyOrgChangeInfo.class);
+			for(int i = 0; i < pociList.size(); i++){
+				pociList.get(i).setChangeTime(sdf.parse(pociList.get(i).getChangeTimeTxt()));
+				pociList.get(i).setCreater(baseService.getUserName());
+				pociList.get(i).setCreateTime(new Date());
+				pociList.get(i).setStatus("1");
+			}
+		}
+		
+		//党副信息
+		if(!unpublicPartyOrgInfo.getDeputySecretaryList().isEmpty()){
+			dsiList = JSON.parseArray(unpublicPartyOrgInfo.getDeputySecretaryList(), DeputySecretaryInfo.class);
+			for(int j = 0; j < dsiList.size(); j++){
+				dsiList.get(j).setDeputySecretaryBirthday(sdf.parse(dsiList.get(j).getDeputySecretaryBirthdayTxt()));
+				dsiList.get(j).setCreateOrg(baseService.getCurrentUserDeptId());
+				dsiList.get(j).setCreater(baseService.getUserName());
+				dsiList.get(j).setCreateTime(new Date());
+				dsiList.get(j).setStatus("1");
+			}
+		}
+		
 		Integer mainId = unpublicPartyOrgInfo.getId();
 		if(unpublicPartyOrgInfo.getReportHigher() == 1){
 			unpublicPartyOrgInfo.setStatus("5");//上报申请中
@@ -341,7 +411,7 @@ public class UnPublicPartyOrgController {
 		if(mainId == null || StringUtils.isEmpty(mainId.toString())){
 			
 			try {
-				unPublicPartyOrgService.addOrg(unpublicPartyOrgInfo, pociList, dsiList, orgInfoArray);
+				unPublicPartyOrgService.addOrg(unpublicPartyOrgInfo, pociList, dsiList, instructList, lowerPartyOrgList, orgInfoArray);
 				return returnMsg(1, msg);
 			} catch (Exception e) {
 				logger.debug("新增非公组织信息时出现异常:{}", e.getMessage(),e);
@@ -349,7 +419,7 @@ public class UnPublicPartyOrgController {
 			}
 		}else{
 			try {
-				unPublicPartyOrgService.updateOrg(unpublicPartyOrgInfo, pociList, dsiList);
+				unPublicPartyOrgService.updateOrg(unpublicPartyOrgInfo, pociList, dsiList, instructList, lowerPartyOrgList);
 				if(unpublicPartyOrgInfo.getReportHigher() == 0){
 					msg = "修改成功";
 				}
@@ -369,12 +439,8 @@ public class UnPublicPartyOrgController {
 	@RequestMapping(value="/unpublic/partyOrgSetStatus",method=RequestMethod.POST)
 	@ResponseBody
 	public Map<String,Object> orgSetStatus(Model model,String id,String status){
-		UnpublicPartyOrgInfo info = new UnpublicPartyOrgInfo();
-		info.setId(Integer.parseInt(id));
+		UnpublicPartyOrgInfo info = unpublicPartyOrgInfoMapper.selectByPrimaryKey(Integer.parseInt(id));
 		info.setStatus(status);
-		
-		//info.setUpdateTime(new Date());
-		//info.setUpdator(baseService.getUserName());
 		unpublicPartyOrgInfoMapper.updateByPrimaryKeySelective(info);
 		return returnMsg(1, "操作成功!");
 	}
@@ -387,18 +453,13 @@ public class UnPublicPartyOrgController {
 	@RequestMapping(value="/unpublic/partyOrgsSetStatus",method=RequestMethod.POST)
 	@ResponseBody
 	public Map<String,Object> orgsSetStatus(Model model,String partyOrgIds,String status){
-		String[] partyOrgArray = partyOrgIds.split(",");
-		for(int i = 0; i < partyOrgArray.length; i++){
-			if(partyOrgArray[i] != null && partyOrgArray[i].length() > 0){
-				UnpublicPartyOrgInfo info = new UnpublicPartyOrgInfo();
-				info.setId(Integer.parseInt(partyOrgArray[i]));
-				info.setStatus(status);
-				//info.setUpdateTime(new Date());
-				//info.setUpdator(baseService.getUserName());
-				unpublicPartyOrgInfoMapper.updateByPrimaryKeySelective(info);
-			}
+		try{
+			unPublicPartyOrgService.orgsSetStatus(partyOrgIds, status);
+			return returnMsg(1, "操作成功!");
+		}catch(Exception e){
+			e.printStackTrace();
+			return returnMsg(0, "操作失败!");
 		}
-		return returnMsg(1, "操作成功!");
 	}
 	
 	/**
@@ -410,10 +471,9 @@ public class UnPublicPartyOrgController {
 	@RequestMapping(value="/unpublic/partyorgdelete",method=RequestMethod.POST)
 	@ResponseBody
 	public Map<String,Object> orgdelete(Model model,String id){
-		UnpublicPartyOrgInfo info = new UnpublicPartyOrgInfo();
-		info.setId(Integer.parseInt(id));
-		info.setStatus("0");
 		try {
+			UnpublicPartyOrgInfo info = unpublicPartyOrgInfoMapper.selectByPrimaryKey(Integer.parseInt(id));
+			info.setStatus("0");
 			unpublicPartyOrgInfoMapper.updateByPrimaryKeySelective(info);
 			//删除日志
 			logService.saveLog(LOG_OPERATION_TYPE.DELETE.toString(), 
@@ -525,18 +585,15 @@ public class UnPublicPartyOrgController {
 		try {
 			String[] partyOrgIdArray = partyOrgIds.split(",");
 			for(int i = 0; i < partyOrgIdArray.length; i++){
-				UnpublicPartyOrgInfo main = new UnpublicPartyOrgInfo();
-				main.setId(Integer.parseInt(partyOrgIdArray[i]));
+				UnpublicPartyOrgInfo main = unpublicPartyOrgInfoMapper.selectByPrimaryKey(Integer.parseInt(partyOrgIdArray[i]));
 				main.setStatus("4");
-		//		main.setUpdateTime(new Date());
-		//		main.setUpdator(baseService.getUserName());
 				unpublicPartyOrgInfoMapper.updateByPrimaryKeySelective(main);
+				
+//				//撤销审核通过日志
+				logService.saveLog(LOG_OPERATION_TYPE.MODIFY.toString(), 
+						logService.getDetailInfo("log.unpublic.cancelok",
+								baseService.getUserName(),main.getPartyOrgName()));
 			}
-//			main = unpublicPartyOrgInfoMapper.selectByPrimaryKey(id);
-//			//撤销审核通过日志
-//			logService.saveLog(LOG_OPERATION_TYPE.MODIFY.toString(), 
-//					logService.getDetailInfo("log.unpublic.cancelok",
-//							baseService.getUserName(),main.getPartyOrgName()));
 			return returnMsg(1, "审核通过，撤销该组织成功！");
 		} catch (Exception e) {
 			logger.debug("撤销审核通过党组织信息时出现异常:{}", e.getMessage(),e);
@@ -636,9 +693,15 @@ public class UnPublicPartyOrgController {
 		List<DataDictionary> yesNoList = dict.findByDmm(CommonConstants.YES_NO);
 		List<DataDictionary> partyOrgClassList = dict.findByDmm(CommonConstants.PARTY_ORG_CLASS);
 		List<DataDictionary> partyOrgFormList = dict.findByDmm(CommonConstants.PARTY_ORG_FORM);
+		List<DataDictionary> partyorgStatusList = dict.findByDmm(CommonConstants.UNPUBLIC_ORG_STATUS);
+		List<DataDictionary> operatorList = dict.findByDmm(CommonConstants.PARTY_ORG_OPERATOR);
 		model.addAttribute("yesNoList", yesNoList);
 		model.addAttribute("partyOrgClassList", partyOrgClassList);
 		model.addAttribute("partyOrgFormList", partyOrgFormList);
+		model.addAttribute("partyorgStatusList", partyorgStatusList);
+		model.addAttribute("operatorList", operatorList);
+		model.addAttribute("createOrgName", baseService.getDeptNameById(baseService.getCurrentUserDeptId()));
+		model.addAttribute("createOrgId", baseService.getCurrentUserDeptId());
 	}
 	/**
 	 * 编辑页面初始化参数
@@ -682,15 +745,32 @@ public class UnPublicPartyOrgController {
 	 * @param info
 	 */
 	private void convertRow(UnpublicPartyOrgInfo main) {
-
+		SimpleDateFormat sdf = new SimpleDateFormat();
 		main.setPartyOrgFormTxt(dict.getValueByCode(CommonConstants.PARTY_ORG_FORM,main.getPartyOrgForm()));
 		main.setPartyOrgTypeTxt(dict.getValueByCode(CommonConstants.PARTY_ORG_CLASS,main.getPartyOrgType()));
 		main.setStatusTxt(dict.getValueByCode(CommonConstants.UNPUBLIC_ORG_STATUS,main.getStatus()));
-		
-		main.setInstructorUnitTxt(baseService.getDeptNameById(main.getInstructorUnit()));
+		main.setSecretarySourceTxt(dict.getValueByCode(CommonConstants.SOURCE,main.getSecretarySource()));
+		if(main.getPartyOrgTime() != null){
+			main.setPartyOrgTimeTxt(sdf.format(main.getPartyOrgTime()));
+		}
 		main.setSecretaryCompanyTxt(baseService.getDeptNameById(main.getSecretaryCompany()));
-		main.setBelongUnitTxt(baseService.getDeptNameById(main.getBelongUnit()));
-		
+	}
+	
+	/**
+	 * 数据转换
+	 * @param info
+	 */
+	private void convertData(String orgIds, String orgNames, Model model){
+		List<DataDictionary> unitList = new ArrayList<>();
+		String[] orgIdArray = orgIds.split(",");
+		String[] orgNameArray = orgNames.split(",");
+		for(int i = 0; i < orgIdArray.length; i++){
+			DataDictionary data = new DataDictionary();
+			data.setCode(orgIdArray[i]);
+			data.setValue(orgNameArray[i]);
+			unitList.add(data);
+		}
+		model.addAttribute("unitList", unitList);
 	}
 
 	/**

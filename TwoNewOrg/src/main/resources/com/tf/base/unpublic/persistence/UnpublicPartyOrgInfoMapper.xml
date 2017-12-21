@@ -57,13 +57,15 @@
   <select id="queryList" resultMap="BaseResultMap">
   	<![CDATA[
 	  	SELECT
-			o.id as orgId,o.name, 
-			oc.partymbr_in_unpublic_num,
-			oc.partymbr_notin_unpublic_num, p.*
+			o.id as orgId, o.name, 
+			(select count(*) from unpublic_org_pmbr_info 
+				where unpublic_org_info_id = o.id and partymbr_in_unpublic_is = '1') as partymbr_in_unpublic_num,
+			(select count(*) from unpublic_org_pmbr_info 
+				where unpublic_org_info_id = o.id and partymbr_in_unpublic_is = '0') as partymbr_notin_unpublic_num, 
+			p.*
 		FROM
 			unpublic_org_info o
 		LEFT JOIN unpublic_party_org_info p ON o.unpublic_party_org_id = p.id and p.status <> '0'
-		LEFT JOIN unpublic_org_pmbr_count oc ON o.id = oc.unpublic_org_info_id
 	]]>
   	<where>
   			o.status = '2' 
@@ -76,11 +78,25 @@
   		<if test="params.partyOrgForm != null and params.partyOrgForm != ''">
   			and p.party_org_form = #{params.partyOrgForm}
   		</if>
-  		<if test="params.belongUnit != null and params.belongUnit != ''">
-  			and p.belong_unit = #{params.belongUnit}
-  		</if>
   		<if test="params.createOrg !=null and params.createOrg !='' ">
   			and o.create_org = #{params.createOrg}
+  		</if>
+  		<if test="params.creater !=null and params.creater !=''">
+  			and p.creater like CONCAT('%', #{params.creater}, '%')
+  		</if>
+  		<if test="params.status !=null and params.status !=''">
+  			and p.status = #{params.status}
+  		</if>
+  		<if test="params.inOperator !=null and params.inOperator !='' and params.partyInNum !=null and params.partyInNum !=''">
+  			and (select count(*) from unpublic_org_pmbr_info 
+				where unpublic_org_info_id = o.id and partymbr_in_unpublic_is = '1') ${params.inOperator} ${params.partyInNum}
+  		</if>
+  		<if test="params.notinOperator !=null and params.notinOperator !='' and params.partyNotInNum !=null and params.partyNotInNum !=''">
+  			and (select count(*) from unpublic_org_pmbr_info 
+				where unpublic_org_info_id = o.id and partymbr_in_unpublic_is = '0') ${params.notinOperator} ${params.partyNotInNum}
+  		</if>
+  		<if test="params.isQuWeiSign !=null and params.isQuWeiSign !='' and params.isQuWeiSign == '1'.toString()">
+  			<![CDATA[ and p.status is not null ]]>
   		</if>
   	</where>
   	order by p.create_time desc

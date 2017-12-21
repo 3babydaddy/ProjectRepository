@@ -60,6 +60,9 @@ public class PartyConstructionService {
 	 */
 	@Transactional
 	public void updateOrg(SocialPartyOrgBuilding main)throws Exception {
+		main.setCreater(baseService.getUserName());
+		main.setCreateTime(new Date());
+		main.setSocialPartyOrgId(Integer.parseInt(main.getPartyOrgId()));
 		socialPartyOrgBuildingMapper.updateByPrimaryKeySelective(main);
 	}
 

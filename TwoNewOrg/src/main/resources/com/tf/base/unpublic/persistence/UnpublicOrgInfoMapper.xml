@@ -73,9 +73,15 @@
   		<if test="params.createOrg !=null and params.createOrg !='' ">
   			and main.create_org = #{params.createOrg}
   		</if>
+  		<if test="params.creator !=null and params.creator !='' ">
+  			and main.creator LIKE CONCAT('%',#{params.creator},'%')
+  		</if>
   		<if test="params.otherCondition != null  and params.otherCondition != ''">
   			and  exists (select 1 from unpublic_org_info_other_count t1 where t1.unpublic_org_info_id = main.id 
                    and t1.field_name=#{params.otherCondition})
+  		</if>
+  		<if test="params.status !=null and params.status !=''">
+  			and main.status = #{params.status}
   		</if>
   	</where>
   	order by ${orderby}

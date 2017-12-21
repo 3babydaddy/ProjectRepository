@@ -29,7 +29,7 @@ function loadData(){
 			rownumbers:true,
 			fitColumns : true,
 			striped : true,
-			singleSelect : true,
+			singleSelect : false,
 			remoteSort: true,
 			pagination:true,
 			nowrap:false,
@@ -42,10 +42,12 @@ function loadData(){
 				,{field :"isTrainingInRotationTxt",title :"是否对党员轮训一遍",width :"10%", align:"center",formatter:ifNullShowHeng}
 				,{field :"isPartyMemberTrainTxt",title :"党员是否按时足额主动交纳党费",width :"12%", align:"center",formatter:ifNullShowHeng}
 				,{field :"isDevelopListenTxt",title :"是否按规定开展“三会一课”",width :"12%", align:"center",formatter:ifNullShowHeng}
-	            ,{field :"isDevelopDiscussionsTxt",title :"是否按规定每年开展民主评议党员",width :"12%", align:"center",formatter:ifNullShowHeng}   
-	            ,{field :"isChangeEveryyearTxt",title :"党组织是否按规定进行换届",width :"12%", align:"center",formatter:ifNullShowHeng}
-	            ,{field :"isRectifyPartyTxt",title :"是否完成整顿相对后进基层党组织",width :"12%", align:"center",formatter:ifNullShowHeng}
+	           // ,{field :"isDevelopDiscussionsTxt",title :"是否按规定每年开展民主评议党员",width :"12%", align:"center",formatter:ifNullShowHeng}   
+	           // ,{field :"isChangeEveryyearTxt",title :"党组织是否按规定进行换届",width :"12%", align:"center",formatter:ifNullShowHeng}
+	           // ,{field :"isRectifyPartyTxt",title :"是否完成整顿相对后进基层党组织",width :"12%", align:"center",formatter:ifNullShowHeng}
 	            ,{field :"partyAvgTime",title :"党员(平均学时)",width :"8%", align:"center",formatter:ifNullShowHeng}
+	            ,{field :"year",title :"年度",width :"8%", align:"center",formatter:ifNullShowHeng}
+	            ,{field :"creater",title :"创建人",width :"8%", align:"center",formatter:ifNullShowHeng}
 	            ,{field :"statusTxt",title :"状态",width :"8%", align:"center",formatter:ifNullShowHeng}
 	         ] ],
 	      onLoadSuccess : function(data) {
@@ -56,7 +58,7 @@ function loadData(){
 	if(!isQuWeiDept){
 		options.toolbar = [{
 			text:'编辑',
-			iconCls: 'icon-add',
+			iconCls: 'icon-edit',
 			handler: function(){addRow();}
 		},{
 			text:'查看',

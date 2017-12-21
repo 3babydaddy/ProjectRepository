@@ -41,11 +41,12 @@ function loadData(){
 				,{field :"partyOrgTypeTxt",title :"党组织类别",width :"8%", align:"center",formatter:ifNullShowHeng}
 				,{field :"partyOrgTel",title :"党组织联系电话",width :"10%", align:"center",formatter:ifNullShowHeng}
 				,{field :"subjectionPartyName",title :"隶属党组织名称",width :"10%", align:"center",formatter:ifNullShowHeng}
-				,{field :"secretaryName",title :"书记名称",width :"8%", align:"center",formatter:ifNullShowHeng}   
-	            ,{field :"secretarySource",title :"书记来源",width :"8%", align:"center",formatter:ifNullShowHeng}
-	            ,{field :"partyOrgTime",title :"党组织成立时间",width :"6%", align:"center",formatter:ifNullShowHeng}
+				,{field :"secretaryName",title :"书记名称",width :"12%", align:"center",formatter:ifNullShowHeng}   
+	            ,{field :"secretarySourceTxt",title :"书记来源",width :"8%", align:"center",formatter:ifNullShowHeng}
+	            ,{field :"partyOrgTimeTxt",title :"党组织成立时间",width :"10%", align:"center",formatter:ifNullShowHeng}
+	            ,{field :"creater",title :"创建人",width :"6%", align:"center",formatter:ifNullShowHeng}
 	            ,{field :"statusTxt",title :"状态",width :"6%", align:"center",formatter:ifNullShowHeng},
-	            {field : 'statusAndDo',title : '操作',width : "15%" ,align:'center',
+	            {field : 'statusAndDo',title : '操作',width : "6%" ,align:'center',
 					formatter:function(value,row,index){
 						return '<a href="javascript:void(0)" class="easyui-linkbutton" name="editBtn" onclick="editOrgInfo(\''+ row.id  + '\',\'edit\')">查看</a>';
 		            }	
@@ -159,7 +160,7 @@ function editRow(){
 	}
 	var id = row.id;
 	if(id == null){
-		layer.alert('“'+row.orgName + '”未进行过新增操作！');
+		layer.alert('“'+row.orgName + '”未进行过党组织信息录入操作！');
 		return;
 	}
 	if(row.status == 2 || row.status == 5){

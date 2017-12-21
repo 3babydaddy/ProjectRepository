@@ -65,6 +65,8 @@ public class DeptLeaderInfo {
     
     @Transient
     private String deptName;
+    @Transient
+    private String updateSign;
 
     /**
      * @return id
@@ -268,5 +270,13 @@ public class DeptLeaderInfo {
 
 	public void setDeptName(String deptName) {
 		this.deptName = deptName;
+	}
+
+	public String getUpdateSign() {
+		return updateSign;
+	}
+
+	public void setUpdateSign(String updateSign) {
+		this.updateSign = updateSign;
 	}
 }

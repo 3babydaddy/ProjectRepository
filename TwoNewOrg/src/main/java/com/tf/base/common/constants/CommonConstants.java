@@ -104,6 +104,9 @@ public class CommonConstants {
 	public static final String PARTY_SECRETARIES_AND_COMMISSION_TYPE = "PARTY_SECRETARIES_AND_COMMISSION_TYPE";
 	public static final String ANNUAL_SURVEY = "ANNUAL_SURVEY";
 	public static final String PARTY_ORG_STATUS = "PARTY_ORG_STATUS";
+	public static final String HEIGHT_PARTY_ORG = "HEIGHT_PARTY_ORG";
+	public static final String OTHER_INFO_MANAGER = "OTHER_INFO_MANAGER";
+	public static final String PARTY_ORG_OPERATOR = "PARTY_ORG_OPERATOR";
 	/* 智能预警*/
 	public static final String PERSONNEL_CATEGORY = "PERSONNEL_CATEGORY";
 	public static final String REMINDER_CYCLE = "REMINDER_CYCLE";

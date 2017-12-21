@@ -5,6 +5,60 @@ $(function(){
 	
 	 initPartyOrgTree();
 	 
+	 var set = {
+				nonSelectedText: '请选择',
+				numberDisplayed: 10,
+				allSelectedText:'全部'
+	 };
+	 var instructSize = $("#instructSize").val();
+	 for(var s = 0; s < instructSize; s++){
+		$("#zhidaodanwei"+s).multiselect(set);
+	 }
+	 if(instructSize == 0){
+		 $("#zhidaodanwei0").multiselect(set);
+	 }
+	 
+	 //下级党组织信息
+	 var s = 0;
+	 $("#add_operate_lowerParty").click(function(){
+		$(this).before($(this).prev().clone());
+		if(t == 0){
+			$(this).prev().append('<button type="button"  class="remove_operate_lowerParty btn btn-primary btn-sm glyphicon glyphicon-minus"></button>');
+		}
+		s++;
+		$(this).prev().find(".operate_address").val("").trigger('change');
+		$(this).prev().find("input[name=lowerPartyOrgName]").val("");
+		$(this).prev().find("input[name=lowerPartyOrgType]").val("");
+	});
+	
+	$("#editForm").on('click','.remove_operate_lowerParty',function(){
+			$(this).parent().remove();
+		s--;
+	});
+	 
+	 //指导员信息
+	 var t = 0;
+	 $("#add_operate_instructor").click(function(){
+		$(this).before($(this).prev().clone());
+		if(t == 0){
+			$(this).prev().append('<button type="button"  class="remove_operate_instructor btn btn-primary btn-sm glyphicon glyphicon-minus"></button>');
+		}
+		t++;
+		$(this).prev().find(".operate_address").val("").trigger('change');
+		$(this).prev().find("input[name=instructorName]").val("");
+		$(this).prev().find("input[name=instructorJob]").val("");
+		$(this).prev().find("select[id=zhidaodanwei"+(t-1)+"]").attr('id','zhidaodanwei'+t);
+		$(this).prev().find("div[class=btn-group]")[0].style.display='none';
+		$("#zhidaodanwei"+t).multiselect("destroy").val("").multiselect(set);
+	
+	});
+	
+	$("#editForm").on('click','.remove_operate_instructor',function(){
+			$(this).parent().remove();
+		t--;
+	});
+	
+	//换届信息
 	var i = 0;
 	$("#add_operate_address").click(function(){
 		$(this).before($(this).prev().clone());
@@ -13,20 +67,16 @@ $(function(){
 		}
 		i++;
 		$(this).prev().find(".operate_address").val("").trigger('change');
-		$(this).prev().find("input[name=partymbrInUnpublicNum"+(i-1)+"]").attr('id','partymbrInUnpublicNum'+i).val("");
-		$(this).prev().find("input[name=filepartymbrUnderThirtyfiveNum"+(i-1)+"]").attr('id','filepartymbrUnderThirtyfiveNum'+i).val("");
-		$(this).prev().find("input[name=partymbrUnderThirtyfiveNum"+(i-1)+"]").attr('id','partymbrUnderThirtyfiveNum'+i).val("");
-		$(this).prev().find("input[name=partymbrInUnpublicNum"+(i-1)+"]").attr('name','partymbrInUnpublicNum'+i).val("");
-		$(this).prev().find("input[name=filepartymbrUnderThirtyfiveNum"+(i-1)+"]").attr('name','filepartymbrUnderThirtyfiveNum'+i).val("");
-		$(this).prev().find("input[name=partymbrUnderThirtyfiveNum"+(i-1)+"]").attr('name','partymbrUnderThirtyfiveNum'+i).val("");
+		$(this).prev().find("input[id=partymbrInUnpublicNum"+(i-1)+"]").attr('id','partymbrInUnpublicNum'+i).val("");
+		$(this).prev().find("input[id=filepartymbrUnderThirtyfiveNum"+(i-1)+"]").attr('id','filepartymbrUnderThirtyfiveNum'+i).val("");
+		$(this).prev().find("input[id=partymbrUnderThirtyfiveNum"+(i-1)+"]").attr('id','partymbrUnderThirtyfiveNum'+i).val("");
 	});
 	
 	$("#editForm").on('click','.remove_operate_address',function(){
 			$(this).parent().remove();
 			i--;
 	});
-	
-	
+	//党副信息
 	var j = 0;
 	$("#add_operate_party").click(function(){
 		$(this).before($(this).prev().clone());
@@ -35,13 +85,13 @@ $(function(){
 		}
 		j++;
 		$(this).prev().find(".operate_party").val("").trigger('change');
-		$(this).prev().find("select[name=deputySecretaryType"+(j-1)+"]").attr('name','deputySecretaryType'+j).val("");
-		$(this).prev().find("input[name=deputySecretaryName"+(j-1)+"]").attr('name','deputySecretaryName'+j).val("");
-		$(this).prev().find("input[name=deputySecretaryBirthdayTxt"+(j-1)+"]").attr('name','deputySecretaryBirthdayTxt'+j).val("");
-		$(this).prev().find("select[name=deputySecretarySex"+(j-1)+"]").attr('name','deputySecretarySex'+j).val("");
-		$(this).prev().find("select[name=deputySecretaryEducation"+(j-1)+"]").attr('name','deputySecretaryEducation'+j).val("");
-		$(this).prev().find("select[name=deputySecretaryIsFullTime"+(j-1)+"]").attr('name','deputySecretaryIsFullTime'+j).val("");
-		$(this).prev().find("select[name=isBoardOfficer"+(j-1)+"]").attr('name','isBoardOfficer'+j).val("");
+		$(this).prev().find("select[name=deputySecretaryType]").val("");
+		$(this).prev().find("input[name=deputySecretaryName]").val("");
+		$(this).prev().find("input[name=deputySecretaryBirthdayTxt]").val("");
+		$(this).prev().find("select[name=deputySecretarySex]").val("");
+		$(this).prev().find("select[name=deputySecretaryEducation]").val("");
+		$(this).prev().find("select[name=deputySecretaryIsFullTime]").val("");
+		$(this).prev().find("select[name=isBoardOfficer]").val("");
 	});
 	
 	$("#editForm").on('click','.remove_operate_party',function(){
@@ -49,22 +99,27 @@ $(function(){
 			j--;
 	});
 	
+	//是否建立党组织
 	$("#isSetUpPartyOrg").on('change', function(){
 		isSetUpPartyOrg();
 	});
 	isSetUpPartyOrg();
-	
+	//是否选派指导员，隐藏或者显示指导员信息
 	$("#isInstructor").on('change', function(){
 		showInstructorInfo();
 	});
 	showInstructorInfo();
-	
+	//党组织组建形式
 	$("#partyOrgForm").on('change', function(){
 		showChangInfo();
 	});
 	showChangInfo();
+	//根据党组织类型；隐藏或者显示下级党组织信息
+	$("#partyOrgType").on('change', function(){
+		showLowerPartyInfo();
+	});
+	showLowerPartyInfo();
 });
-
 
 function getQueryParams() {
 	var params = {};
@@ -96,15 +151,20 @@ function isSetUpPartyOrg(){
 	}
 }
 
-function showChangInfo(){
+/**
+ * 不同的建立方式<br>
+ * 党组织信息展示的控制
+ */
+function showChangInfo() {
 	var hiddenFlag = $("#partyOrgForm").val();
-	if(hiddenFlag == 0 && hiddenFlag != ""){
+	if (hiddenFlag == 0 || hiddenFlag == 1 || hiddenFlag == 2) {
 		showAllsign(hiddenFlag);
-		document.getElementById("divTwo").style.display='none';
-	}else if(hiddenFlag == 1 || hiddenFlag == 2){
-		showAllsign(hiddenFlag);
-		document.getElementById("divTwo").style.display='';
-	}else{
+		$("#divTwo").show();
+		// 网格建 不显示换届信息
+		if (hiddenFlag == 2) {
+			$("#divTwo").hide();
+		}
+	} else {
 		hiddenAllsign(hiddenFlag);
 	}
 }
@@ -115,6 +175,15 @@ function showInstructorInfo(){
 		document.getElementById("divOne").style.display='none';
 	}else{
 		document.getElementById("divOne").style.display='';
+	}
+}
+
+function showLowerPartyInfo() {
+	var hiddenFlag = $("#partyOrgType").val();
+	if (hiddenFlag == 0 || hiddenFlag == 1) {
+		$("#divEight").show();
+	} else {
+		$("#divEight").hide();
 	}
 }
 
@@ -131,6 +200,7 @@ function hiddenAllsign(flag){
 	document.getElementById("divFive").style.display='none';
 	document.getElementById("divSix").style.display='none';
 	document.getElementById("divSev").style.display='none';
+	document.getElementById("divEight").style.display='none';
 }
 
 function showAllsign(flag){
@@ -146,6 +216,7 @@ function showAllsign(flag){
 	document.getElementById("divFive").style.display='';
 	document.getElementById("divSix").style.display='';
 	document.getElementById("divSev").style.display='';
+	document.getElementById("divEight").style.display='';
 }
 
 function save(flag){
@@ -170,6 +241,10 @@ function submitReport(){
 function submit(flag){
 	//var formdata=new FormData($("#editForm")[0]);
 	//alert($("#editForm").serialize());
+	lowerPartyInfoConver();
+	instructConver();
+	changeInfoConver();
+	deputySecConver();
 	$.ajax({
 		url:'../unpublic/partyorgedit',
 		type : 'post',
@@ -458,15 +533,120 @@ function showPartyInfo(orgIds){
 	});
 }
 
+function lowerPartyInfoConver(){
+	var LowerPartyArray = new Array();
+	var lpoNames = document.getElementsByName("lowerPartyOrgName");
+	var lpoTypes = document.getElementsByName("lowerPartyOrgType");
+	var lpoSums = document.getElementsByName("lowerPartyOrgSum");
+	for(var i = 0; i < lpoNames.length; i++){
+		if(lpoNames[i].value != "" || lpoTypes[i].value != ""){
+			var info = createLowerPartyInfo(lpoNames[i].value, lpoTypes[i].value,lpoSums[i].value);
+			LowerPartyArray.push(info);
+		}
+	}
+	//debugger;
+	$("#lowerPartyList").val(JSON.stringify(LowerPartyArray));
+}
+
+function instructConver(){
+	var instructArray = new Array();
+	var selectArray = new Array();
+	var names = document.getElementsByName("instructorName");
+	var jobs = document.getElementsByName("instructorJob");
+	for(var i = 0; i < names.length; i++){
+		if(names[i].value != "" || jobs[i].value != "" || $("#zhidaodanwei"+[i]).val() != null){
+			selectArray = $("#zhidaodanwei"+[i]).val();
+			var selectStr = "";
+			if(selectArray != null){
+				for(var j = 0; j < selectArray.length; j++){
+					if(selectStr == ""){
+						selectStr = selectArray[j];
+					}else{
+						selectStr = selectStr + ',' + selectArray[j];
+					}
+				}
+			}
+			var info = createInstructInfo(names[i].value, jobs[i].value, selectStr);
+			instructArray.push(info);
+		}
+	}
+	$("#instructList").val(JSON.stringify(instructArray));
+}
+
+function changeInfoConver(){
+	var changeArray = new Array();
+	var changeTimes = document.getElementsByName("partymbrInUnpublicNum");
+	var changeFiles = document.getElementsByName("partymbrUnderThirtyfiveNum");
+	for(var i = 0; i < changeTimes.length; i++){
+		if(changeTimes[i].value != "" || changeFiles[i].value != ""){
+			var info = createChangeInfo(changeTimes[i].value, changeFiles[i].value);
+			changeArray.push(info);
+		}
+	}
+	//debugger;
+	$("#changeList").val(JSON.stringify(changeArray));
+}
+
+function deputySecConver(){
+	var deputySecArray = new Array();
+	var types = document.getElementsByName("deputySecretaryType");
+	var names = document.getElementsByName("deputySecretaryName");
+	var birthdayTxts = document.getElementsByName("deputySecretaryBirthdayTxt");
+	var sexs = document.getElementsByName("deputySecretarySex");
+	var educations = document.getElementsByName("deputySecretaryEducation");
+	var isFullTimes = document.getElementsByName("deputySecretaryIsFullTime");
+	var isBoardOfficers = document.getElementsByName("isBoardOfficer");
+	for(var i = 0; i < types.length; i++){
+		if(types[i].value != "" || names[i].value != "" || birthdayTxts[i].value != "" || sexs[i].value != ""
+				|| educations[i].value != "" || isFullTimes[i].value != "" || isBoardOfficers[i].value != ""){
+			var info = createDuputySecInfo(types[i].value, names[i].value, birthdayTxts[i].value, sexs[i].value
+					, educations[i].value, isFullTimes[i].value, isBoardOfficers[i].value);
+			deputySecArray.push(info);
+		}
+	}
+	$("#deputySecretaryList").val(JSON.stringify(deputySecArray));
+}
+//下级党组织信息实体类
+function createLowerPartyInfo(lowerPartyOrgName, lowerPartyOrgType,lowerPartyOrgSum){
+	var LowerPartyInfo = new Object();
+	LowerPartyInfo.lowerPartyOrgName = lowerPartyOrgName;
+	LowerPartyInfo.lowerPartyOrgType = lowerPartyOrgType;
+	LowerPartyInfo.lowerPartyOrgSum = lowerPartyOrgSum;
+	return LowerPartyInfo;
+}
+//指导员信息实体类
+function createInstructInfo(instructorName, instructorJob, instructOrgs){
+	var instructInfo = new Object();
+	instructInfo.instructorName = instructorName;
+	instructInfo.instructorJob = instructorJob;
+	instructInfo.instructOrgs = instructOrgs;
+	return instructInfo;
+}
+//换届信息实体类
+function createChangeInfo(changeTimeTxt, changeAttachmentId){
+	var changeInfo = new Object();
+	changeInfo.changeTimeTxt = changeTimeTxt;
+	changeInfo.changeAttachmentId = changeAttachmentId;
+	return changeInfo;
+}
+//党务信息实体类
+function createDuputySecInfo(deputySecretaryType, deputySecretaryName, deputySecretaryBirthdayTxt, deputySecretarySex,
+							deputySecretaryEducation, deputySecretaryIsFullTime, isBoardOfficer){
+	var duputySecInfo = new Object();
+	duputySecInfo.deputySecretaryType = deputySecretaryType;
+	duputySecInfo.deputySecretaryName = deputySecretaryName;
+	duputySecInfo.deputySecretaryBirthdayTxt = deputySecretaryBirthdayTxt;
+	duputySecInfo.deputySecretarySex = deputySecretarySex;
+	duputySecInfo.deputySecretaryEducation = deputySecretaryEducation;
+	duputySecInfo.deputySecretaryIsFullTime = deputySecretaryIsFullTime;
+	duputySecInfo.isBoardOfficer = isBoardOfficer;
+	return duputySecInfo;
+}
+
 function getElByName(name){
 	return $("input[name="+name+"]");
 }
-function showDept(){
-	showDeptTree("instructorUnit","createOrgTxt");
-}
+
 function showDept1(){
 	showDeptTree("secretaryCompany","createOrgTxt1");
-}
-function showDept2(){
-	showDeptTree("belongUnit","createOrgTxt2");
 }

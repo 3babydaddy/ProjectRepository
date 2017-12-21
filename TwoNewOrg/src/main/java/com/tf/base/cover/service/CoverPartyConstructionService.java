@@ -60,6 +60,8 @@ public class CoverPartyConstructionService {
 	 */
 	@Transactional
 	public void updateOrg(CoverPartyOrgBuilding main)throws Exception {
+		main.setCreater(baseService.getUserName());
+		main.setCreateTime(new Date());
 		coverPartyOrgBuildingMapper.updateByPrimaryKeySelective(main);
 	}
 

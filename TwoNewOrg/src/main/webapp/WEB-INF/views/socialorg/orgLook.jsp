@@ -39,8 +39,13 @@
 					</tr>
 					<tr>
 						<td style="text-align: right;">住　　地：</td>
-						<td style="text-align: left;" colspan="3">${main.address }</td>
-						
+						<td style="text-align: left;">${main.address }</td>
+						<c:if test="${main.nature eq '0201' || main.nature eq '0204'}">
+							<td style="text-align: right;">是否设立思想政治<br/>教育工作机构：</td>
+							<td style="text-align: left;">${main.isIdeologicalPoliticalOrgTxt }</td>
+							<td style="text-align: right;">是否设立德育工作机构：</td>
+							<td style="text-align: left;">${main.isMoralEducationOrgTxt}</td>
+						</c:if>
 					</tr>
 				</table>
 		   </div>

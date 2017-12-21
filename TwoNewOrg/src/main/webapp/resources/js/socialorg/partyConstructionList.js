@@ -29,7 +29,7 @@ function loadData(){
 			rownumbers:true,
 			fitColumns : true,
 			striped : true,
-			singleSelect : true,
+			singleSelect : false,
 			remoteSort: true,
 			pagination:true,
 			nowrap:false,
@@ -41,10 +41,12 @@ function loadData(){
 				,{field :"threeYearsUnqualifieds",title :"近三年处置不合格党员数",width :"10%", align:"center",formatter:ifNullShowHeng}
 				,{field :"totalPayDues",title :"党建工作经费总额",width :"10%", align:"center",formatter:ifNullShowHeng}
 				,{field :"cityFunds",title :"市区财政支出数额(元)",width :"10%", align:"center",formatter:ifNullShowHeng}
-				,{field :"districtFunds",title :"区管党费支持数额(元)",width :"10%", align:"center",formatter:ifNullShowHeng}
-				,{field :"socialOrgFunds",title :"社会组织管理经费支持数额(元)",width :"12%", align:"center",formatter:ifNullShowHeng}
+				//,{field :"districtFunds",title :"区管党费支持数额(元)",width :"10%", align:"center",formatter:ifNullShowHeng}
+				//,{field :"socialOrgFunds",title :"社会组织管理经费支持数额(元)",width :"12%", align:"center",formatter:ifNullShowHeng}
 				,{field :"yearTotalPayDues",title :"上年度党员缴纳党费总额",width :"12%", align:"center",formatter:ifNullShowHeng}
 	            ,{field :"annualSurveyTxt",title :"年检结果",width :"8%", align:"center",formatter:ifNullShowHeng}   
+	            ,{field :"year",title :"年度",width :"8%", align:"center",formatter:ifNullShowHeng}   
+	            ,{field :"creater",title :"创建人",width :"8%", align:"center",formatter:ifNullShowHeng}   
 	            ,{field :"statusTxt",title :"状态",width :"8%", align:"center",formatter:ifNullShowHeng}   
 	         ] ],
 	      onLoadSuccess : function(data) {
@@ -55,7 +57,7 @@ function loadData(){
 	if(!isQuWeiDept){
 		options.toolbar = [{
 			text:'编辑',
-			iconCls: 'icon-add',
+			iconCls: 'icon-edit',
 			handler: function(){addRow();}
 		},{
 			text:'查看',
@@ -156,9 +158,9 @@ function addRow(){
 	//获取党组织的信息
 	var partyOrgName = row.partyOrgName;
 	var partyOrgId = row.partyOrgId;
-	//获取党组织的id
-	var unpublicPartyOrgId = row.unpublicPartyOrgId;
-	var url = ctx + '/socialorg/partyconstructionedit?id='+id+'&partyOrgId='+partyOrgId+'&partyOrgName='+partyOrgName;
+	var nature = row.nature;
+	var url = ctx + '/socialorg/partyconstructionedit?id='+id+'&partyOrgId='+partyOrgId+
+							'&partyOrgName='+partyOrgName+'&nature='+nature;
 	//openWin("编辑", url,"90%","90%",function(){reloadData()});
 	
 	utils.e.openWin('editwin', title,url,"80%","80%",function(){
@@ -204,8 +206,13 @@ function lookRow(){
 		return;
 	}
 	var id = row.id;
+	if(row.id == null || row.id == undefined){
+		layer.alert('“'+row.partyOrgName + '”未建立党建，不能进行查看操作！');
+		return;
+	}
 	var partyOrgName = row.partyOrgName;
-	var url = ctx + '/socialorg/partyconstructionlook?id='+id+'&partyOrgName='+partyOrgName;
+	var nature = row.nature;
+	var url = ctx + '/socialorg/partyconstructionlook?id='+id+'&partyOrgName='+partyOrgName+'&nature='+nature;
 	//openWin("查看", url,"90%","90%");
 	utils.e.openWin('lookwin','查看',url,"80%","80%",function(){
 		reloadData()
@@ -259,7 +266,8 @@ function delRow(id){
 		return;
 	}
 	var id = row.id;
-	if(id==undefined){
+	if(row.id == null || row.id == undefined){
+		layer.alert('“'+row.partyOrgName + '”未建立党建，不能进行删除操作！');
 		return;
 	}
 	if(row.status != 1){

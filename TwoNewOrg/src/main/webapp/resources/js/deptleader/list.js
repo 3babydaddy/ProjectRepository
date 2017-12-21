@@ -42,6 +42,13 @@ function loadData(){
 	            ,{field :"deptName",title :"所在部门",width :"10%", align:"center",formatter:ifNullShowHeng}
 	            ,{field :"type",title :"类型",width :"10%", align:"center",formatter:ifNullShowHeng}
 	            ,{field :"status",title :"状态",width :"10%", align:"center",formatter:ifNullShowHeng}
+	            ,{field : 'statusAndDo',title : '修改后待审核',width : "10%" ,align:'center',
+					formatter:function(value,row,index){
+						if(row.updateSign == '1'){
+							return '<a href="javascript:void(0)" class="easyui-linkbutton" name="editBtn" onclick="lookOrgInfo(\''+ row.id  + '\',\'edit\')">查阅</a>';
+						}
+		            }	
+	             }
 	         ] ],
 	      onLoadSuccess : function(data) {
 
@@ -204,27 +211,60 @@ function auditResult(){
 	}else{
 		msg = '您确认审核通过该条记录吗？';
 	}
-	var url = ctx + '/deptleader/audit?id='+id+'&status='+status+'&method=AUDIT';
-	$.messager.confirm('确认', msg,function(r){  
+	//var url = ctx + '/deptleader/audit?id='+id+'&status='+status+'&method=AUDIT';
+	$.messager.defaults = { ok: '是', cancel: '否' };
+
+	$.messager.confirm('操作提示', msg,function(r){  
 		if(r){
 			$.ajax({
-	    		url:url,
+				url:ctx + '/deptleader/audit',
 	    		type:'post',
+	    		data:{id:id,status:status},
 	    		dataType:'json',
 	    		success:function(result){
 	    			if(result.status ==1){
-	    				$.messager.alert(result.msg);
-	    				//alert(result.msg);
+	    				//$.messager.alert(result.msg);
+	    				alert(result.msg);
 	    				reloadData();
 	    			}
 	    			else
-	    				//alert(result.errorMsg);
-	    				$.messager.alert(result.msg);
+	    				alert(result.errorMsg);
+	    				//$.messager.alert(result.msg);
+	    		}
+	    	});
+		}else{
+			$.ajax({
+	    		url:ctx + '/deptleader/audit',
+	    		type:'post',
+	    		data:{id:id,status:'审核不通过'},
+	    		dataType:'json',
+	    		success:function(result){
+	    			if(result.status ==1){
+	    				//$.messager.alert(result.msg);
+	    				alert(result.msg);
+	    				reloadData();
+	    			}
+	    			else
+	    				alert(result.errorMsg);
+	    				//$.messager.alert(result.msg);
 	    		}
 	    	});
 		}
     	
 	}); 
+}
+/**
+ * 查看修改后的数据
+ * @param id
+ * @returns
+ */
+function lookOrgInfo(deptId){
+	
+	var url = ctx + '/deptleader/lookupdateInfo?id='+deptId;
+	//openWin("查看", url,"90%","90%");
+	utils.e.openWin('lookwin','查看',url,"80%","80%",function(){
+		reloadData()
+	},true);
 }
 function getCheckedRow(){
 	var row = $("#gridPanel").datagrid('getSelected');

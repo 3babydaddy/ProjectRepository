@@ -1,11 +1,9 @@
 package com.tf.base.commonstatistics.controller;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -24,13 +22,14 @@ import com.tf.base.common.constants.CommonConstants;
 import com.tf.base.common.domain.DataDictionary;
 import com.tf.base.common.domain.DictionaryRepository;
 import com.tf.base.common.excel.Demo;
-import com.tf.base.common.excel.ExcelDataFormatter;
 import com.tf.base.common.excel.ExcelUtils;
 import com.tf.base.common.service.BaseService;
-import com.tf.base.common.service.LogService;
 import com.tf.base.common.utils.PageUtil;
-import com.tf.base.unpublic.domain.UnpublicOrgInfo;
-import com.tf.base.unpublic.persistence.UnpublicOrgInfoMapper;
+import com.tf.base.commonstatistics.domain.QueryParam;
+import com.tf.base.commonstatistics.domain.SocialWorkLedger;
+import com.tf.base.commonstatistics.domain.UnpublicWorkLedger;
+import com.tf.base.commonstatistics.persistence.SocialWorkLedgerMapper;
+import com.tf.base.commonstatistics.persistence.UnpublicWorkLedgerMapper;
 
 @Controller
 public class CommonReportsController {
@@ -43,10 +42,9 @@ public class CommonReportsController {
 	@Autowired
 	private BaseService baseService;
 	@Autowired
-	private LogService logService;
-
+	private UnpublicWorkLedgerMapper unpublicWorkLedgerMapper;
 	@Autowired
-	private UnpublicOrgInfoMapper unpublicOrgInfoMapper;
+	private SocialWorkLedgerMapper socialWorkLedgerMapper;
 
 	/**
 	 * 新区非公有制经济组织党组织工作台账初始化页面
@@ -70,76 +68,34 @@ public class CommonReportsController {
 	 * @param response
 	 */
 	@RequestMapping(value = "/commonstatistics/unpublicworkledger", method = RequestMethod.POST)
-	public void unpublicReportList(UnpublicOrgInfo params, int page, int rows, HttpServletResponse response) {
+	public void unpublicReportList(QueryParam params, int page, int rows, HttpServletResponse response) {
 		String deptId = baseService.getCurrentUserDeptId();
 		logger.debug("当前登录用户部门ID:===========>" + deptId + " ,是否为区委部门?" + baseService.isQuWeiDept());
-
-		String orderby = "";
 		if (!baseService.isQuWeiDept()) {
 			params.setCreateOrg(deptId);
-			orderby = " main.update_time desc , main.status desc, main.create_time desc";
-		} else {
-			orderby = " main.status desc , main.create_time desc";
 		}
 		PageHelper.startPage(page, rows, true);
-		List<UnpublicOrgInfo> list = unpublicOrgInfoMapper.queryList(params, orderby);
+		List<UnpublicWorkLedger> list = unpublicWorkLedgerMapper.queryList(params);
 		this.convertRows(list);
-		list.clear();
-		PageUtil.returnPage(response, new PageInfo<UnpublicOrgInfo>(list));
+		this.convertDict(list);
+		PageUtil.returnPage(response, new PageInfo<UnpublicWorkLedger>(list));
 	}
 
 	@SuppressWarnings("static-access")
-	@RequestMapping(value = "/file/exportDemo")
+	@RequestMapping(value = "/file/exportUnpublicReport")
 	@ResponseBody
-	public boolean export(HttpServletResponse response1) {
-		System.out.println("写Excel");
-		List<Demo> list = new ArrayList<Demo>();
-		Demo u = new Demo();
-		u.setAge("3");
-		u.setName("fdsafdsa");
-		u.setXx(123.23D);
-		u.setYy(new Date());
-		u.setLocked(false);
-		u.setDb(new BigDecimal(123));
-		list.add(u);
-
-		u = new Demo();
-		u.setAge("23");
-		u.setName("fdsafdsa");
-		u.setXx(123.23D);
-		u.setYy(new Date());
-		u.setLocked(true);
-		u.setDb(new BigDecimal(234));
-		list.add(u);
-
-		u = new Demo();
-		u.setAge("123");
-		u.setName("fdsafdsa");
-		u.setXx(123.23D);
-		u.setYy(new Date());
-		u.setLocked(false);
-		u.setDb(new BigDecimal(2344));
-		u.setStatus("1");
-		list.add(u);
-
-		u = new Demo();
-		u.setAge("年龄");
-		u.setName("姓名");
-		u.setXx(123.23D);
-		u.setYy(new Date());
-		u.setLocked(true);
-		u.setDb(new BigDecimal(908));
-		list.add(u);
-
-//		ExcelDataFormatter edf = new ExcelDataFormatter();
-//		Map<String, String> map = new HashMap<String, String>();
-//		map.put("true", "真");
-//		map.put("false", "假");
-//		edf.set("locked", map);
-
+	public boolean exportUnpublicReport(HttpServletResponse response) {
+		String deptId = baseService.getCurrentUserDeptId();
+		QueryParam params = new QueryParam();
+		if (!baseService.isQuWeiDept()) {
+			params.setCreateOrg(deptId);
+		}
+		List<UnpublicWorkLedger> list = unpublicWorkLedgerMapper.queryList(params);
+		this.convertRows(list);
+		this.convertDict(list);
 		ExcelUtils excelUtils = new ExcelUtils(Demo.class);
 		try {
-			excelUtils.writeToFile(list, 6, response1);
+			excelUtils.writeToFile(list, 6, response, "unpublic");
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -148,7 +104,7 @@ public class CommonReportsController {
 	}
 
 	/**
-	 * 新区民办学校党建工作台账初始化页面
+	 * 社会工作台账初始化页面
 	 * 
 	 * @param model
 	 * @return
@@ -157,11 +113,11 @@ public class CommonReportsController {
 	public String orginit(Model model) {
 
 		editPage(model);
-		return "commonstatistics/privateSchoolWorkLedger";
+		return "commonstatistics/socialOrgWorkLedger";
 	}
 
 	/**
-	 * 新区民办学校党建工作台账列表展示
+	 * 社会工作台账列表展示
 	 * 
 	 * @param params
 	 * @param page
@@ -169,24 +125,41 @@ public class CommonReportsController {
 	 * @param response
 	 */
 	@RequestMapping(value = "/commonstatistics/privateschoolworkledger", method = RequestMethod.POST)
-	public void orglist(UnpublicOrgInfo params, int page, int rows, HttpServletResponse response) {
+	public void orglist(QueryParam params, int page, int rows, HttpServletResponse response) {
 		String deptId = baseService.getCurrentUserDeptId();
 		logger.debug("当前登录用户部门ID:===========>" + deptId + " ,是否为区委部门?" + baseService.isQuWeiDept());
-
-		String orderby = "";
 		if (!baseService.isQuWeiDept()) {
 			params.setCreateOrg(deptId);
-			orderby = " main.update_time desc , main.status desc, main.create_time desc";
-		} else {
-			orderby = " main.status desc , main.create_time desc";
-		}
+		} 
 		PageHelper.startPage(page, rows, true);
-		List<UnpublicOrgInfo> list = unpublicOrgInfoMapper.queryList(params, orderby);
-		this.convertRows(list);
-		list.clear();
-		PageUtil.returnPage(response, new PageInfo<UnpublicOrgInfo>(list));
+		List<SocialWorkLedger> list = socialWorkLedgerMapper.queryList(params);
+		this.convertRowsBySocial(list);
+		this.convertDictBySocial(list);
+		PageUtil.returnPage(response, new PageInfo<SocialWorkLedger>(list));
 	}
 
+	@SuppressWarnings("static-access")
+	@RequestMapping(value = "/file/exportSocialReport")
+	@ResponseBody
+	public boolean exportSocialReport(HttpServletResponse response) {
+		String deptId = baseService.getCurrentUserDeptId();
+		QueryParam params = new QueryParam();
+		if (!baseService.isQuWeiDept()) {
+			params.setCreateOrg(deptId);
+		}
+		List<SocialWorkLedger> list = socialWorkLedgerMapper.queryList(params);
+		this.convertRowsBySocial(list);
+		this.convertDictBySocial(list);
+		ExcelUtils excelUtils = new ExcelUtils(Demo.class);
+		try {
+			excelUtils.writeToFile(list, 6, response, "socialorg");
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
 	/**
 	 * 列表页面初始化参数
 	 * 
@@ -194,8 +167,10 @@ public class CommonReportsController {
 	 */
 	private void editPage(Model model) {
 		List<DataDictionary> yesNoList = dict.findByDmm(CommonConstants.YES_NO);
-
+		Calendar cal = Calendar.getInstance(); 
+		String year = cal.get(Calendar.YEAR)+"";
 		model.addAttribute("yesNoList", yesNoList);
+		model.addAttribute("year", year);
 	}
 
 	/**
@@ -203,8 +178,8 @@ public class CommonReportsController {
 	 * 
 	 * @param rows
 	 */
-	private void convertRows(List<UnpublicOrgInfo> rows) {
-		for (UnpublicOrgInfo info : rows) {
+	private void convertRows(List<UnpublicWorkLedger> rows) {
+		for (UnpublicWorkLedger info : rows) {
 			this.convertRow(info);
 		}
 	}
@@ -214,54 +189,388 @@ public class CommonReportsController {
 	 * 
 	 * @param info
 	 */
-	private void convertRow(UnpublicOrgInfo main) {
+	private void convertRow(UnpublicWorkLedger main) {
 
-		main.setStatusTxt(dict.getValueByCode(CommonConstants.UNPUBLIC_ORG_STATUS, main.getStatus()));
-		main.setIndustryTypeTxt(dict.getValueByCode(CommonConstants.ENTERPRISE_TYPE, main.getIndustryType()));
-		main.setLevelTxt(dict.getValueByCode(CommonConstants.ZONE_LEVEL, main.getLevel()));
-		main.setMillionBuildingIsTxt(dict.getValueByCode(CommonConstants.YES_NO, main.getMillionBuildingIs()));
-		main.setBelocatedAddressTxt(
-				dict.getValueByCode(CommonConstants.ENTERPRISE_BELOCATED_ADDRESS, main.getBelocatedAddress()));
-		main.setOnScaleIsTxt(dict.getValueByCode(CommonConstants.YES_NO, main.getOnScaleIs()));
-
-		String businessType = splitConvertField(CommonConstants.BUSINESS_TYPE, main.getBusinessType());
-
-		main.setBusinessTypeTxt(businessType);
-		String nationality = splitConvertField(CommonConstants.NATIONALITY, main.getNationality());
-		main.setNationlityTxt(nationality);
-
-		main.setCreateOrgTxt(baseService.getDeptNameById(main.getCreateOrg()));
-	}
-
-	private String splitConvertField(String code, String value) {
-		StringBuffer sb = new StringBuffer();
-
-		if (value == null || value.equals(""))
-			return "";
-		String values[] = value.split(",");
-		if (values.length > 0) {
-
-			for (String v : values) {
-				sb.append(dict.getValueByCode(code, v));
-				sb.append(",");
-			}
-			return (!sb.toString().equals("") ? sb.toString().substring(0, sb.toString().length() - 1) : sb.toString());
-		} else {
-			return "";
+		//企业坐落地belocatedAddress 0:其他 1：园区 2：楼宇
+		if("0".equals(main.getBelocatedAddress())){
+			main.setAdOther("√");
+			main.setPark("×");
+			main.setBuilding("×");
+		}else if("1".equals(main.getBelocatedAddress())){
+			main.setAdOther("×");
+			main.setPark("√");
+			main.setBuilding("×");
+		}else if("2".equals(main.getBelocatedAddress())){
+			main.setAdOther("×");
+			main.setPark("×");
+			main.setBuilding("√");
+		}
+		
+		//企业类型industryType 01：私营(企业)类型 02：港澳台(企业)类型 03：外商(企业)类型
+		if(main.getIndustryType().startsWith("01")){
+			main.setPrivateBusiness("√");
+			main.setMainlangBusiness("×");
+			main.setForeignBusiness("×");
+		}else if(main.getIndustryType().startsWith("02")){
+			main.setPrivateBusiness("×");
+			main.setMainlangBusiness("√");
+			main.setForeignBusiness("×");
+		}else if(main.getIndustryType().startsWith("03")){
+			main.setPrivateBusiness("×");
+			main.setMainlangBusiness("×");
+			main.setForeignBusiness("√");
+		}
+		//党组织组建形式partyOrgForm 0：单独建立 1：联合建立 2：网格建立
+		if("0".equals(main.getPartyOrgForm())){
+			main.setAloneCreate("√");
+			main.setUnionCreate("×");
+			main.setGridCreate("×");
+		}else if("1".equals(main.getPartyOrgForm())){
+			main.setAloneCreate("×");
+			main.setUnionCreate("√");
+			main.setGridCreate("×");
+		}else if("2".equals(main.getPartyOrgForm())){
+			main.setAloneCreate("×");
+			main.setUnionCreate("×");
+			main.setGridCreate("√");
+		}
+		//党组织类别partyOrgType 0：党委 1：党总支 2：党支部 3联合党支部
+		if("0".equals(main.getPartyOrgType())){
+			main.setPartyBranch("√");
+			main.setGeneralParty("×");
+			main.setPartyCommittee("×");
+		}else if("1".equals(main.getPartyOrgType())){
+			main.setPartyBranch("×");
+			main.setGeneralParty("√");
+			main.setPartyCommittee("×");
+		}else if("2".equals(main.getPartyOrgType())){
+			main.setPartyBranch("×");
+			main.setGeneralParty("×");
+			main.setPartyCommittee("√");
+		}
+		//未建立党组织原因absencePartyOrgReasion 0：正式党员不足三人 1：其他 2：企业出资人不支持 3：上级党组织未及时指导
+		if("0".equals(main.getAbsencePartyOrgReasion())){
+			main.setNoParty("√");
+			main.setPartyOther("×");
+			main.setNoGuidance("×");
+			main.setNoSupport("×");
+		}else if("1".equals(main.getAbsencePartyOrgReasion())){
+			main.setNoParty("×");
+			main.setPartyOther("√");
+			main.setNoGuidance("×");
+			main.setNoSupport("×");
+		}else if("2".equals(main.getAbsencePartyOrgReasion())){
+			main.setNoParty("×");
+			main.setPartyOther("×");
+			main.setNoGuidance("√");
+			main.setNoSupport("×");
+		}else if("3".equals(main.getAbsencePartyOrgReasion())){
+			main.setNoParty("×");
+			main.setPartyOther("×");
+			main.setNoGuidance("×");
+			main.setNoSupport("√");
+		}
+		//书记来源secretarySource 0：出资人担任 1：中层管理人员担任 2：上级党组织选派 3：其他人员担任
+		if("0".equals(main.getSecretarySource())){
+			main.setContributor("√");
+			main.setMidBear("×");
+			main.setUpBear("×");
+			main.setBearOther("×");
+		}else if("1".equals(main.getSecretarySource())){
+			main.setContributor("×");
+			main.setMidBear("√");
+			main.setUpBear("×");
+			main.setBearOther("×");
+		}else if("2".equals(main.getSecretarySource())){
+			main.setContributor("×");
+			main.setMidBear("×");
+			main.setUpBear("√");
+			main.setBearOther("×");
+		}else if("3".equals(main.getSecretarySource())){
+			main.setContributor("×");
+			main.setMidBear("×");
+			main.setUpBear("×");
+			main.setBearOther("√");
 		}
 	}
 
 	/**
-	 * 返回信息及标示
+	 * 转换数据集合
 	 * 
-	 * @param status
-	 * @param msg
-	 * @return
+	 * @param rows
 	 */
-	private Map<String, Object> returnMsg(int status, String msg) {
-		Map<String, Object> result = new HashMap<String, Object>();
-		result.put("status", status);
-		result.put("msg", msg);
-		return result;
+	private void convertDict(List<UnpublicWorkLedger> rows) {
+		SimpleDateFormat sdf = new SimpleDateFormat();
+		for (UnpublicWorkLedger info : rows) {
+			if(info.getPartyOrgTime() != null){
+				info.setPartyOrgTimeTxt(sdf.format(info.getPartyOrgTime()));
+			}
+			if(info.getInparkName() != null){
+				info.setInparkBuildName(info.getInparkName());
+			}else if(info.getBuildingName() != null){
+				info.setInparkBuildName(info.getBuildingName());
+			}
+			info.setCreateOrg(baseService.getDeptNameById(info.getCreateOrg()));
+			info.setMillionBuildingIs(dict.getValueByCode(CommonConstants.YES_NO, info.getMillionBuildingIs()));
+			info.setBelocatedAddress(dict.getValueByCode(CommonConstants.ENTERPRISE_BELOCATED_ADDRESS, info.getBelocatedAddress()));
+			info.setLevel(dict.getValueByCode(CommonConstants.ZONE_LEVEL, info.getLevel()));
+			info.setOnScaleIs(dict.getValueByCode(CommonConstants.YES_NO, info.getOnScaleIs()));
+			info.setSponsorPartymemberIs(dict.getValueByCode(CommonConstants.YES_NO, info.getSponsorPartymemberIs()));
+			info.setSponsorPartyorgSecretaryIs(dict.getValueByCode(CommonConstants.YES_NO, info.getSponsorPartyorgSecretaryIs()));
+			info.setSponsorTwodeputyAcommitteeIs(dict.getValueByCode(CommonConstants.YES_NO, info.getSponsorTwodeputyAcommitteeIs()));
+			info.setIsSetUpPartyOrg(dict.getValueByCode(CommonConstants.YES_NO, info.getIsSetUpPartyOrg()));
+			info.setIsInstructor(dict.getValueByCode(CommonConstants.YES_NO, info.getIsInstructor()));
+			info.setIsTrainingInRotation(dict.getValueByCode(CommonConstants.YES_NO, info.getIsTrainingInRotation()));
+			info.setIsPartyMemberTrain(dict.getValueByCode(CommonConstants.YES_NO, info.getIsPartyMemberTrain()));
+			info.setHasSociaty(dict.getValueByCode(CommonConstants.YES_NO, info.getHasSociaty()));
+			info.setHasYouthLeague(dict.getValueByCode(CommonConstants.YES_NO, info.getHasYouthLeague()));
+			info.setHasWomenLeague(dict.getValueByCode(CommonConstants.YES_NO, info.getHasWomenLeague()));
+			info.setIsOneself(dict.getValueByCode(CommonConstants.YES_NO, info.getIsOneself()));
+			info.setIsIntoManage(dict.getValueByCode(CommonConstants.YES_NO, info.getIsIntoManage()));
+			info.setIsDevelopListen(dict.getValueByCode(CommonConstants.YES_NO, info.getIsDevelopListen()));
+			info.setIsDevelopDiscussions(dict.getValueByCode(CommonConstants.YES_NO, info.getIsDevelopDiscussions()));
+			info.setIsDevelopAnalysis(dict.getValueByCode(CommonConstants.YES_NO, info.getIsDevelopAnalysis()));
+			info.setIsChangeEveryyear(dict.getValueByCode(CommonConstants.YES_NO, info.getIsChangeEveryyear()));
+			
+		}
 	}
+	
+	/**
+	 * 转换数据集合
+	 * 
+	 * @param rows
+	 */
+	private void convertRowsBySocial(List<SocialWorkLedger> rows) {
+		for (SocialWorkLedger info : rows) {
+			this.convertRowBySocial(info);
+		}
+	}
+
+	/**
+	 * 转换单条数据
+	 * 
+	 * @param info
+	 */
+	private void convertRowBySocial(SocialWorkLedger main) {
+
+		
+		//党建参检结果annualSurvey 0：合格 1：基本合格 2：不合格3：未参检
+		if("0".equals(main.getAnnualSurvey())){
+			main.setQualified("√");
+			main.setBasicQualified("×");
+			main.setNoQualified("×");
+			main.setNoJoin("×");
+		}else if("1".equals(main.getAnnualSurvey())){
+			main.setQualified("×");
+			main.setBasicQualified("√");
+			main.setNoQualified("×");
+			main.setNoJoin("×");
+		}else if("2".equals(main.getAnnualSurvey())){
+			main.setQualified("×");
+			main.setBasicQualified("×");
+			main.setNoQualified("√");
+			main.setNoJoin("×");
+		}else if("3".equals(main.getAnnualSurvey())){
+			main.setQualified("×");
+			main.setBasicQualified("×");
+			main.setNoQualified("×");
+			main.setNoJoin("√");
+		}
+		//党组织组建形式partyOrgForm 0：单独建立 1：联合建立 2：网格建立
+		if("0".equals(main.getPartyOrgForm())){
+			main.setAloneCreate("√");
+			main.setUnionCreate("×");
+			main.setGridCreate("×");
+			main.setCoverCreate("×");
+		}else if("1".equals(main.getPartyOrgForm())){
+			main.setAloneCreate("×");
+			main.setUnionCreate("√");
+			main.setGridCreate("×");
+			main.setCoverCreate("×");
+		}else if("2".equals(main.getPartyOrgForm())){
+			main.setAloneCreate("×");
+			main.setUnionCreate("×");
+			main.setGridCreate("√");
+			main.setCoverCreate("×");
+		}else{
+			main.setAloneCreate("×");
+			main.setUnionCreate("×");
+			main.setGridCreate("×");
+			main.setCoverCreate("√");
+		}
+		//党组织类别partyOrgType 0：党委 1：党总支 2：党支部 3联合党支部
+		if("0".equals(main.getPartyOrgType())){
+			main.setPartyBranch("√");
+			main.setGeneralParty("×");
+			main.setPartyCommittee("×");
+			main.setPartyGridCommittee("×");
+		}else if("1".equals(main.getPartyOrgType())){
+			main.setPartyBranch("×");
+			main.setGeneralParty("√");
+			main.setPartyCommittee("×");
+			main.setPartyGridCommittee("×");
+		}else if("2".equals(main.getPartyOrgType())){
+			main.setPartyBranch("×");
+			main.setGeneralParty("×");
+			main.setPartyCommittee("√");
+			main.setPartyGridCommittee("×");
+		}else if("3".equals(main.getPartyOrgType())){
+			main.setPartyBranch("×");
+			main.setGeneralParty("×");
+			main.setPartyCommittee("×");
+			main.setPartyGridCommittee("√");
+		}
+		//未建立党组织原因absencePartyOrgReasion 0：正式党员不足三人 1：其他 2：企业出资人不支持 3：上级党组织未及时指导
+		if("0".equals(main.getAbsencePartyOrgReasion())){
+			main.setNoParty("√");
+			main.setPartyOther("×");
+			main.setNoGuidance("×");
+			main.setNoSupport("×");
+		}else if("1".equals(main.getAbsencePartyOrgReasion())){
+			main.setNoParty("×");
+			main.setPartyOther("√");
+			main.setNoGuidance("×");
+			main.setNoSupport("×");
+		}else if("2".equals(main.getAbsencePartyOrgReasion())){
+			main.setNoParty("×");
+			main.setPartyOther("×");
+			main.setNoGuidance("√");
+			main.setNoSupport("×");
+		}else if("3".equals(main.getAbsencePartyOrgReasion())){
+			main.setNoParty("×");
+			main.setPartyOther("×");
+			main.setNoGuidance("×");
+			main.setNoSupport("√");
+		}
+		//书记来源secretarySource 0：出资人担任 1：中层管理人员担任 2：上级党组织选派 3：其他人员担任
+		main.setSecretaryName1(main.getSecretaryName());
+		if("0".equals(main.getSecretarySource())){
+			main.setContributor("√");
+			main.setMidBear("×");
+			main.setUpBear("×");
+			main.setBearOther("×");
+			main.setContributor1("√");
+			main.setMidBear1("×");
+			main.setUpBear1("×");
+			main.setPrinConcurrently("×");
+		}else if("1".equals(main.getSecretarySource())){
+			main.setContributor("×");
+			main.setMidBear("√");
+			main.setUpBear("×");
+			main.setBearOther("×");
+			main.setContributor1("×");
+			main.setMidBear1("√");
+			main.setUpBear1("×");
+			main.setPrinConcurrently("×");
+		}else if("2".equals(main.getSecretarySource())){
+			main.setContributor("×");
+			main.setMidBear("×");
+			main.setUpBear("√");
+			main.setBearOther("×");
+			main.setContributor1("×");
+			main.setMidBear1("×");
+			main.setUpBear1("√");
+			main.setPrinConcurrently("×");
+		}else if("3".equals(main.getSecretarySource())){
+			main.setContributor("×");
+			main.setMidBear("×");
+			main.setUpBear("×");
+			main.setBearOther("√");
+			main.setContributor1("×");
+			main.setMidBear1("×");
+			main.setUpBear1("×");
+			main.setPrinConcurrently("×");
+		}else if("4".equals(main.getSecretarySource())){
+			main.setContributor("×");
+			main.setMidBear("×");
+			main.setUpBear("×");
+			main.setBearOther("×");
+			main.setContributor1("×");
+			main.setMidBear1("×");
+			main.setUpBear1("×");
+			main.setPrinConcurrently("√");
+		}
+		//党组织所隶属上级党组织parentPartyOrgType 0:区教育局党组织 
+		//1:区人力资源社会保障局党组织 2:区社会组织党委 3:乡镇(街道)党组织 4:社区党组织 5:其他
+		if("0".equals(main.getParentPartyOrgType())){
+			main.setEduPartOrg("√");
+			main.setSocialPartyOrg("×");
+			main.setSocialParty("×");
+			main.setTownParyOrg("×");
+			main.setCommunityPartyOrg("×");
+			main.setOtherPartyOrg("×");
+		}else if("1".equals(main.getParentPartyOrgType())){
+			main.setEduPartOrg("×");
+			main.setSocialPartyOrg("√");
+			main.setSocialParty("×");
+			main.setTownParyOrg("×");
+			main.setCommunityPartyOrg("×");
+			main.setOtherPartyOrg("×");
+		}else if("2".equals(main.getParentPartyOrgType())){
+			main.setEduPartOrg("×");
+			main.setSocialPartyOrg("×");
+			main.setSocialParty("√");
+			main.setTownParyOrg("×");
+			main.setCommunityPartyOrg("×");
+			main.setOtherPartyOrg("×");
+		}else if("3".equals(main.getParentPartyOrgType())){
+			main.setEduPartOrg("×");
+			main.setSocialPartyOrg("×");
+			main.setSocialParty("×");
+			main.setTownParyOrg("√");
+			main.setCommunityPartyOrg("×");
+			main.setOtherPartyOrg("×");
+		}else if("4".equals(main.getParentPartyOrgType())){
+			main.setEduPartOrg("×");
+			main.setSocialPartyOrg("×");
+			main.setSocialParty("×");
+			main.setTownParyOrg("×");
+			main.setCommunityPartyOrg("√");
+			main.setOtherPartyOrg("×");
+		}else if("5".equals(main.getParentPartyOrgType())){
+			main.setEduPartOrg("×");
+			main.setSocialPartyOrg("×");
+			main.setSocialParty("×");
+			main.setTownParyOrg("×");
+			main.setCommunityPartyOrg("×");
+			main.setOtherPartyOrg("√");
+		}
+	}
+
+	/**
+	 * 转换数据集合
+	 * 
+	 * @param rows
+	 */
+	private void convertDictBySocial(List<SocialWorkLedger> rows) {
+		SimpleDateFormat sdf = new SimpleDateFormat();
+		for (SocialWorkLedger info : rows) {
+			if(info.getPartyOrgTime() != null){
+				info.setPartyOrgTimeTxt(sdf.format(info.getPartyOrgTime()));
+			}
+			info.setCategory(dict.getValueByCode(CommonConstants.ORG_CATEGORY, info.getCategory()));
+			info.setChargePartymemberIs(dict.getValueByCode(CommonConstants.YES_NO, info.getChargePartymemberIs()));
+			info.setChargePartyorgSecretaryIs(dict.getValueByCode(CommonConstants.YES_NO, info.getChargePartyorgSecretaryIs()));
+			info.setChargeTwodeputyAcommitteeIs(dict.getValueByCode(CommonConstants.YES_NO, info.getChargeTwodeputyAcommitteeIs()));
+			info.setIsSetUpPartyOrg(dict.getValueByCode(CommonConstants.YES_NO, info.getIsSetUpPartyOrg()));
+			info.setIsInstructor(dict.getValueByCode(CommonConstants.YES_NO, info.getIsInstructor()));
+			info.setIsPartyMemberTrain(dict.getValueByCode(CommonConstants.YES_NO, info.getIsPartyMemberTrain()));
+			info.setIsTrainingInRotation(dict.getValueByCode(CommonConstants.YES_NO, info.getIsTrainingInRotation()));
+			info.setPartyMeetingMonth(dict.getValueByCode(CommonConstants.YES_NO, info.getPartyMeetingMonth()));
+			info.setIsBoardOfficer(dict.getValueByCode(CommonConstants.YES_NO, info.getIsBoardOfficer()));
+			if(info.getDeputySecretaryFullIs() != null && Integer.parseInt(info.getDeputySecretaryFullIs()) > 0){
+				info.setDeputySecretaryFullIs("是");
+			}else{
+				info.setDeputySecretaryFullIs("否");
+			}
+			
+			info.setDeputySecreraryNumberIs(dict.getValueByCode(CommonConstants.YES_NO, info.getDeputySecreraryNumberIs()));
+			info.setIsIdeologicalPoliticalOrg(dict.getValueByCode(CommonConstants.YES_NO, info.getIsIdeologicalPoliticalOrg()));
+			info.setIsPartyIntoSchool(dict.getValueByCode(CommonConstants.YES_NO, info.getIsPartyIntoSchool()));
+			info.setIsMoralEducationOrg(dict.getValueByCode(CommonConstants.YES_NO, info.getIsMoralEducationOrg()));
+			info.setIsIntoManage(dict.getValueByCode(CommonConstants.YES_NO, info.getIsIntoManage()));
+		}
+	}
+	
+	
 }

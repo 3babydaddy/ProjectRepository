@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tf.base.unpublic.persistence.PartyInstructorInfoMapper">
+  <resultMap id="BaseResultMap" type="com.tf.base.unpublic.domain.PartyInstructorInfo">
+    <id column="party_instructor_id" jdbcType="INTEGER" property="partyInstructorId" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="party_org_id" jdbcType="INTEGER" property="partyOrgId" />
+    <result column="instructor_name" jdbcType="VARCHAR" property="instructorName" />
+    <result column="instructor_sex" jdbcType="VARCHAR" property="instructorSex" />
+    <result column="instructor_comp" jdbcType="VARCHAR" property="instructorComp" />
+    <result column="instructor_job" jdbcType="VARCHAR" property="instructorJob" />
+    <result column="instructor_education" jdbcType="VARCHAR" property="instructorEducation" />
+    <result column="instruct_orgs" jdbcType="VARCHAR" property="instructOrgs" />
+    <result column="creater" jdbcType="VARCHAR" property="creater" />
+    <result column="create_org" jdbcType="VARCHAR" property="createOrg" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    party_instructor_id, type, party_org_id, instructor_name, instructor_sex, instructor_comp, 
+    instructor_job, instructor_education, instruct_orgs, creater, create_org, create_time, 
+    status
+  </sql>
+  <update id="deleteInstructInfo">
+  	update party_instructor_info set status = '2' where party_org_id = #{partyOrgId}
+  </update>
+</mapper>

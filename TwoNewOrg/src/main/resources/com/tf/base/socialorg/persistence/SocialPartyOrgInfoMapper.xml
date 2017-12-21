@@ -26,7 +26,6 @@
     <result column="secretary_education" jdbcType="VARCHAR" property="secretaryEducation" />
     <result column="secretary_source" jdbcType="VARCHAR" property="secretarySource" />
     <result column="secretary_company" jdbcType="VARCHAR" property="secretaryCompany" />
-    <result column="is_board_officer" jdbcType="VARCHAR" property="isBoardOfficer" />
     <result column="part_time_workers" jdbcType="INTEGER" property="partTimeWorkers" />
     <result column="full_time_workers" jdbcType="INTEGER" property="fullTimeWorkers" />
     <result column="stage_area" jdbcType="VARCHAR" property="stageArea" />
@@ -45,20 +44,24 @@
     is_instructor, instructor_name, instructor_unit, instructor_job, party_org_time, 
     party_org_attachment, party_org_name, party_org_tel, subjection_party_name, subjection_party_id, 
     secretary_name, secretary_birthday, secretary_education, secretary_source, secretary_company, 
-    is_board_officer, part_time_workers, full_time_workers, stage_area, others_share_stage, 
+    part_time_workers, full_time_workers, stage_area, others_share_stage, 
     community_share_stage, other_info, is_party_into_school, parent_party_org_type, creater, 
     create_org, create_time, status
   </sql>
   <select id="queryList" resultMap="BaseResultMap">
   	<![CDATA[
   		SELECT
-			o.id as orgId,o.name, o.nature,
-			oc.partymbr_group_in_socielorg_num as partyInNum,
-			oc.partymbr_in_socielorg_num as partyNotInNum, p.*
+			o.id as orgId, o.name, o.nature,
+			(select count(*) from social_org_pmbr_info 
+					where social_org_info_id = o.id 
+					and partymbr_group_in_socialorg_is = '1') as partyInNum,
+			(select count(*) from social_org_pmbr_info 
+					where social_org_info_id = o.id 
+					and partymbr_group_in_socialorg_is = '0') as partyNotInNum, 
+			p.*
 		FROM
 			social_org_info o
 		LEFT JOIN social_party_org_info p ON o.social_party_org_id = p.id and p.status <> '0'
-		LEFT JOIN social_org_pmbr_count oc ON o.id = oc.social_org_info_id
 	]]>
   	<where>
   			o.status = '2' 
@@ -73,6 +76,25 @@
   		</if>
   		<if test="params.createOrg !=null and params.createOrg !='' ">
   			and o.create_org = #{params.createOrg}
+  		</if>
+  		<if test="params.creater !=null and params.creater !='' ">
+  			and p.creater like CONCAT('%', #{params.creater}, '%')
+  		</if>
+  		<if test="params.status !=null and params.status !=''">
+  			and p.status = #{params.status}
+  		</if>
+  		<if test="params.inOperator !=null and params.inOperator !='' and params.partyInNum !=null and params.partyInNum !=''">
+  			and (select count(*) from social_org_pmbr_info 
+					where social_org_info_id = o.id 
+					and partymbr_group_in_socialorg_is = '1') ${params.inOperator} ${params.partyInNum}
+  		</if>
+  		<if test="params.notinOperator !=null and params.notinOperator !='' and params.partyNotInNum !=null and params.partyNotInNum !=''">
+  			and (select count(*) from social_org_pmbr_info 
+					where social_org_info_id = o.id 
+					and partymbr_group_in_socialorg_is = '0') ${params.notinOperator} ${params.partyNotInNum}
+  		</if>
+  		<if test="params.isQuWeiSign !=null and params.isQuWeiSign !='' and params.isQuWeiSign == '1'.toString()">
+  			<![CDATA[ and p.status is not null ]]>
   		</if>
   	</where>
   	order by p.create_time desc	

@@ -88,6 +88,9 @@ public class UnPublicPartyConstructionController {
 		
 		if(!baseService.isQuWeiDept()){
 			params.setCreateOrg(deptId);
+		}else{
+			//工委列表展示过滤掉组织状态为正常;但还没有新建党组织的数据
+			params.setIsQuWeiSign("1");
 		}
 		PageHelper.startPage(page, rows, true);
 		List<UnpulicPartyOrgBuilding> list = unpulicPartyOrgBuildingMapper.queryList(params);
@@ -203,11 +206,8 @@ public class UnPublicPartyConstructionController {
 		String[] partyOrgArray = partyOrgIds.split(",");
 		for(int i = 0; i < partyOrgArray.length; i++){
 			if(partyOrgArray[i] != null && partyOrgArray[i].length() > 0){
-				UnpulicPartyOrgBuilding info = new UnpulicPartyOrgBuilding();
-				info.setId(Integer.parseInt(partyOrgArray[i]));
+				UnpulicPartyOrgBuilding info = unpulicPartyOrgBuildingMapper.selectByPrimaryKey(Integer.parseInt(partyOrgArray[i]));
 				info.setStatus(status);
-				//info.setUpdateTime(new Date());
-				//info.setUpdator(baseService.getUserName());
 				unpulicPartyOrgBuildingMapper.updateByPrimaryKeySelective(info);
 			}
 		}
@@ -222,11 +222,8 @@ public class UnPublicPartyConstructionController {
 	@RequestMapping(value="/unpublic/partyConstructionSetStatus",method=RequestMethod.POST)
 	@ResponseBody
 	public Map<String,Object> orgSetStatus(Model model,String id,String status){
-		UnpulicPartyOrgBuilding info = new UnpulicPartyOrgBuilding();
-		info.setId(Integer.parseInt(id));
+		UnpulicPartyOrgBuilding info = unpulicPartyOrgBuildingMapper.selectByPrimaryKey(Integer.parseInt(id));
 		info.setStatus(status);
-		//info.setUpdateTime(new Date());
-		//info.setUpdator(baseService.getUserName());
 		unpulicPartyOrgBuildingMapper.updateByPrimaryKeySelective(info);
 		return returnMsg(1, "操作成功!");
 	}
@@ -240,10 +237,9 @@ public class UnPublicPartyConstructionController {
 	@RequestMapping(value="/unpublic/partyconstructiondelete",method=RequestMethod.POST)
 	@ResponseBody
 	public Map<String,Object> orgdelete(Model model,String id){
-		UnpulicPartyOrgBuilding info = new UnpulicPartyOrgBuilding();
-		info.setId(Integer.parseInt(id));
-		info.setStatus("0");
 		try {
+			UnpulicPartyOrgBuilding info = unpulicPartyOrgBuildingMapper.selectByPrimaryKey(Integer.parseInt(id));
+			info.setStatus("0");
 			unpulicPartyOrgBuildingMapper.updateByPrimaryKeySelective(info);
 			//删除日志
 			logService.saveLog(LOG_OPERATION_TYPE.DELETE.toString(), 
@@ -359,18 +355,16 @@ public class UnPublicPartyConstructionController {
 		try {
 			String[] partyOrgIdArray = partyOrgIds.split(",");
 			for(int i = 0; i < partyOrgIdArray.length; i++){
-				UnpulicPartyOrgBuilding main = new UnpulicPartyOrgBuilding();
-				main.setId(Integer.parseInt(partyOrgIdArray[i]));
+				UnpulicPartyOrgBuilding main = unpulicPartyOrgBuildingMapper.selectByPrimaryKey(Integer.parseInt(partyOrgIdArray[i]));
 				main.setStatus("4");//已撤销
-				//main.setUpdateTime(new Date());
-				//main.setUpdator(baseService.getUserName());
 				unpulicPartyOrgBuildingMapper.updateByPrimaryKeySelective(main);
+				
+				UnpublicPartyOrgInfo info = unpublicPartyOrgInfoMapper.selectByPrimaryKey(main.getUnpublicPartyOrgId()+"");
+//				//撤销审核通过日志
+				logService.saveLog(LOG_OPERATION_TYPE.MODIFY.toString(), 
+						logService.getDetailInfo("log.unpublic.cancelok",
+								baseService.getUserName(),info.getPartyOrgName()));
 			}
-//			UnpublicPartyOrgInfo info = unpublicPartyOrgInfoMapper.selectByPrimaryKey(main.getUnpublicPartyOrgId()+"");
-//			//撤销审核通过日志
-//			logService.saveLog(LOG_OPERATION_TYPE.MODIFY.toString(), 
-//					logService.getDetailInfo("log.unpublic.cancelok",
-//							baseService.getUserName(),info.getPartyOrgName()));
 			return returnMsg(1, "审核通过，撤销该组织成功！");
 		} catch (Exception e) {
 			logger.debug("撤销审核通过社会组织信息时出现异常:{}", e.getMessage(),e);
@@ -385,7 +379,11 @@ public class UnPublicPartyConstructionController {
 	 */
 	private void editPage(Model model){
 		List<DataDictionary> yesNoList = dict.findByDmm(CommonConstants.YES_NO);
+		List<DataDictionary> partyorgStatusList = dict.findByDmm(CommonConstants.UNPUBLIC_ORG_STATUS);
 		model.addAttribute("yesNoList", yesNoList);
+		model.addAttribute("partyorgStatusList", partyorgStatusList);
+		model.addAttribute("createOrgName", baseService.getDeptNameById(baseService.getCurrentUserDeptId()));
+		model.addAttribute("createOrgId", baseService.getCurrentUserDeptId());
 	}
 	
 	

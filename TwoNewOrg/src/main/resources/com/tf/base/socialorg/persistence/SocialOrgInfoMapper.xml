@@ -21,6 +21,10 @@
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     <result column="updator" property="updator" jdbcType="VARCHAR" />
     <result column="create_org" property="createOrg" jdbcType="VARCHAR" />
+    <result column="social_party_org_id" property="socialPartyOrgId" jdbcType="VARCHAR" />
+    <result column="cover_party_org_id" property="coverPartyOrgId" jdbcType="VARCHAR" />
+    <result column="is_ideological_political_org" property="isIdeologicalPoliticalOrg" jdbcType="VARCHAR" />
+    <result column="is_moral_education_org" property="isMoralEducationOrg" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     <!--
@@ -63,9 +67,15 @@
   		<if test="params.createOrg !=null and params.createOrg !='' ">
   			and main.create_org = #{params.createOrg}
   		</if>
+  		<if test="params.creator !=null and params.creator !='' ">
+  			and main.creator LIKE CONCAT('%',#{params.creator},'%')
+  		</if>
   		<if test="params.otherCondition != null  and params.otherCondition != ''">
   			and  exists (select 1 from social_org_info_other_count t1 where t1.social_org_info_id = main.id 
                    and t1.field_name=#{params.otherCondition})
+  		</if>
+  		<if test="params.status !=null and params.status !=''">
+  			and main.status = #{params.status}
   		</if>
   	</where>
   </sql>

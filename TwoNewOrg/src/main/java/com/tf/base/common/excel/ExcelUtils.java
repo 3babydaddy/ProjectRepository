@@ -41,6 +41,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 
+import ch.qos.logback.core.joran.conditional.ElseAction;
 import net.sf.json.JSONObject;
 
 public class ExcelUtils<E> {
@@ -106,14 +107,14 @@ public class ExcelUtils<E> {
 
 	public static <T> void writeToFile(List<T> list, String filePath, int startRow) throws Exception {
 		// 创建并获取工作簿对象
-		Workbook wb = getWorkBook(list, startRow);
+		Workbook wb = getWorkBook(list, startRow,"");
 		// 写入到文件
 		FileOutputStream out = new FileOutputStream(filePath);
 		wb.write(out);
 		out.close();
 	}
 
-	public static <T> void writeToFile(List<T> list, int startRow, HttpServletResponse response)
+	public static <T> void writeToFile(List<T> list, int startRow, HttpServletResponse response, String flag)
 			throws Exception {
 		// 写入到文件
 		response.reset();
@@ -124,7 +125,7 @@ public class ExcelUtils<E> {
 
 		try {
 			// 创建并获取工作簿对象
-			Workbook wb = getWorkBook(list, startRow);
+			Workbook wb = getWorkBook(list, startRow, flag);
 			wb.write(ouputStream);// 写入到输出流
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -242,9 +243,14 @@ public class ExcelUtils<E> {
 	 * @return Workbook
 	 * @throws Exception
 	 */
-	public static <T> Workbook getWorkBook(List<T> list, int startRow) throws Exception {	
+	public static <T> Workbook getWorkBook(List<T> list, int startRow, String flag) throws Exception {	
 		String path = ExcelUtils.class.getClassLoader().getResource("").getPath();
-		FileInputStream fis = new FileInputStream(path+"/templet/social.xlsx");
+		FileInputStream fis = null;
+		if("unpublic".equals(flag)){
+			fis = new FileInputStream(path+"/templet/unpublic.xlsx");
+		}else if("socialorg".equals(flag)){
+			fis = new FileInputStream(path+"/templet/social.xlsx");
+		}
 		// 创建工作簿
 		XSSFWorkbook wb = new XSSFWorkbook(fis);
 		// Workbook wb = new SXSSFWorkbook(xs);

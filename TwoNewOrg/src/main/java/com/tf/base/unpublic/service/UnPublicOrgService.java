@@ -20,7 +20,6 @@ import com.tf.base.common.service.LogService;
 import com.tf.base.common.utils.DateUtil;
 import com.tf.base.common.utils.GeneralCalcUtils;
 import com.tf.base.common.utils.LogInfoExtUtil;
-import com.tf.base.socialorg.domain.SocialOrgInfoOtherCount;
 import com.tf.base.unpublic.domain.AddPmbrParams;
 import com.tf.base.unpublic.domain.AllParams;
 import com.tf.base.unpublic.domain.RemovePmbrParams;
@@ -337,9 +336,13 @@ public class UnPublicOrgService {
 	 * @param info
 	 */
 	@Transactional
-	public void delOrg(UnpublicOrgInfo info) {
-
-		unpublicOrgInfoMapper.updateByPrimaryKeySelective(info);
+	public void delOrg(String[] partyOrgIdArray) {
+		for(int i = 0; i < partyOrgIdArray.length; i++){
+			UnpublicOrgInfo info = new UnpublicOrgInfo();
+			info.setId(Integer.parseInt(partyOrgIdArray[i]));
+			info.setStatus("0");
+			unpublicOrgInfoMapper.updateByPrimaryKeySelective(info);
+		}
 	}
 
 	/**
@@ -358,8 +361,7 @@ public class UnPublicOrgService {
 		reason.setStatus(CommonConstants.STATUS_FLAG_VALID);
 		unpublicOrgCancelRecordMapper.insertSelective(reason);
 		
-		UnpublicOrgInfo main = new UnpublicOrgInfo();
-		main.setId(Integer.parseInt(id));
+		UnpublicOrgInfo main = unpublicOrgInfoMapper.selectByPrimaryKey(Integer.parseInt(id));
 		main.setStatus("3");//撤销申请中
 		unpublicOrgInfoMapper.updateByPrimaryKeySelective(main);
 	}
@@ -493,9 +495,8 @@ public class UnPublicOrgService {
 
 		UnpublicOrgPmbrInfo oldPmbrInfo = unpublicOrgPmbrInfoMapper.selectByPrimaryKey(params.getPmbrInfoId());
 		
-		UnpublicOrgPmbrInfo pmbrInfo = new UnpublicOrgPmbrInfo();
+		UnpublicOrgPmbrInfo pmbrInfo = unpublicOrgPmbrInfoMapper.selectByPrimaryKey(Integer.parseInt(params.getPmbrInfoId()));
 		pmbrInfo.setStatus("0");
-		pmbrInfo.setId(Integer.parseInt(params.getPmbrInfoId()));
 		unpublicOrgPmbrInfoMapper.updateByPrimaryKeySelective(pmbrInfo);
 		
 		UnpublicOrgPmbrChangeInfo pmbrChangeInfo = new UnpublicOrgPmbrChangeInfo();

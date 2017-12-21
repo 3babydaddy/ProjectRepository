@@ -42,13 +42,54 @@
                 </tr>
                 <tr style="height:5px;"></tr>
                 <tr>
-                	<td align="right">活动场所单位：</td>
-                    <td align= "left" >
-	                    <input type="text" id="createOrgTxt" size=15 readonly="readonly" onclick="showDept();" />
-	                    <input type="hidden" id="belongUnit" name="belongUnit" />
+                	<c:if test="${isQuWeiDept}">
+                		<td align="right">填报单位：</td>
+	                    <td align= "left" >
+		                    <input type="text" id="createOrgTxt" size=15 readonly="readonly" onclick="showDept();" />
+		                    <input type="hidden" id="createOrg" name="createOrg" />
+	                    </td>
+                	</c:if>
+                	<c:if test="${!isQuWeiDept}">
+                		<td align="right">填报单位：</td>
+	                    <td align= "left" >
+		                    <input type="text" class="easyui-textbox" readonly="readonly" style="width:160px;" value="${createOrgName}" />
+	                    </td>
+                	</c:if>
+                    <td align="right">状态：</td>
+                    <td align="left">
+                         <select class="easyui-combobox" id="status" name="status" style="width:160px;" data-options="editable:false">
+                            <option value="" >--请选择--</option>
+                            <c:forEach var="it" items="${partyorgStatusList}">
+                               <option value="${it.code}">${it.value}</option>
+                            </c:forEach>
+                        </select>
                     </td>
-                    
-                    <td   align="right" colspan="4" style="margin-right: 15px;"><a href="javascript:void(0)"
+                    <td align="right">创建人：</td>
+                    <td align="left"><input class="easyui-textbox" type="text" id="creater" name="creater" size=15/></td>
+                </tr>
+                 <tr style="height:5px;"></tr>
+                <tr>
+                 	<td align="right">正式党员：</td>
+                    <td align="left">
+                         <select class="easyui-combobox" id="inOperator" name="inOperator" data-options="editable:false" style="float:left;width:60px;font-size:12px;margin-top:2px;">
+                            <option value="" >请选择</option>
+                            <c:forEach var="it" items="${operatorList}">
+                               <option value="${it.code}">${it.value}</option>
+                            </c:forEach>
+                        </select>
+                        <input class="easyui-textbox" type="number" id="partyInNum" name="partyInNum" style="float:left;width:90px;" size=15/>
+                    </td>
+                    <td align="right">组织关系不在非公<br/>企业的党员总数：</td>
+                    <td align="left">
+                         <select class="easyui-combobox" id="notinOperator" name="notinOperator" data-options="editable:false" style="float:left;width:60px;font-size:12px;margin-top:2px;">
+                            <option value="" >请选择</option>
+                            <c:forEach var="it" items="${operatorList}">
+                               <option value="${it.code}">${it.value}</option>
+                            </c:forEach>
+                        </select>
+                        <input class="easyui-textbox" type="number" id="partyNotInNum" name="partyNotInNum" size=15 style="float:left;width:90px;" size=15/>
+                    </td>
+                	<td   align="right" colspan="2" style="margin-right: 15px;"><a href="javascript:void(0)"
                         class="easyui-linkbutton" icon="icon-search" id="searchBtn">查询</a></td>
                     <td align="right"></td>
                 </tr>

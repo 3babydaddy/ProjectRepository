@@ -28,7 +28,7 @@
 						<td style="text-align: left;"><input class="form-control" name="name" value="${main.name }" maxlength="50"/></td>
 						<td style="text-align: right;"><font color="red">*</font>性　　质：</td>
 						<td style="text-align: left;">
-							<select class="form-control" name="nature">
+							<select class="form-control" id="nature" name="nature">
 								<option value="" >--请选择--</option>
 	                            <c:forEach var="it" items="${orgNatureList}">
 								<optgroup label="${it.key }">
@@ -62,8 +62,25 @@
 					</tr>
 					<tr>
 						<td style="text-align: right;"><font color="red">*</font>住　　地：</td>
-						<td style="text-align: left;" colspan="3"><input class="form-control" name="address" value="${main.address }" maxlength="100"/></td>
-						
+						<td style="text-align: left;"><input class="form-control" name="address" value="${main.address }" maxlength="100"/></td>
+						<td style="text-align: right;"><font color="red">*</font>是否设立思想政治<br/>教育工作机构：</td>
+						<td style="text-align: left;">
+							<select class="form-control" id="isIdeologicalPoliticalOrg" name="isIdeologicalPoliticalOrg" disabled="disabled">
+								<option value="">-请选择-</option>
+								<c:forEach var="it" items="${yesNoList}">
+	                               <option value="${it.code}" <c:if test="${main.isIdeologicalPoliticalOrg == it.code }"> selected="selected"</c:if>>${it.value}</option>
+	                            </c:forEach>
+							</select>
+						</td>
+						<td style="text-align: right;"><font color="red">*</font>是否设立德育工作机构：</td>
+						<td style="text-align: left;">
+							<select class="form-control" id="isMoralEducationOrg" name="isMoralEducationOrg" disabled="disabled">
+								<option value="">-请选择-</option>
+								<c:forEach var="it" items="${yesNoList}">
+	                               <option value="${it.code}" <c:if test="${main.isMoralEducationOrg == it.code }"> selected="selected"</c:if>>${it.value}</option>
+	                            </c:forEach>
+							</select>
+						</td>
 					</tr>
 				</table>
 		   </div>

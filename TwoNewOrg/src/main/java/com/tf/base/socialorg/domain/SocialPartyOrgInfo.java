@@ -115,11 +115,7 @@ public class SocialPartyOrgInfo {
      */
     @Column(name = "secretary_company")
     private String secretaryCompany;
-    /**
-     * 是否是理事会成员
-     */
-    @Column(name = "is_board_officer")
-    private String isBoardOfficer;
+  
     /**
      * 其他党务工作者兼职人数
      */
@@ -210,7 +206,23 @@ public class SocialPartyOrgInfo {
     private String secretaryCompanyTxt;
     @Transient
     private String nature;
-
+    @Transient
+    private String isQuWeiSign; //1:是工委 0：否
+    @Transient
+    private String secretarySourceTxt;
+    @Transient
+    private String changeList;
+    @Transient
+    private String deputySecretaryList;
+    @Transient
+    private String instructList;
+    @Transient
+    private String lowerPartyList;
+    @Transient
+    private String inOperator;
+    @Transient
+    private String notinOperator;
+    
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -591,14 +603,6 @@ public class SocialPartyOrgInfo {
 		this.secretaryCompanyTxt = secretaryCompanyTxt;
 	}
 
-	public String getIsBoardOfficer() {
-		return isBoardOfficer;
-	}
-
-	public void setIsBoardOfficer(String isBoardOfficer) {
-		this.isBoardOfficer = isBoardOfficer;
-	}
-
 	public String getOtherShareStage() {
 		return otherShareStage;
 	}
@@ -637,6 +641,70 @@ public class SocialPartyOrgInfo {
 
 	public void setNature(String nature) {
 		this.nature = nature;
+	}
+
+	public String getIsQuWeiSign() {
+		return isQuWeiSign;
+	}
+
+	public void setIsQuWeiSign(String isQuWeiSign) {
+		this.isQuWeiSign = isQuWeiSign;
+	}
+
+	public String getSecretarySourceTxt() {
+		return secretarySourceTxt;
+	}
+
+	public void setSecretarySourceTxt(String secretarySourceTxt) {
+		this.secretarySourceTxt = secretarySourceTxt;
+	}
+
+	public String getChangeList() {
+		return changeList;
+	}
+
+	public void setChangeList(String changeList) {
+		this.changeList = changeList;
+	}
+
+	public String getDeputySecretaryList() {
+		return deputySecretaryList;
+	}
+
+	public void setDeputySecretaryList(String deputySecretaryList) {
+		this.deputySecretaryList = deputySecretaryList;
+	}
+
+	public String getInstructList() {
+		return instructList;
+	}
+
+	public void setInstructList(String instructList) {
+		this.instructList = instructList;
+	}
+
+	public String getLowerPartyList() {
+		return lowerPartyList;
+	}
+
+	public void setLowerPartyList(String lowerPartyList) {
+		this.lowerPartyList = lowerPartyList;
+	}
+
+	public String getInOperator() {
+		return inOperator;
+	}
+
+	public void setInOperator(String inOperator) {
+		this.inOperator = inOperator;
+	}
+
+	public String getNotinOperator() {
+		return notinOperator;
+	}
+
+	public void setNotinOperator(String notinOperator) {
+		this.notinOperator = notinOperator;
 	}
 
 

@@ -37,16 +37,17 @@ function loadData(){
 			     {field :"id",hidden:true}
 			    ,{field :"ck",title :"选择",checkbox:true}
 				,{field :"orgName",title :"企业名称",width :"8%", align:"center",formatter:ifNullShowHeng}
-				,{field :"partyInNum",title :"组织关系在社会企业的党员总数",width :"8%", align:"center",formatter:ifNullShowHeng}
-				,{field :"partyNotInNum",title :"组织关系不在社会企业的党员总数",width :"8%", align:"center",formatter:ifNullShowHeng}
+				,{field :"partyInNum",title :"正式党员",width :"6%", align:"center",formatter:ifNullShowHeng}
+				,{field :"partyNotInNum",title :"组织关系不在社会企业的党员总数",width :"6%", align:"center",formatter:ifNullShowHeng}
 				,{field :"partyOrgName",title :"党组织名称",width :"8%", align:"center",formatter:ifNullShowHeng}
 				,{field :"partyOrgFormTxt",title :"党组织组建形式",width :"8%", align:"center",formatter:ifNullShowHeng}
-				,{field :"partyOrgTypeTxt",title :"党组织类别",width :"8%", align:"center",formatter:ifNullShowHeng}
+				,{field :"partyOrgTypeTxt",title :"党组织类别",width :"6%", align:"center",formatter:ifNullShowHeng}
 				,{field :"partyOrgTel",title :"党组织联系电话",width :"10%", align:"center",formatter:ifNullShowHeng}
-				,{field :"subjectionPartyName",title :"隶属党组织名称",width :"10%", align:"center",formatter:ifNullShowHeng}
+				,{field :"subjectionPartyName",title :"隶属党组织名称",width :"8%", align:"center",formatter:ifNullShowHeng}
 				,{field :"secretaryName",title :"书记名称",width :"8%", align:"center",formatter:ifNullShowHeng}   
-	            ,{field :"secretarySource",title :"书记来源",width :"8%", align:"center",formatter:ifNullShowHeng}
-	            ,{field :"partyOrgTime",title :"党组织成立时间",width :"6%", align:"center",formatter:ifNullShowHeng}
+	            ,{field :"secretarySourceTxt",title :"书记来源",width :"6%", align:"center",formatter:ifNullShowHeng}
+	            ,{field :"partyOrgTimeTxt",title :"党组织成立时间",width :"10%", align:"center",formatter:ifNullShowHeng}
+	            ,{field :"creater",title :"创建人",width :"6%", align:"center",formatter:ifNullShowHeng}
 	            ,{field :"statusTxt",title :"状态",width :"6%", align:"center",formatter:ifNullShowHeng}
 	         ] ],
 	      onLoadSuccess : function(data) {
@@ -152,11 +153,12 @@ function addRow(){
 			orgIdStr = row[i].orgId;
 			orgNameStr = row[i].orgName;
 		}else{
-			orgIdStr = orgIdStr + "," + row[i].id;
-			orgNameStr = orgNameStr + "," + row[i].name;
+			orgIdStr = orgIdStr + "," + row[i].orgId;
+			orgNameStr = orgNameStr + "," + row[i].orgName;
 		}
 	}
-	var url = ctx + '/socialorg/partyorgedit?id=&orgIds='+orgIdStr+'&orgNames='+orgNameStr;
+	var nature = row[0].nature;
+	var url = ctx + '/socialorg/partyorgedit?id=&orgIds='+orgIdStr+'&orgNames='+orgNameStr+'&nature='+nature;
 	//openWin("编辑", url,"90%","90%",function(){reloadData()});
 	
 	utils.e.openWin('editwin','新增',url,"80%","80%",function(){
@@ -178,7 +180,7 @@ function editRow(){
 	}
 	var id = row.id;
 	if(id == null){
-		layer.alert('“'+row.orgName + '”未进行过新增操作！');
+		layer.alert('“'+row.orgName + '”未进行过党组织信息录入操作！');
 		return;
 	}
 	if(row.status == 2 || row.status == 5){
@@ -211,8 +213,12 @@ function lookRow(){
 		row = row[0];
 	}
 	var id = row.id;
+	if(id == null){
+		layer.alert('“'+row.orgName + '”未进行过新增操作！');
+		return;
+	}
 	var nature = row.nature; 
-	var url = ctx + '/socialorg/partyOrglook?id='+id;
+	var url = ctx + '/socialorg/partyOrglook?id='+id+'&nature='+nature;
 	//openWin("查看", url,"90%","90%");
 	utils.e.openWin('lookwin','查看',url,"80%","80%",function(){
 		reloadData()
@@ -229,7 +235,7 @@ function cancelRow(){
 	}
 	var id = row.id;
 	if(row.status > 2 || row.status < 2){
-		layer.alert('“'+row.partyOrgName + '”不能进行撤销操作！');
+		layer.alert('“'+row.orgName + '”不能进行撤销操作！');
 		return;
 	}
 	var url = ctx + '/socialorg/partyorgcancel?id='+id+'&method=edit';
@@ -252,7 +258,7 @@ function cancelReasonRow(id){
 	var id = row.id;
 	
 	if(row.status != 3 && row.status != 4){//撤销中和已撤销时
-		layer.alert('“'+row.partyOrgName + '”没有进行撤销操作，不能查看撤销原因！');
+		layer.alert('“'+row.orgName + '”没有进行撤销操作，不能查看撤销原因！');
 		return;
 	}
 	
@@ -273,10 +279,11 @@ function delRow(id){
 	}
 	var id = row.id;
 	if(id==undefined){
+		layer.alert('“'+row.orgName + '”未建立党组织,不能进行删除操作！');
 		return;
 	}
 	if(row.status != 1){
-		layer.alert('“'+row.partyOrgName + '”不能进行删除操作！');
+		layer.alert('“'+row.orgName + '”不能进行删除操作！');
 		return;
 	}
 	layer.confirm('您确认想要删除记录吗？',function(index){  
@@ -311,7 +318,7 @@ function nocancel(){
 	}
 	var id = row.id;
 	if(row.status != 3){
-		layer.alert('“'+row.partyOrgName + '”未进行撤销申请，不能进行取消撤销操作！');
+		layer.alert('“'+row.orgName + '”未进行撤销申请，不能进行取消撤销操作！');
 		return;
 	}
 	layer.confirm('您想要取消撤销审批吗？',function(){    
@@ -349,7 +356,7 @@ function  cancelok(){
 				partyOrgIds = partyOrgIds + ',' + row[i].id;
 			}
 		}else{
-			layer.alert('“'+row[i].partyOrgName + '”未进行撤销申请，不能进行撤销通过操作！');
+			layer.alert('“'+row[i].orgName + '”未进行撤销申请，不能进行撤销通过操作！');
 			return;
 		}
 	}
@@ -391,7 +398,7 @@ function returnRow(){
 	}
 	var id = row.id;
 	if(row.status != 2 && row.status != 5){
-		layer.alert('“'+row.partyOrgName + '”未进行上报，不能进行退回操作！');
+		layer.alert('“'+row.orgName + '”未进行上报，不能进行退回操作！');
 		return;
 	}
 	layer.confirm('您确认要退回操作吗？',function(){    
@@ -433,7 +440,7 @@ function reportHigherRow(){
 				partyOrgIds = partyOrgIds + ',' + row[i].id;
 			}
 		}else{
-			layer.alert('“'+row[i].partyOrgName + '”未进行上报，不能进行上报通过操作！');
+			layer.alert('“'+row[i].orgName + '”未进行上报，不能进行上报通过操作！');
 			return;
 		}
 	}

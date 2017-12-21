@@ -13,12 +13,9 @@ $(function(){
 			}
 			i++;
 			$(this).prev().find(".operate_address").val("").trigger('change');
-			$(this).prev().find("input[name=partymbrInUnpublicNum"+(i-1)+"]").attr('id','partymbrInUnpublicNum'+i).val("");
-			$(this).prev().find("input[name=filepartymbrUnderThirtyfiveNum"+(i-1)+"]").attr('id','filepartymbrUnderThirtyfiveNum'+i).val("");
-			$(this).prev().find("input[name=partymbrUnderThirtyfiveNum"+(i-1)+"]").attr('id','partymbrUnderThirtyfiveNum'+i).val("");
-			$(this).prev().find("input[name=partymbrInUnpublicNum"+(i-1)+"]").attr('name','partymbrInUnpublicNum'+i).val("");
-			$(this).prev().find("input[name=filepartymbrUnderThirtyfiveNum"+(i-1)+"]").attr('name','filepartymbrUnderThirtyfiveNum'+i).val("");
-			$(this).prev().find("input[name=partymbrUnderThirtyfiveNum"+(i-1)+"]").attr('name','partymbrUnderThirtyfiveNum'+i).val("");
+			$(this).prev().find("input[id=partymbrInUnpublicNum"+(i-1)+"]").attr('id','partymbrInUnpublicNum'+i).val("");
+			$(this).prev().find("input[id=filepartymbrUnderThirtyfiveNum"+(i-1)+"]").attr('id','filepartymbrUnderThirtyfiveNum'+i).val("");
+			$(this).prev().find("input[id=partymbrUnderThirtyfiveNum"+(i-1)+"]").attr('id','partymbrUnderThirtyfiveNum'+i).val("");
 		});
 		
 		$("#editForm").on('click','.remove_operate_address',function(){
@@ -35,13 +32,13 @@ $(function(){
 			}
 			j++;
 			$(this).prev().find(".operate_party").val("").trigger('change');
-			$(this).prev().find("select[name=deputySecretaryType"+(j-1)+"]").attr('name','deputySecretaryType'+j).val("");
-			$(this).prev().find("input[name=deputySecretaryName"+(j-1)+"]").attr('name','deputySecretaryName'+j).val("");
-			$(this).prev().find("input[name=deputySecretaryBirthdayTxt"+(j-1)+"]").attr('name','deputySecretaryBirthdayTxt'+j).val("");
-			$(this).prev().find("select[name=deputySecretarySex"+(j-1)+"]").attr('name','deputySecretarySex'+j).val("");
-			$(this).prev().find("select[name=deputySecretaryEducation"+(j-1)+"]").attr('name','deputySecretaryEducation'+j).val("");
-			$(this).prev().find("select[name=deputySecretaryIsFullTime"+(j-1)+"]").attr('name','deputySecretaryIsFullTime'+j).val("");
-			$(this).prev().find("select[name=isBoardOfficer"+(j-1)+"]").attr('name','isBoardOfficer'+j).val("");
+			$(this).prev().find("select[name=deputySecretaryType]").val("");
+			$(this).prev().find("input[name=deputySecretaryName]").val("");
+			$(this).prev().find("input[name=deputySecretaryBirthdayTxt]").val("");
+			$(this).prev().find("select[name=deputySecretarySex]").val("");
+			$(this).prev().find("select[name=deputySecretaryEducation]").val("");
+			$(this).prev().find("select[name=deputySecretaryIsFullTime]").val("");
+			$(this).prev().find("select[name=isBoardOfficer]").val("");
 		});
 		
 		$("#editForm").on('click','.remove_operate_party',function(){
@@ -49,10 +46,6 @@ $(function(){
 				j--;
 		});
 		
-		$("#isInstructor").on('change', function(){
-			showInstructorInfo();
-		});
-		showInstructorInfo();
 });
 
 function getQueryParams() {
@@ -72,15 +65,6 @@ function reloadData(){
 	$('#gridPanel').datagrid('options').queryParams = params;
 	
 	 $('#gridPanel').datagrid('reload');
-}
-
-function showInstructorInfo(){
-	var setUpSign = $("#isInstructor").val();
-	if(setUpSign == 0 && setUpSign != ""){
-		document.getElementById("divOne").style.display='none';
-	}else{
-		document.getElementById("divOne").style.display='';
-	}
 }
 
 function save(flag){
@@ -105,6 +89,8 @@ function submitReport(){
 function submit(flag){
 	//var formdata=new FormData($("#editForm")[0]);
 	//alert($("#editForm").serialize());
+	changeInfoConver();
+	deputySecConver();
 	$.ajax({
 		url:'../cover/partyorgedit',
 		type : 'post',
@@ -147,9 +133,6 @@ function validate(){
 	    	  required: true
 	      },
 	      partyOrgType:{
-	    	  required: true
-	      },
-	      isInstructor:{
 	    	  required: true
 	      },
 	      instructorName:{
@@ -226,18 +209,6 @@ function validate(){
 		    },
 		    partyOrgType: {
 	    		required: "请选择党组织类别"
-		    },
-		    isInstructor: {
-	    		required: "请选择是否选派党建工作指导员或联络员"
-		    },
-		    instructorName: {
-	    		required: "请填写选派党建工作指导员或联络员的姓名"
-		    },
-		    instructorUnitTxt: {
-	    		required: "请选择选派党建工作指导员或联络员的单位"
-		    },
-		    instructorJob: {
-	    		required: "请选择是否选派党建工作指导员或联络员"
 		    },
 		    partyOrgTimeTxt: {
 	    		required: "请填写选派党建工作指导员或联络员的职务"
@@ -395,6 +366,61 @@ function showPartyInfo(partyOrgId){
 	utils.e.openWin('showPartyInfoWin','党员基本信息',url,"80%","50%",function(){
 		//reloadData()
 	});
+}
+
+function changeInfoConver(){
+	var changeArray = new Array();
+	var changeTimes = document.getElementsByName("partymbrInUnpublicNum");
+	var changeFiles = document.getElementsByName("partymbrUnderThirtyfiveNum");
+	for(var i = 0; i < changeTimes.length; i++){
+		if(changeTimes[i].value != "" || changeFiles[i].value != ""){
+			var info = createChangeInfo(changeTimes[i].value, changeFiles[i].value);
+			changeArray.push(info);
+		}
+	}
+	//debugger;
+	$("#changeList").val(JSON.stringify(changeArray));
+}
+
+function deputySecConver(){
+	var deputySecArray = new Array();
+	var types = document.getElementsByName("deputySecretaryType");
+	var names = document.getElementsByName("deputySecretaryName");
+	var birthdayTxts = document.getElementsByName("deputySecretaryBirthdayTxt");
+	var sexs = document.getElementsByName("deputySecretarySex");
+	var educations = document.getElementsByName("deputySecretaryEducation");
+	var isFullTimes = document.getElementsByName("deputySecretaryIsFullTime");
+	var isBoardOfficers = document.getElementsByName("isBoardOfficer");
+	for(var i = 0; i < types.length; i++){
+		if(types[i].value != "" || names[i].value != "" || birthdayTxts[i].value != "" || sexs[i].value != ""
+				|| educations[i].value != "" || isFullTimes[i].value != "" || isBoardOfficers[i].value != ""){
+			var info = createDuputySecInfo(types[i].value, names[i].value, birthdayTxts[i].value, sexs[i].value
+					, educations[i].value, isFullTimes[i].value, isBoardOfficers[i].value);
+			deputySecArray.push(info);
+		}
+	}
+	$("#deputySecretaryList").val(JSON.stringify(deputySecArray));
+}
+
+//换届信息实体类
+function createChangeInfo(changeTimeTxt, changeAttachmentId){
+	var changeInfo = new Object();
+	changeInfo.changeTimeTxt = changeTimeTxt;
+	changeInfo.changeAttachmentId = changeAttachmentId;
+	return changeInfo;
+}
+//党务信息实体类
+function createDuputySecInfo(deputySecretaryType, deputySecretaryName, deputySecretaryBirthdayTxt, deputySecretarySex,
+							deputySecretaryEducation, deputySecretaryIsFullTime, isBoardOfficer){
+	var duputySecInfo = new Object();
+	duputySecInfo.deputySecretaryType = deputySecretaryType;
+	duputySecInfo.deputySecretaryName = deputySecretaryName;
+	duputySecInfo.deputySecretaryBirthdayTxt = deputySecretaryBirthdayTxt;
+	duputySecInfo.deputySecretarySex = deputySecretarySex;
+	duputySecInfo.deputySecretaryEducation = deputySecretaryEducation;
+	duputySecInfo.deputySecretaryIsFullTime = deputySecretaryIsFullTime;
+	duputySecInfo.isBoardOfficer = isBoardOfficer;
+	return duputySecInfo;
 }
 
 function getElByName(name){

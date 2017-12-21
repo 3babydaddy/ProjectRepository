@@ -137,6 +137,10 @@ public class SocialPartyOrgBuilding {
     private String annualSurveyTxt;
     @Transient
     private String statusTxt;
+    @Transient
+    private String nature;
+    @Transient
+    private String isQuWeiSign; //1:是工委 2：否
     
 
     @Override
@@ -397,6 +401,22 @@ public class SocialPartyOrgBuilding {
 
 	public void setStatusTxt(String statusTxt) {
 		this.statusTxt = statusTxt;
+	}
+
+	public String getNature() {
+		return nature;
+	}
+
+	public void setNature(String nature) {
+		this.nature = nature;
+	}
+
+	public String getIsQuWeiSign() {
+		return isQuWeiSign;
+	}
+
+	public void setIsQuWeiSign(String isQuWeiSign) {
+		this.isQuWeiSign = isQuWeiSign;
 	}
 
 	

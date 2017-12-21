@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
@@ -59,7 +60,6 @@ import com.tf.base.socialorg.persistence.SocialOrgPmbrChangeInfoMapper;
 import com.tf.base.socialorg.persistence.SocialOrgPmbrCountMapper;
 import com.tf.base.socialorg.persistence.SocialOrgPmbrInfoMapper;
 import com.tf.base.socialorg.service.OrgService;
-import com.tf.base.unpublic.domain.UnpublicOrgPmbrInfo;
 
 import tk.mybatis.mapper.entity.Example;
 
@@ -119,13 +119,10 @@ public class OrgController {
 	 * @param response
 	 */
 	@RequestMapping(value="/socialorg/orglist",method=RequestMethod.POST)
-	public void orglist(SocialOrgInfo params,
-			int page,int rows,HttpServletResponse response){
-		
+	public void orglist(SocialOrgInfo params, int page,int rows,
+			HttpServletRequest request, HttpServletResponse response){
 		String deptId = baseService.getCurrentUserDeptId();
-
 		logger.debug("当前登录用户部门ID:===========>" + deptId + " ,是否为区委部门?" + baseService.isQuWeiDept());
-		
 		String orderby = "";
 		//查看
 		if(baseService.isQuWeiDept()){
@@ -159,7 +156,8 @@ public class OrgController {
 		main.setStatusTxt(dictionaryRepository.getValueByCode(CommonConstants.SOCIAL_ORG_STATUS, main.getStatus()));
 		main.setNatureTxt(dictionaryRepository.getValueByCode(CommonConstants.ORG_NATURE,main.getNature()));
 		main.setCategoryTxt(dictionaryRepository.getValueByCode(CommonConstants.ORG_CATEGORY, main.getCategory()));
-		
+		main.setIsIdeologicalPoliticalOrgTxt(dictionaryRepository.getValueByCode(CommonConstants.YES_NO,main.getIsIdeologicalPoliticalOrg()));
+		main.setIsMoralEducationOrgTxt(dictionaryRepository.getValueByCode(CommonConstants.YES_NO,main.getIsMoralEducationOrg()));
 		//从业人员
 		SocialOrgJobinCount count = new SocialOrgJobinCount();
 		count.setSocialOrgInfoId(mainId);
@@ -327,10 +325,8 @@ public class OrgController {
 	public Map<String,Object> orgSetStatus(Model model,String partyOrgIds,String status){
 		String[] partyOrgIdArray = partyOrgIds.split(",");
 		for(int i = 0; i < partyOrgIdArray.length; i++){
-			SocialOrgInfo info = new SocialOrgInfo();
-			info.setId(Integer.parseInt(partyOrgIdArray[i]));
+			SocialOrgInfo info = socialOrgInfoMapper.selectByPrimaryKey(partyOrgIdArray[i]);
 			info.setStatus(status);
-			
 			info.setUpdateTime(new Date());
 			info.setUpdator(baseService.getUserName());
 			socialOrgInfoMapper.updateByPrimaryKeySelective(info);
@@ -345,19 +341,17 @@ public class OrgController {
 	 */
 	@RequestMapping(value="/socialorg/orgdelete",method=RequestMethod.POST)
 	@ResponseBody
-	public Map<String,Object> orgdelete(Model model,String id){
-		SocialOrgInfo info = new SocialOrgInfo();
-		info.setId(Integer.parseInt(id));
-		info.setStatus("0");
-		
+	public Map<String,Object> orgdelete(Model model,String partyOrgIds){
+		String[] partyOrgIdArray = partyOrgIds.split(",");
 		try {
-			
-			orgService.delOrg(info);
-			
-			//删除日志
-			logService.saveLog(LOG_OPERATION_TYPE.DELETE.toString(), 
-					logService.getDetailInfo("log.socialorg.delete",
-							baseService.getUserName(),info.getName()));
+			orgService.delOrg(partyOrgIdArray);
+			for(int i = 0; i < partyOrgIdArray.length; i++){
+				SocialOrgInfo main = socialOrgInfoMapper.selectByPrimaryKey(partyOrgIdArray[i]);
+				//删除日志
+				logService.saveLog(LOG_OPERATION_TYPE.DELETE.toString(), 
+						logService.getDetailInfo("log.socialorg.delete",
+								baseService.getUserName(),main.getName()));
+			}
 			
 			return returnMsg(1, "删除成功!");
 		} catch (Exception e) {
@@ -460,13 +454,11 @@ public class OrgController {
 	@ResponseBody
 	public Map<String, Object> nocancel(Model model,String id,String remarks){
 		
-		SocialOrgInfo main = new SocialOrgInfo();
-		main.setId(Integer.parseInt(id));
+		SocialOrgInfo main = socialOrgInfoMapper.selectByPrimaryKey(Integer.parseInt(id));
 		main.setStatus("2");
-		
 		main.setUpdateTime(new Date());
 		main.setUpdator(baseService.getUserName());
-		socialOrgInfoMapper.updateByPrimaryKeySelective(main);
+		socialOrgInfoMapper.updateByPrimaryKey(main);
 		
 		try {
 			
@@ -496,12 +488,11 @@ public class OrgController {
 		try {
 			String[] partyOrgIdArray = partyOrgIds.split(",");
 			for(int i = 0; i < partyOrgIdArray.length; i++){
-				SocialOrgInfo main = new SocialOrgInfo();
-				main.setId(Integer.parseInt(partyOrgIdArray[i]));
+				SocialOrgInfo main = socialOrgInfoMapper.selectByPrimaryKey(Integer.parseInt(partyOrgIdArray[i]));
 				main.setStatus("4");//已撤销
 				main.setUpdateTime(new Date());
 				main.setUpdator(baseService.getUserName());
-				socialOrgInfoMapper.updateByPrimaryKeySelective(main);
+				socialOrgInfoMapper.updateByPrimaryKey(main);
 				
 				main = socialOrgInfoMapper.selectByPrimaryKey(partyOrgIdArray[i]);
 				//撤销审核通过日志
@@ -714,7 +705,7 @@ public class OrgController {
 		List<DataDictionary> orgCategoryList = dictionaryRepository.findByDmm(CommonConstants.ORG_CATEGORY);
 		List<DataDictionary> partyDeputyTypeList = dictionaryRepository.findByDmm(CommonConstants.PARTY_DEPUTY_TYPE);
 		List<DataDictionary> otherConditionList = dict.findByDmm(CommonConstants.SOCIAL_ORG_OTHER_CONDITION);
-		
+		List<DataDictionary> partyorgStatusList = dict.findByDmm(CommonConstants.UNPUBLIC_ORG_STATUS);
 		
 		model.addAttribute("yesNoList", yesNoList);
 		model.addAttribute("hasNotList", hasNotList);
@@ -723,6 +714,11 @@ public class OrgController {
 		model.addAttribute("orgCategoryList", orgCategoryList);
 		model.addAttribute("partyDeputyTypeList", partyDeputyTypeList);
 		model.addAttribute("otherConditionList", otherConditionList);
+		model.addAttribute("partyorgStatusList", partyorgStatusList);
+		model.addAttribute("createOrgName", baseService.getDeptNameById(baseService.getCurrentUserDeptId()));
+		model.addAttribute("createOrgId", baseService.getCurrentUserDeptId());
+		// 批量上报开关 例如 ：0关闭 1开启 
+		model.addAttribute("batchSwitch",dict.getValueByCode("SOCIAL_BATCH_SWITCH", "SWITCH"));
 	}
 	
 	/**
@@ -746,6 +742,8 @@ public class OrgController {
 		info.setCategoryTxt(dictionaryRepository.getValueByCode(CommonConstants.ORG_CATEGORY,info.getCategory()));
 		info.setStatusTxt(dictionaryRepository.getValueByCode(CommonConstants.SOCIAL_ORG_STATUS,info.getStatus()));
 		info.setCreateOrgTxt(baseService.getDeptNameById(info.getCreateOrg()));
+		info.setIsIdeologicalPoliticalOrgTxt(dictionaryRepository.getValueByCode(CommonConstants.YES_NO,info.getIsIdeologicalPoliticalOrg()));
+		info.setIsMoralEducationOrgTxt(dictionaryRepository.getValueByCode(CommonConstants.YES_NO,info.getIsMoralEducationOrg()));
 	}
 	
 	/**

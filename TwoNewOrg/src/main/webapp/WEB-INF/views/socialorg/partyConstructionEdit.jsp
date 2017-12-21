@@ -58,6 +58,7 @@
 						</td>
 						<td style="text-align: right;"><font color="red">*</font>党建工作经费总额：</td>
 						<td style="text-align: left;"><input class="form-control" name="totalPayDues" value="${main.totalPayDues }"/></td>
+					</tr>
 				</table>
 		   </div>
 		</div>
@@ -129,17 +130,19 @@
 							</select>
 						</td>
 					</tr>
-					<tr>
-						<td style="text-align: right;"><font color="red">*</font>党建工作经费是否列入学校年度经费预算：</td>
-						<td style="text-align: left;">
-							<select class="form-control" name="isIntoManage" id="isIntoManage">
-								<option value="">--请选择--</option>
-								<c:forEach var="it" items="${yesNoList}">
-									<option value="${it.code }" <c:if test="${main.partyMeetingMonth == it.code }"> selected="selected"</c:if>>${it.value }</option>
-								</c:forEach>
-							</select>
-						</td>
-					</tr>
+					<c:if test="${nature eq '0201' or nature eq '0204'}">
+						<tr>
+							<td style="text-align: right;"><font color="red">*</font>党建工作经费是否列入学校年度经费预算：</td>
+							<td style="text-align: left;">
+								<select class="form-control" name="isIntoManage" id="isIntoManage">
+									<option value="">--请选择--</option>
+									<c:forEach var="it" items="${yesNoList}">
+										<option value="${it.code }" <c:if test="${main.partyMeetingMonth == it.code }"> selected="selected"</c:if>>${it.value }</option>
+									</c:forEach>
+								</select>
+							</td>
+						</tr>
+					</c:if>
 				</table>
 		   </div>
 		</div>

@@ -135,7 +135,8 @@ public class CoverPartyOrgBuilding {
     private Integer reportHigher;
     @Transient
     private String statusTxt;
-    
+    @Transient
+    private String isQuWeiSign;//1：是工委 0：否
 
     @Override
     public String toString() {
@@ -438,6 +439,14 @@ public class CoverPartyOrgBuilding {
 
 	public void setStatusTxt(String statusTxt) {
 		this.statusTxt = statusTxt;
+	}
+
+	public String getIsQuWeiSign() {
+		return isQuWeiSign;
+	}
+
+	public void setIsQuWeiSign(String isQuWeiSign) {
+		this.isQuWeiSign = isQuWeiSign;
 	}
 
 	

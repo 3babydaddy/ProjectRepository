@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.tf.base.common.constants.CommonConstants;
@@ -112,8 +113,6 @@ public class CoverPartyOrgController {
 		List<CoverPartyOrgInfo> list = coverPartyOrgInfoMapper.queryList(params);
 		this.convertRows(list);
 		PageUtil.returnPage(response, new PageInfo<CoverPartyOrgInfo>(list));
-		
-		
 	}
 	
 	/**
@@ -232,6 +231,7 @@ public class CoverPartyOrgController {
 			CoverOrgPmbrCount copc = new CoverOrgPmbrCount();
 			model.addAttribute("main", main);
 			model.addAttribute("changeDateList", changeDateList);
+			model.addAttribute("deputsecList", deputsecList);
 			model.addAttribute("copc", copc);
 		}
 		editPage(model);
@@ -251,43 +251,29 @@ public class CoverPartyOrgController {
 		List<DeputySecretaryInfo> dsiList = new ArrayList<>();
 		String msg = "";
 		SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd" );
-		//换届信息和党副信息
-		for(int i = 0; i < 8; i++){
-        	String changeTime = request.getParameter("partymbrInUnpublicNum"+i);
-        	String fileId = request.getParameter("partymbrUnderThirtyfiveNum"+i);
-        	if(changeTime != null && changeTime.length()>0 && fileId != null && fileId.length()>0){
-        		CoverPartyOrgChangeInfo changeInfo = new CoverPartyOrgChangeInfo();
-        		changeInfo.setChangeTime(sdf.parse(changeTime));
-        		changeInfo.setChangeAttachmentId(Integer.parseInt(fileId));
-        		changeInfo.setCreater(baseService.getUserName());
-        		changeInfo.setCreateTime(new Date());
-        		changeInfo.setStatus("1");
-        		pociList.add(changeInfo);
-        	}
-        	DeputySecretaryInfo deputySecretaryInfo = new DeputySecretaryInfo();
-        	String type = request.getParameter("deputySecretaryType"+i);
-        	String name = request.getParameter("deputySecretaryName"+i);
-        	String brithday = request.getParameter("deputySecretaryBirthdayTxt"+i);
-        	String sex = request.getParameter("deputySecretarySex"+i);
-        	String education = request.getParameter("deputySecretaryEducation"+i);
-        	String isFullTime = request.getParameter("deputySecretaryIsFullTime"+i);
-        	String isBoardOfficer = request.getParameter("isBoardOfficer"+i);
-        	if(name != null && name.length() > 0 && brithday != null && brithday.length() > 0){
-        		deputySecretaryInfo.setDeputySecretaryType(type);
-            	deputySecretaryInfo.setDeputySecretaryName(name);
-            	deputySecretaryInfo.setDeputySecretaryBirthday(sdf.parse(brithday));
-            	deputySecretaryInfo.setDeputySecretarySex(sex);
-            	deputySecretaryInfo.setDeputySecretaryEducation(education);
-            	deputySecretaryInfo.setDeputySecretaryIsFullTime(isFullTime);
-            	deputySecretaryInfo.setIsBoardOfficer(isBoardOfficer);
-            	deputySecretaryInfo.setCreateOrg(baseService.getCurrentUserDeptId());
-            	deputySecretaryInfo.setCreater(baseService.getUserName());
-            	deputySecretaryInfo.setCreateTime(new Date());
-            	deputySecretaryInfo.setStatus("1");
-            	dsiList.add(deputySecretaryInfo);
-        	}
-        	
-        }
+		//换届信息
+		if(!coverPartyOrgInfo.getChangeList().isEmpty()){
+			pociList = JSON.parseArray(coverPartyOrgInfo.getChangeList(), CoverPartyOrgChangeInfo.class);
+			for(int i = 0; i < pociList.size(); i++){
+				pociList.get(i).setChangeTime(sdf.parse(pociList.get(i).getChangeTimeTxt()));
+				pociList.get(i).setCreater(baseService.getUserName());
+				pociList.get(i).setCreateTime(new Date());
+				pociList.get(i).setStatus("1");
+			}
+		}
+		
+		//党副信息
+		if(!coverPartyOrgInfo.getDeputySecretaryList().isEmpty()){
+			dsiList = JSON.parseArray(coverPartyOrgInfo.getDeputySecretaryList(), DeputySecretaryInfo.class);
+			for(int j = 0; j < dsiList.size(); j++){
+				dsiList.get(j).setDeputySecretaryBirthday(sdf.parse(dsiList.get(j).getDeputySecretaryBirthdayTxt()));
+				dsiList.get(j).setCreateOrg(baseService.getCurrentUserDeptId());
+				dsiList.get(j).setCreater(baseService.getUserName());
+				dsiList.get(j).setCreateTime(new Date());
+				dsiList.get(j).setStatus("1");
+			}
+		}
+		
 		Integer mainId = coverPartyOrgInfo.getId();
 		if(coverPartyOrgInfo.getReportHigher() == 1){
 			coverPartyOrgInfo.setStatus("5");//上报申请中
@@ -327,12 +313,8 @@ public class CoverPartyOrgController {
 	@RequestMapping(value="/cover/partyOrgSetStatus",method=RequestMethod.POST)
 	@ResponseBody
 	public Map<String,Object> orgSetStatus(Model model,String id,String status){
-		CoverPartyOrgInfo info = new CoverPartyOrgInfo();
-		info.setId(Integer.parseInt(id));
+		CoverPartyOrgInfo info = coverPartyOrgInfoMapper.selectByPrimaryKey(Integer.parseInt(id));
 		info.setStatus(status);
-		
-		//info.setUpdateTime(new Date());
-		//info.setUpdator(baseService.getUserName());
 		coverPartyOrgInfoMapper.updateByPrimaryKeySelective(info);
 		return returnMsg(1, "操作成功!");
 	}
@@ -346,19 +328,13 @@ public class CoverPartyOrgController {
 	@RequestMapping(value="/cover/partyOrgsSetStatus",method=RequestMethod.POST)
 	@ResponseBody
 	public Map<String,Object> orgsSetStatus(Model model,String partyOrgIds,String status){
-		String[] partyOrgArray = partyOrgIds.split(",");
-		for(int i = 0; i < partyOrgArray.length; i++){
-			if(partyOrgArray[i] != null && partyOrgArray[i].length() > 0){
-				CoverPartyOrgInfo info = new CoverPartyOrgInfo();
-				info.setId(Integer.parseInt(partyOrgArray[i]));
-				info.setStatus(status);
-				
-				//info.setUpdateTime(new Date());
-				//info.setUpdator(baseService.getUserName());
-				coverPartyOrgInfoMapper.updateByPrimaryKeySelective(info);
-			}
+		try{
+			coverPartyOrgService.orgsSetStatus(partyOrgIds, status);
+			return returnMsg(1, "操作成功!");
+		}catch(Exception e){
+			e.printStackTrace();
+			return returnMsg(0, "操作失败!");
 		}
-		return returnMsg(1, "操作成功!");
 	}
 	
 	/**
@@ -370,8 +346,7 @@ public class CoverPartyOrgController {
 	@RequestMapping(value="/cover/partyorgdelete",method=RequestMethod.POST)
 	@ResponseBody
 	public Map<String,Object> orgdelete(Model model,String id){
-		CoverPartyOrgInfo info = new CoverPartyOrgInfo();
-		info.setId(Integer.parseInt(id));
+		CoverPartyOrgInfo info = coverPartyOrgInfoMapper.selectByPrimaryKey(Integer.parseInt(id));
 		info.setStatus("0");
 		try {
 			coverPartyOrgInfoMapper.updateByPrimaryKeySelective(info);
@@ -515,11 +490,8 @@ public class CoverPartyOrgController {
 		try {
 			String[] partyOrgIdArray = partyOrgIds.split(",");
 			for(int i = 0; i < partyOrgIdArray.length; i++){
-				CoverPartyOrgInfo main = new CoverPartyOrgInfo();
-				main.setId(Integer.parseInt(partyOrgIdArray[i]));
+				CoverPartyOrgInfo main = coverPartyOrgInfoMapper.selectByPrimaryKey(Integer.parseInt(partyOrgIdArray[i]));
 				main.setStatus("4");
-//				main.setUpdateTime(new Date());
-//				main.setUpdator(baseService.getUserName());
 				coverPartyOrgInfoMapper.updateByPrimaryKeySelective(main);
 				
 				main = coverPartyOrgInfoMapper.selectByPrimaryKey(partyOrgIdArray[i]);
@@ -625,6 +597,10 @@ public class CoverPartyOrgController {
 		model.addAttribute("yesNoList", yesNoList);
 		model.addAttribute("partyOrgClassList", partyOrgClassList);
 		model.addAttribute("partyOrgFormList", partyOrgFormList);
+		List<DataDictionary> partyorgStatusList = dict.findByDmm(CommonConstants.UNPUBLIC_ORG_STATUS);
+		model.addAttribute("partyorgStatusList", partyorgStatusList);
+		model.addAttribute("createOrgName", baseService.getDeptNameById(baseService.getCurrentUserDeptId()));
+		model.addAttribute("createOrgId", baseService.getCurrentUserDeptId());
 	}
 	/**
 	 * 编辑页面初始化参数
@@ -668,11 +644,14 @@ public class CoverPartyOrgController {
 	 * @param info
 	 */
 	private void convertRow(CoverPartyOrgInfo main) {
-
+		SimpleDateFormat sdf = new SimpleDateFormat();
 		main.setPartyOrgFormTxt(dict.getValueByCode(CommonConstants.PARTY_ORG_FORM,main.getPartyOrgForm()));
 		main.setPartyOrgTypeTxt(dict.getValueByCode(CommonConstants.PARTY_ORG_CLASS,main.getPartyOrgType()));
 		main.setStatusTxt(dict.getValueByCode(CommonConstants.UNPUBLIC_ORG_STATUS,main.getStatus()));
-		
+		main.setSecretarySourceTxt(dict.getValueByCode(CommonConstants.SOURCE,main.getSecretarySource()));
+		if(main.getPartyOrgTime() != null){
+			main.setPartyOrgTimeTxt(sdf.format(main.getPartyOrgTime()));
+		}
 		main.setInstructorUnitTxt(baseService.getDeptNameById(main.getInstructorUnit()));
 		main.setSecretaryCompanyTxt(baseService.getDeptNameById(main.getSecretaryCompany()));
 	}
@@ -792,8 +771,7 @@ public class CoverPartyOrgController {
 	public Map<String, Object> removePartymbrSave(String id){
 		
 		try {
-			CoverOrgPmbrInfo coverOrgPmbrInfo = new CoverOrgPmbrInfo();
-			coverOrgPmbrInfo.setId(Integer.parseInt(id));
+			CoverOrgPmbrInfo coverOrgPmbrInfo = coverOrgPmbrInfoMapper.selectByPrimaryKey(Integer.parseInt(id));
 			coverOrgPmbrInfo.setStatus("0");
 			coverOrgPmbrInfoMapper.updateByPrimaryKeySelective(coverOrgPmbrInfo);
 			return returnMsg(1, "减少党员成功!");

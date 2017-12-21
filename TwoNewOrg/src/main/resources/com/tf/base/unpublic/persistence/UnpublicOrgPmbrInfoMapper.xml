@@ -49,9 +49,11 @@
   	</where>
   </select>
   <select id="queryListByOrgId" resultMap="BaseResultMap">
-  	select * from unpublic_org_pmbr_info a, unpublic_org_pmbr_count c
+  	select * from 
+  		unpublic_org_pmbr_info a LEFT JOIN 
+		unpublic_org_pmbr_count c on a.id = c.unpublic_org_info_id
   	<where>
-  		and a.status ='1' and a.id = c.unpublic_org_info_id
+  		and a.status ='1' 
   		<if test="name != null and name != ''">
   			and a.name like CONCAT('%', #{name}, '%') 
   		</if>

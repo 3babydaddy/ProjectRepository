@@ -28,7 +28,7 @@ function loadData(){
 			rownumbers:true,
 			fitColumns : true,
 			striped : true,
-			singleSelect : true,
+			singleSelect : false,
 			remoteSort: true,
 			pagination:true,
 			nowrap:false,
@@ -37,9 +37,9 @@ function loadData(){
 			    ,{field :"ck",title :"选择",checkbox:true}
 			    ,{field :"createOrgTxt",title :"填报单位",width :"8%", align:"center",formatter:ifNullShowHeng}
 				,{field :"name",title :"企业名称",width :"8%", align:"center",formatter:ifNullShowHeng}
-				,{field :"industryTypeTxt",title :"企业类型",width :"8%", align:"center",formatter:ifNullShowHeng}
-				,{field :"businessTypeTxt",title :"行业类型",width :"8%", align:"center",formatter:ifNullShowHeng}
-				,{field :"belocatedAddressTxt",title :"企业坐落地",width :"10%", align:"center",formatter:ifNullShowHeng}
+				,{field :"industryTypeTxt",title :"企业类型",width :"6%", align:"center",formatter:ifNullShowHeng}
+				,{field :"businessTypeTxt",title :"行业类型",width :"6%", align:"center",formatter:ifNullShowHeng}
+				,{field :"belocatedAddressTxt",title :"企业坐落地",width :"8%", align:"center",formatter:ifNullShowHeng}
 	            ,{field :"registerAddress",title :"企业注册地",width :"7%", align:"center",formatter:ifNullShowHeng}   
 //	            ,{field :"business_director_org",title :"园区级别",width :"8%", align:"center",formatter:ifNullShowHeng}
 //	            ,{field :"address",title :"是否为亿元楼宇",width :"8%", align:"center",formatter:ifNullShowHeng}
@@ -48,6 +48,7 @@ function loadData(){
 	            ,{field :"businessVolume",title :"年营业收入（万元）",width :"10%", align:"center",formatter:ifNullShowHeng}
 	            ,{field :"jobinTotalnum",title :"从业人员数量（名）",width :"10%", align:"center",formatter:ifNullShowHeng}
 	            ,{field :"onScaleIsTxt",title :"是否规模以上企业",width :"10%", align:"center",formatter:ifNullShowHeng}
+	            ,{field :"creator",title :"创建人",width :"6%", align:"center",formatter:ifNullShowHeng}
 	            ,{field :"statusTxt",title :"状态",width :"6%", align:"center",formatter:ifNullShowHeng}
 	          
 	         ] ],
@@ -117,6 +118,20 @@ function loadData(){
 			iconCls: 'icon-large-clipart',
 			handler: function(){partyMbrRow('look');}
 		}];
+		
+	}
+	var batchSwitch = $("#batchSwitch").val();
+	/**
+	 * 批量上报功能
+	 * 根据数据字典配置是否开启
+	 */
+	if(!isQuWeiDept && batchSwitch == "1"){
+		var batchReport = {
+				text:'批量上报',
+				iconCls: 'icon-ok',
+				handler: function(){batchReportFun();}
+			};
+		options.toolbar.push(batchReport);
 	}
 	$('#gridPanel').datagrid(options);
 	
@@ -146,9 +161,11 @@ function addRow(){
  */
 function editRow(){
 	var row = getCheckedRow();
-	if(row == null){
+	if(row.length != 1){
 		layer.alert('请选择一条记录！')
 		return;
+	}else{
+		row = row[0];
 	}
 	var id = row.id;
 	if(row.status == 2 || row.status == 5){
@@ -173,9 +190,11 @@ function editRow(){
  */
 function lookRow(){
 	var row = getCheckedRow();
-	if(row == null){
+	if(row.length != 1){
 		layer.alert('请选择一条记录！')
 		return;
+	}else{
+		row = row[0];
 	}
 	var id = row.id;
 	var url = ctx + '/unpublic/orglook?id='+id;
@@ -187,9 +206,11 @@ function lookRow(){
 
 function cancelRow(){
 	var row = getCheckedRow();
-	if(row == null){
+	if(row.length != 1){
 		layer.alert('请选择一条记录！')
 		return;
+	}else{
+		row = row[0];
 	}
 	var id = row.id;
 	if(row.status > 2 || row.status < 2){
@@ -207,9 +228,11 @@ function cancelRow(){
 
 function cancelReasonRow(id){
 	var row = getCheckedRow();
-	if(row == null){
+	if(row.length != 1){
 		layer.alert('请选择一条记录！')
 		return;
+	}else{
+		row = row[0];
 	}
 	var id = row.id;
 	
@@ -226,24 +249,30 @@ function cancelReasonRow(id){
 }
 
 function delRow(id){
+	var partyOrgIds = "";
 	var row = getCheckedRow();
-	if(row == null){
+	if(row.length < 1){
 		layer.alert('请选择一条记录！')
 		return;
 	}
-	var id = row.id;
-	if(id==undefined){
-		return;
+	for(var i = 0; i < row.length; i++){
+		if(row[i].status == 1){
+			if(partyOrgIds == ""){
+				partyOrgIds = row[i].id;
+			}else{
+				partyOrgIds = partyOrgIds + ',' + row[i].id;
+			}
+		}else{
+			layer.alert('“'+row[i].name + '”不能进行删除操作！');
+			return;
+		}
 	}
-	if(row.status != 1){
-		layer.alert('“'+row.name + '”不能进行删除操作！');
-		return;
-	}
+	
 	layer.confirm('您确认想要删除记录吗？',function(index){  
 		layer.close(index);
     	$.ajax({
     		url:ctx + '/unpublic/orgdelete',
-    		data:{id:id},
+    		data:{partyOrgIds:partyOrgIds},
     		type:'post',
     		dataType:'json',
     		success:function(result){
@@ -263,9 +292,11 @@ function delRow(id){
 
 function nocancel(){
 	var row = getCheckedRow();
-	if(row == null){
+	if(row.length != 1){
 		layer.alert('请选择一条记录！')
 		return;
+	}else{
+		row = row[0];
 	}
 	var id = row.id;
 	if(row.status != 3){
@@ -335,9 +366,11 @@ function  cancelok(){
 
 function partyMbrRow(method){
 	var row = getCheckedRow();
-	if(row == null){
+	if(row.length != 1){
 		layer.alert('请选择一条记录！')
 		return;
+	}else{
+		row = row[0];
 	}
 	var id = row.id;
 	if(row.status == 3){
@@ -359,20 +392,28 @@ function showPartyMbrList(id,method){
 }
 
 function returnRow(){
-	var row = getCheckedRow();
-	if(row == null){
+	var partyOrgIds = "";
+	var row = $("#gridPanel").datagrid('getSelections');
+	if(row.length < 1){
 		layer.alert('请选择一条记录！')
 		return;
 	}
-	var id = row.id;
-	if(row.status != 2 && row.status != 5){
-		layer.alert('“'+row.name + '”未进行上报，不能进行退回操作！');
-		return;
+	for(var i = 0; i < row.length; i++){
+		if(row[i].status == 2 || row[i].status == 5){
+			if(partyOrgIds == ""){
+				partyOrgIds = row[i].id;
+			}else{
+				partyOrgIds = partyOrgIds + ',' + row[i].id;
+			}
+		}else{
+			layer.alert('“'+row[i].name + '”未进行上报，不能进行退回操作！');
+			return;
+		}
 	}
 	layer.confirm('您确认要退回操作吗？',function(){    
 		$.ajax({
 			url:ctx + '/unpublic/orgSetStatus',
-			data:{id:id , status:1},
+			data:{status:1, partyOrgIds : partyOrgIds},
 			type:'post',
 			dataType:'json',
 			success:function(result){
@@ -390,12 +431,13 @@ function returnRow(){
 }
 
 function getCheckedRow(){
-	var row = $("#gridPanel").datagrid('getSelected');
+	var row = $("#gridPanel").datagrid('getSelections');
 	return row;
 }
+
 function reportHigherRow(){
 	var partyOrgIds = "";
-	var row = $("#gridPanel").datagrid('getSelections');
+	var row = getCheckedRow();
 	if(row.length < 1){
 		layer.alert('请选择一条记录！')
 		return;
@@ -433,4 +475,44 @@ function reportHigherRow(){
 }
 function showDept(){
 	showDeptTree("createOrg","createOrgTxt");
+}
+
+function batchReportFun(){
+	var partyOrgIds = "";
+	var row = getCheckedRow();
+	if(row.length <= 1){
+		layer.alert('请至少选择2条记录！')
+		return;
+	}
+	
+	for(var i = 0; i < row.length; i++){
+		if(row[i].status == 1){
+			if(partyOrgIds == ""){
+				partyOrgIds = row[i].id;
+			}else{
+				partyOrgIds = partyOrgIds + ',' + row[i].id;
+			}
+		}else{
+			layer.alert('只能对临时保存的记录进行批量上报操作！');
+			return;
+		}
+	}
+	layer.confirm('请确保批量上报数据准确性，上报后无法修改，确认批量上报吗？',function(){
+		$.ajax({
+			url:ctx + '/unpublic/orgSetStatus',
+			data:{partyOrgIds:partyOrgIds , status:5},
+			type:'post',
+			dataType:'json',
+			success:function(result){
+				if(result.status ==1){
+					layer.alert(result.msg,function(i){
+						reloadData();
+						layer.close(i); // 关闭提示框
+					});
+				}
+				else
+					layer.alert(result.msg);
+			}
+		});
+	});
 }

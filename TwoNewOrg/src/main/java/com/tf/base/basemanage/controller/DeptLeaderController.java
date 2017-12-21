@@ -114,6 +114,12 @@ public class DeptLeaderController {
 			return result;
 		}
 		list = deptLeaderInfoMapper.selectByExampleAndRowBounds(example, new RowBounds(start,rows));
+		for(DeptLeaderInfo dInfo : list){
+			int count = deptLeaderInfoMapper.getUpdateCount(dInfo.getId());
+			if(count > 0){
+				dInfo.setUpdateSign("1");
+			}
+		}
 		this.convertRows(list);
 		
 		result.put("total", total);
@@ -256,8 +262,7 @@ public class DeptLeaderController {
 	public Map<String,Object> del(String id,String status,String method,Model model)throws Exception{
 		String msg = "";
 		status = new String(status.getBytes("iso-8859-1"),"utf-8");
-		DeptLeaderInfo info = new DeptLeaderInfo();
-		info.setId(Integer.parseInt(id));
+		DeptLeaderInfo info = deptLeaderInfoMapper.selectByPrimaryKey(Integer.parseInt(id));
 		if("临时保存".equals(status)){
 			info.setDel(CommonConstants.DEL_FLAG_YES);
 			info.setStatus("0");
@@ -294,12 +299,14 @@ public class DeptLeaderController {
 	@RequestMapping(value="/deptleader/audit",method=RequestMethod.POST)
 	@ResponseBody
 	public Map<String,Object> audit(String id,String status,String method,Model model)throws Exception{
-		status = new String(status.getBytes("iso-8859-1"),"utf-8");
-		DeptLeaderInfo info = new DeptLeaderInfo();
-		info.setId(Integer.parseInt(id));
+		//status = new String(status.getBytes("iso-8859-1"),"utf-8");
+		DeptLeaderInfo info = deptLeaderInfoMapper.selectByPrimaryKey(Integer.parseInt(id));
 		if("删除申请".equals(status)){
 			info.setDel(CommonConstants.DEL_FLAG_YES);
 			info.setStatus("0");
+		}else if("审核不通过".equals(status)){
+			info.setStatus("2");
+			deptLeaderInfoTemMapper.deleteByPrimaryKey(info.getId());
 		}else{
 			info.setStatus("2");
 			DeptLeaderInfoTem deptLeaderInfoTem = deptLeaderInfoTemMapper.selectByPrimaryKey(info.getId());
@@ -339,6 +346,26 @@ public class DeptLeaderController {
 		JSONArray jsonArray = new JSONArray();
 		jsonArray.add(json);
 		return jsonArray.toString();
+	}
+	
+	/**
+	 * 查看修改后的数据
+	 * @param id
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="/deptleader/lookupdateInfo",method=RequestMethod.GET)
+	public String lookupdateInfo(String id,Model model){
+		
+		DeptLeaderInfo info = deptLeaderInfoMapper.queryUpdateDeptInfo(id);
+		this.convertRow(info);
+		
+		//查看日志
+		logService.saveLog(LOG_OPERATION_TYPE.VIEW.toString(), 
+				logService.getDetailInfo("log.deptleader.view",
+						baseService.getUserName(),info.getName()));
+		model.addAttribute("info", info);
+		return "deptleader/look";
 	}
 	
 	/**

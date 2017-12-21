@@ -63,6 +63,15 @@
   		<if test="params.createOrg !=null and params.createOrg !='' ">
   			and poi.create_org = #{params.createOrg}
   		</if>
+  		<if test="params.creater !=null and params.creater !='' ">
+  			and pob.creater like concat('%',#{params.creater},'%') 
+  		</if>
+  		<if test="params.status !=null and params.status !=''">
+  			and pob.status = #{params.status}
+  		</if>
+  		<if test="params.isQuWeiSign !=null and params.isQuWeiSign !='' and params.isQuWeiSign == '1'.toString()">
+  			<![CDATA[ and pob.status is not null ]]>
+  		</if>
   	</where>
   	order by pob.status desc, pob.create_time desc
   </select>

@@ -115,7 +115,7 @@ public class UnPublicOrgController {
 	 * @param response
 	 */
 	@RequestMapping(value="/unpublic/orglist",method=RequestMethod.POST)
-	public void orglist(UnpublicOrgInfo params,
+	public void orglist(UnpublicOrgInfo params, 
 			int page,int rows,HttpServletResponse response){
 		String deptId = baseService.getCurrentUserDeptId();
 		logger.debug("当前登录用户部门ID:===========>" + deptId + " ,是否为区委部门?" + baseService.isQuWeiDept());
@@ -131,8 +131,6 @@ public class UnPublicOrgController {
 		List<UnpublicOrgInfo> list = unpublicOrgInfoMapper.queryList(params,orderby);
 		this.convertRows(list);
 		PageUtil.returnPage(response, new PageInfo<UnpublicOrgInfo>(list));
-		
-		
 	}
 	
 	/**
@@ -343,12 +341,11 @@ public class UnPublicOrgController {
 	public Map<String,Object> orgSetStatus(Model model,String partyOrgIds,String status){
 		String[] partyOrgIdArray = partyOrgIds.split(",");
 		for(int i = 0; i < partyOrgIdArray.length; i++){
-			UnpublicOrgInfo info = new UnpublicOrgInfo();
-			info.setId(Integer.parseInt(partyOrgIdArray[i]));
+			UnpublicOrgInfo info = unpublicOrgInfoMapper.selectByPrimaryKey(partyOrgIdArray[i]);
 			info.setStatus(status);
 			info.setUpdateTime(new Date());
 			info.setUpdator(baseService.getUserName());
-			unpublicOrgInfoMapper.updateByPrimaryKeySelective(info);
+			unpublicOrgInfoMapper.updateByPrimaryKey(info);
 		}
 		
 		return returnMsg(1, "操作成功!");
@@ -362,19 +359,17 @@ public class UnPublicOrgController {
 	 */
 	@RequestMapping(value="/unpublic/orgdelete",method=RequestMethod.POST)
 	@ResponseBody
-	public Map<String,Object> orgdelete(Model model,String id){
-		UnpublicOrgInfo info = new UnpublicOrgInfo();
-		info.setId(Integer.parseInt(id));
-		info.setStatus("0");
+	public Map<String,Object> orgdelete(Model model,String partyOrgIds){
+		String[] partyOrgIdArray = partyOrgIds.split(",");
 		try {
-			
-			unPublicOrgService.delOrg(info);
-			
-			//删除日志
-			logService.saveLog(LOG_OPERATION_TYPE.DELETE.toString(), 
-					logService.getDetailInfo("log.unpublic.delete",
-							baseService.getUserName(),info.getName()));
-			
+			unPublicOrgService.delOrg(partyOrgIdArray);
+			for(int i = 0; i < partyOrgIdArray.length; i++){
+				UnpublicOrgInfo main = unpublicOrgInfoMapper.selectByPrimaryKey(partyOrgIdArray[i]);
+				//删除日志
+				logService.saveLog(LOG_OPERATION_TYPE.DELETE.toString(), 
+						logService.getDetailInfo("log.unpublic.delete",
+								baseService.getUserName(),main.getName()));
+			}
 			return returnMsg(1, "删除成功!");
 		} catch (Exception e) {
 			logger.debug("删除非公组织信息时出现异常:{}", e.getMessage(),e);
@@ -441,12 +436,11 @@ public class UnPublicOrgController {
 	@ResponseBody
 	public Map<String, Object> nocancel(Model model,String id,String remarks){
 		
-		UnpublicOrgInfo main = new UnpublicOrgInfo();
-		main.setId(Integer.parseInt(id));
+		UnpublicOrgInfo main = unpublicOrgInfoMapper.selectByPrimaryKey(Integer.parseInt(id));
 		main.setStatus("2");
 		main.setUpdateTime(new Date());
 		main.setUpdator(baseService.getUserName());
-		unpublicOrgInfoMapper.updateByPrimaryKeySelective(main);
+		unpublicOrgInfoMapper.updateByPrimaryKey(main);
 		
 		try {
 			
@@ -474,12 +468,11 @@ public class UnPublicOrgController {
 		try {
 			String[] partyOrgIdArray = partyOrgIds.split(",");
 			for(int i = 0; i < partyOrgIdArray.length; i++){
-				UnpublicOrgInfo main = new UnpublicOrgInfo();
-				main.setId(Integer.parseInt(partyOrgIdArray[i]));
+				UnpublicOrgInfo main = unpublicOrgInfoMapper.selectByPrimaryKey(Integer.parseInt(partyOrgIdArray[i]));
 				main.setStatus("4");//已撤销
 				main.setUpdateTime(new Date());
 				main.setUpdator(baseService.getUserName());
-				unpublicOrgInfoMapper.updateByPrimaryKeySelective(main);
+				unpublicOrgInfoMapper.updateByPrimaryKey(main);
 				
 				main = unpublicOrgInfoMapper.selectByPrimaryKey(partyOrgIdArray[i]);
 				//撤销审核通过日志
@@ -719,10 +712,16 @@ public class UnPublicOrgController {
 		List<DataDictionary> enterpriseTypeList = dict.findByDmm(CommonConstants.ENTERPRISE_TYPE);
 		List<DataDictionary> zoneLevelList = dict.findByDmm(CommonConstants.ZONE_LEVEL);
 		List<DataDictionary> otherConditionList = dict.findByDmm(CommonConstants.UNPUBLIC_ORG_OTHER_CONDITION);
+		List<DataDictionary> partyorgStatusList = dict.findByDmm(CommonConstants.UNPUBLIC_ORG_STATUS);
 		model.addAttribute("yesNoList", yesNoList);
 		model.addAttribute("enterpriseTypeList", GeneralCalcUtils.convertMap(enterpriseTypeList));
 		model.addAttribute("zoneLevelList", zoneLevelList);
 		model.addAttribute("otherConditionList", otherConditionList);
+		model.addAttribute("partyorgStatusList", partyorgStatusList);
+		model.addAttribute("createOrgName", baseService.getDeptNameById(baseService.getCurrentUserDeptId()));
+		model.addAttribute("createOrgId", baseService.getCurrentUserDeptId());
+		// 批量上报开关 例如 ：0关闭 1开启 
+		model.addAttribute("batchSwitch",dict.getValueByCode("UNPUBLIC_BATCH_SWITCH", "SWITCH"));
 	}
 	/**
 	 * 编辑页面初始化参数

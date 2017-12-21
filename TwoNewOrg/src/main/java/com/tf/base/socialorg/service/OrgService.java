@@ -404,9 +404,12 @@ public class OrgService {
 	}
 
 	@Transactional
-	public void delOrg(SocialOrgInfo info) {
-
-		socialOrgInfoMapper.updateByPrimaryKeySelective(info);
+	public void delOrg(String[] partyOrgIdArray) {
+		for(int i = 0; i < partyOrgIdArray.length; i++){
+			SocialOrgInfo info = socialOrgInfoMapper.selectByPrimaryKey(Integer.parseInt(partyOrgIdArray[i]));
+			info.setStatus("0");
+			socialOrgInfoMapper.updateByPrimaryKeySelective(info);
+		}
 	}
 
 	@Transactional
@@ -420,8 +423,7 @@ public class OrgService {
 		reason.setStatus(CommonConstants.STATUS_FLAG_VALID);
 		socialOrgCancelRecordMapper.insertSelective(reason);
 		
-		SocialOrgInfo main = new SocialOrgInfo();
-		main.setId(Integer.parseInt(id));
+		SocialOrgInfo main = socialOrgInfoMapper.selectByPrimaryKey(Integer.parseInt(id));
 		main.setStatus("3");
 		socialOrgInfoMapper.updateByPrimaryKeySelective(main);
 	}

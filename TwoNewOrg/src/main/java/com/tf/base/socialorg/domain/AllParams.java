@@ -36,6 +36,10 @@ public class AllParams {
 
     private Integer jobinSocialteamIndividualmemberNum;
     
+    private String isIdeologicalPoliticalOrg;
+    
+    private String isMoralEducationOrg;
+    
     //负责人
     private String chargeName;
 
@@ -245,6 +249,22 @@ public class AllParams {
 
 	public void setOtherCondition(String otherCondition) {
 		this.otherCondition = otherCondition;
+	}
+
+	public String getIsIdeologicalPoliticalOrg() {
+		return isIdeologicalPoliticalOrg;
+	}
+
+	public void setIsIdeologicalPoliticalOrg(String isIdeologicalPoliticalOrg) {
+		this.isIdeologicalPoliticalOrg = isIdeologicalPoliticalOrg;
+	}
+
+	public String getIsMoralEducationOrg() {
+		return isMoralEducationOrg;
+	}
+
+	public void setIsMoralEducationOrg(String isMoralEducationOrg) {
+		this.isMoralEducationOrg = isMoralEducationOrg;
 	}
 	
 	

@@ -7,7 +7,7 @@ public class LogCenter {
 
 	
 	private static ExecutorService logExecutor = Executors
-			.newFixedThreadPool(4);
+			.newFixedThreadPool(1);
 	
 	public static void addLogTask(Runnable command) {
 		logExecutor.execute(command);

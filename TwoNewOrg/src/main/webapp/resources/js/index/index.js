@@ -170,19 +170,30 @@ function tabCloseEven()
 	//关闭当前
 	$('#mm-tabclose').click(function(){
 		var currtab_title = $('#mm').data("currtab");
-		$('#tabs').tabs('close',currtab_title);
+		if (currtab_title != '欢迎使用') {
+			$('#tabs').tabs('close',currtab_title);
+		}
 	})
 	//全部关闭
 	$('#mm-tabcloseall').click(function(){
 		$('.tabs-inner span').each(function(i,n){
 			var t = $(n).text();
-			$('#tabs').tabs('close',t);
+			if (t != '欢迎使用') {
+				$('#tabs').tabs('close',t);
+			}
 		});
 	});
 	//关闭除当前之外的TAB
 	$('#mm-tabcloseother').click(function(){
-		$('#mm-tabcloseright').click();
-		$('#mm-tabcloseleft').click();
+		var currTab = $('#tabs').tabs('getSelected');
+        currTitle = currTab.panel('options').title;
+        $(".tabs li").each(function (i, n) {
+            var title = $(n).text();
+            if (currTitle != title && title != '欢迎使用') {//除本页和主页以外全部关闭
+                $('#tabs').tabs('close', title);
+            }
+        });
+        $('#tabs').tabs('select',currTitle);
 	});
 	//关闭当前右侧的TAB
 	$('#mm-tabcloseright').click(function(){

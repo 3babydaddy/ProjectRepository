@@ -51,17 +51,20 @@
   		<if test="params.isDevelopListen != null and params.isDevelopListen != ''">
   			and pob.is_develop_listen = #{params.isDevelopListen}
   		</if>
-  		<if test="params.isDevelopAnalysis != null and params.isDevelopAnalysis != ''">
-  			and pob.is_develop_analysis = #{params.isDevelopAnalysis}
-  		</if>
-  		<if test="params.isChangeEveryyear !=null and params.isChangeEveryyear !='' ">
-  			and pob.is_change_everyyear = #{params.isChangeEveryyear}
-  		</if>
-  		<if test="params.isRectifyParty !=null and params.isRectifyParty !='' ">
-  			and pob.is_rectify_party = #{params.isRectifyParty}
+  		<if test="params.partyOrgName !=null and params.partyOrgName !='' ">
+  			and poi.party_org_name like CONCAT('%', #{params.partyOrgName}, '%')
   		</if>
   		<if test="params.createOrg !=null and params.createOrg !='' ">
   			and poi.create_org = #{params.createOrg}
+  		</if>
+  		<if test="params.creater !=null and params.creater !='' ">
+  			and pob.creater like CONCAT('%', #{params.creater}, '%')
+  		</if>
+  		<if test="params.status !=null and params.status !=''">
+  			and pob.status = #{params.status}
+  		</if>
+  		<if test="params.isQuWeiSign !=null and params.isQuWeiSign !='' and params.isQuWeiSign == '1'.toString()">
+  			<![CDATA[ and pob.status is not null ]]>
   		</if>
   	</where>
   	order by pob.status desc, pob.create_time desc

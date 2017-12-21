@@ -89,6 +89,9 @@ public class CoverPartyConstructionController {
 		
 		if(!baseService.isQuWeiDept()){
 			params.setCreateOrg(deptId);
+		}else{
+			//工委列表展示过滤掉覆盖党组织状态为正常;但还没有新建覆盖党建的数据
+			params.setIsQuWeiSign("1");
 		}
 		PageHelper.startPage(page, rows, true);
 		List<CoverPartyOrgBuilding> list = coverPartyOrgBuildingMapper.queryList(params);
@@ -204,11 +207,8 @@ public class CoverPartyConstructionController {
 		String[] partyOrgArray = partyOrgIds.split(",");
 		for(int i = 0; i < partyOrgArray.length; i++){
 			if(partyOrgArray[i] != null && partyOrgArray[i].length() > 0){
-				CoverPartyOrgBuilding info = new CoverPartyOrgBuilding();
-				info.setId(Integer.parseInt(partyOrgArray[i]));
+				CoverPartyOrgBuilding info = coverPartyOrgBuildingMapper.selectByPrimaryKey(Integer.parseInt(partyOrgArray[i]));
 				info.setStatus(status);
-				//info.setUpdateTime(new Date());
-				//info.setUpdator(baseService.getUserName());
 				coverPartyOrgBuildingMapper.updateByPrimaryKeySelective(info);
 			}
 		}
@@ -223,11 +223,8 @@ public class CoverPartyConstructionController {
 	@RequestMapping(value="/cover/partyConstructionSetStatus",method=RequestMethod.POST)
 	@ResponseBody
 	public Map<String,Object> orgSetStatus(Model model,String id,String status){
-		CoverPartyOrgBuilding info = new CoverPartyOrgBuilding();
-		info.setId(Integer.parseInt(id));
+		CoverPartyOrgBuilding info = coverPartyOrgBuildingMapper.selectByPrimaryKey(Integer.parseInt(id));
 		info.setStatus(status);
-		//info.setUpdateTime(new Date());
-		//info.setUpdator(baseService.getUserName());
 		coverPartyOrgBuildingMapper.updateByPrimaryKeySelective(info);
 		return returnMsg(1, "操作成功!");
 	}
@@ -241,8 +238,7 @@ public class CoverPartyConstructionController {
 	@RequestMapping(value="/cover/partyconstructiondelete",method=RequestMethod.POST)
 	@ResponseBody
 	public Map<String,Object> orgdelete(Model model,String id){
-		CoverPartyOrgBuilding info = new CoverPartyOrgBuilding();
-		info.setId(Integer.parseInt(id));
+		CoverPartyOrgBuilding info = coverPartyOrgBuildingMapper.selectByPrimaryKey(Integer.parseInt(id));
 		info.setStatus("0");
 		try {
 			coverPartyOrgBuildingMapper.updateByPrimaryKeySelective(info);
@@ -325,13 +321,11 @@ public class CoverPartyConstructionController {
 			reason.setCreator(baseService.getUserName());
 			reason.setCreateTime(new Date());
 			reason.setStatus("1");
-			CoverPartyOrgBuilding info = new CoverPartyOrgBuilding();
-			info.setId(Integer.parseInt(id));
+			CoverPartyOrgBuilding info = coverPartyOrgBuildingMapper.selectByPrimaryKey(Integer.parseInt(id));
 			info.setStatus("3");
 			partyConstructionService.cancelOrg(reason, info);
 			
-			CoverPartyOrgBuilding main = coverPartyOrgBuildingMapper.selectByPrimaryKey(id);
-			CoverPartyOrgInfo upoInfo = coverPartyOrgInfoMapper.selectByPrimaryKey(main.getCoverPartyOrgId()+"");
+			CoverPartyOrgInfo upoInfo = coverPartyOrgInfoMapper.selectByPrimaryKey(info.getCoverPartyOrgId()+"");
 			//撤销日志
 			logService.saveLog(LOG_OPERATION_TYPE.DELETE.toString(), 
 					logService.getDetailInfo("log.cover.cancel",
@@ -354,14 +348,10 @@ public class CoverPartyConstructionController {
 	@ResponseBody
 	public Map<String, Object> nocancel(Model model,String id,String remarks){
 		
-		CoverPartyOrgBuilding main = new CoverPartyOrgBuilding();
-		main.setId(Integer.parseInt(id));
+		CoverPartyOrgBuilding main = coverPartyOrgBuildingMapper.selectByPrimaryKey(Integer.parseInt(id));
 		main.setStatus("2");
-		//main.setUpdateTime(new Date());
-		//main.setUpdator(baseService.getUserName());
 		partyConstructionService.nocancel(main);
 		try {
-			main = coverPartyOrgBuildingMapper.selectByPrimaryKey(main.getId());
 			CoverPartyOrgInfo info = coverPartyOrgInfoMapper.selectByPrimaryKey(main.getCoverPartyOrgId()+"");
 			//取消撤销日志
 			logService.saveLog(LOG_OPERATION_TYPE.DELETE.toString(), 
@@ -386,8 +376,7 @@ public class CoverPartyConstructionController {
 		try {
 			String[] partyOrgIdArray = partyOrgIds.split(",");
 			for(int i = 0; i < partyOrgIdArray.length; i++){
-				CoverPartyOrgBuilding main = new CoverPartyOrgBuilding();
-				main.setId(Integer.parseInt(partyOrgIdArray[i]));
+				CoverPartyOrgBuilding main = coverPartyOrgBuildingMapper.selectByPrimaryKey(Integer.parseInt(partyOrgIdArray[i]));
 				main.setStatus("4");//已撤销
 				//main.setUpdateTime(new Date());
 				//main.setUpdator(baseService.getUserName());
@@ -415,6 +404,10 @@ public class CoverPartyConstructionController {
 	private void editPage(Model model){
 		List<DataDictionary> yesNoList = dict.findByDmm(CommonConstants.YES_NO);
 		model.addAttribute("yesNoList", yesNoList);
+		List<DataDictionary> partyorgStatusList = dict.findByDmm(CommonConstants.UNPUBLIC_ORG_STATUS);
+		model.addAttribute("partyorgStatusList", partyorgStatusList);
+		model.addAttribute("createOrgName", baseService.getDeptNameById(baseService.getCurrentUserDeptId()));
+		model.addAttribute("createOrgId", baseService.getCurrentUserDeptId());
 	}
 	
 	

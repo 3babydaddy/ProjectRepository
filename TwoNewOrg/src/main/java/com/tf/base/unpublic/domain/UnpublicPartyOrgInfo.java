@@ -2,7 +2,6 @@ package com.tf.base.unpublic.domain;
 
 
 import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -196,7 +195,23 @@ public class UnpublicPartyOrgInfo {
     private String secretaryCompanyTxt;
     @Transient
     private String belongUnitTxt;
-
+    @Transient
+    private String isQuWeiSign;//1:是工委 0：否
+    @Transient
+    private String changeList;
+    @Transient
+    private String deputySecretaryList;
+    @Transient
+    private String secretarySourceTxt;
+    @Transient
+    private String instructList;
+    @Transient
+    private String lowerPartyList;
+    @Transient
+    private String inOperator;
+    @Transient
+    private String notinOperator;
+    
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -599,6 +614,70 @@ public class UnpublicPartyOrgInfo {
 
 	public void setBelongUnitTxt(String belongUnitTxt) {
 		this.belongUnitTxt = belongUnitTxt;
+	}
+
+	public String getIsQuWeiSign() {
+		return isQuWeiSign;
+	}
+
+	public void setIsQuWeiSign(String isQuWeiSign) {
+		this.isQuWeiSign = isQuWeiSign;
+	}
+
+	public String getChangeList() {
+		return changeList;
+	}
+
+	public void setChangeList(String changeList) {
+		this.changeList = changeList;
+	}
+
+	public String getDeputySecretaryList() {
+		return deputySecretaryList;
+	}
+
+	public void setDeputySecretaryList(String deputySecretaryList) {
+		this.deputySecretaryList = deputySecretaryList;
+	}
+
+	public String getSecretarySourceTxt() {
+		return secretarySourceTxt;
+	}
+
+	public void setSecretarySourceTxt(String secretarySourceTxt) {
+		this.secretarySourceTxt = secretarySourceTxt;
+	}
+
+	public String getInstructList() {
+		return instructList;
+	}
+
+	public void setInstructList(String instructList) {
+		this.instructList = instructList;
+	}
+
+	public String getLowerPartyList() {
+		return lowerPartyList;
+	}
+
+	public void setLowerPartyList(String lowerPartyList) {
+		this.lowerPartyList = lowerPartyList;
+	}
+
+	public String getInOperator() {
+		return inOperator;
+	}
+
+	public void setInOperator(String inOperator) {
+		this.inOperator = inOperator;
+	}
+
+	public String getNotinOperator() {
+		return notinOperator;
+	}
+
+	public void setNotinOperator(String notinOperator) {
+		this.notinOperator = notinOperator;
 	}
 
 
