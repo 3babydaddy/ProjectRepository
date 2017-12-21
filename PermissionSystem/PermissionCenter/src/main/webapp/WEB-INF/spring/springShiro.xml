@@ -37,7 +37,7 @@
     <bean id="sessionIdCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
         <constructor-arg value="sid"/>
         <property name="httpOnly" value="true"/>
-        <property name="maxAge" value="-1"/>
+        <property name="maxAge" value="180000"/>
     </bean>
 
     <!-- 会话DAO -->
@@ -55,10 +55,7 @@
         <property name="sessionDAO" ref="sessionDAO"/>
         <property name="sessionIdCookieEnabled" value="true"/>
         <property name="sessionIdCookie" ref="sessionIdCookie"/>
-        <property name="sessionListeners" ref="mySessionListener"/>
     </bean>
-    
-    <bean id="mySessionListener" class="com.tf.base.common.listener.MySessionListener"></bean>
 
     <!-- 安全管理器 -->
     <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">

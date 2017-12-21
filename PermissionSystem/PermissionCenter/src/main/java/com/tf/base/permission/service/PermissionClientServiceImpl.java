@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.tf.base.common.constants.ConstantsUtils;
+import com.tf.base.common.utils.MD5Utils;
 import com.tf.base.resource.domain.ResourceInfo;
 import com.tf.base.resource.persistence.ResourceQueryMapper;
 import com.tf.base.user.domain.UserInfo;
@@ -97,6 +98,12 @@ public class PermissionClientServiceImpl implements PermissionService {
 			UserInfo userInfo = new UserInfo();
 			userInfo.setUsername(userName);
 			userInfo.setPassword(newPwd);
+			/**
+			 *  fix bug:密码修改 未传入md5
+			 *  modify by wanghw
+			 */
+			String md5 = MD5Utils.md5(newPwd,userName);
+			userInfo.setEncPassword(md5);
 			return userModifyMapper.modifyPasswordByuserName(userInfo);
 		}
 		return 0;

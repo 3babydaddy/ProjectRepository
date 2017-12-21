@@ -31,7 +31,6 @@ public class MenusFilter extends PathMatchingFilter  {
 		}
 	   HttpServletRequest req=(HttpServletRequest) request;
 	   String url = req.getRequestURI();
-	   System.out.println("[请求的URL地址=  "+ url +"]");
 	   
 	   String referer = req.getHeader("referer");
 	   //http://127.0.0.1:8080/base_easyui/index
