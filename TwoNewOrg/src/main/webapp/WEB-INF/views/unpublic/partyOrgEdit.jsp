@@ -111,9 +111,9 @@
 								<div class="form-inline" style="margin-top:5px;">
 									<label>人员姓名：</label>
 									<input class="form-control" name="instructorName" value="" maxlength="20"/>
-									<label>职务：</label>
+									<label>单位及职务：</label>
 									<input class="form-control" name="instructorJob" value="" maxlength="20"/>
-									<label>单位：</label>
+									<label>指导企业：</label>
 				                       <select id="zhidaodanwei0" name="instructorUnitTxt" class="form-control"  multiple="multiple">
 										    <c:forEach var="it" items="${unitList}">
 										        <option value="${it.code }" >${it.value }</option>
@@ -126,9 +126,9 @@
 									<div class="form-inline" style="margin-top:5px;">
 										<label>人员姓名：</label>
 										<input class="form-control" name="instructorName" value="${e.instructorName }" maxlength="20"/>
-										<label>职务：</label>
+										<label>单位及职务：</label>
 										<input class="form-control" name="instructorJob" value="${e.instructorJob }" maxlength="20"/>
-										<label>单位：</label>
+										<label>指导企业：</label>
 							               	<select id="zhidaodanwei${status.index }" name="instructorUnitTxt" class="form-control" multiple="multiple">
 											    <c:forEach var="it" items="${unitList}">
 											        <c:set var="tmpInstructorUnit" value=""/>
