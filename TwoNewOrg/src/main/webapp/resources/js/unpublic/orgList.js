@@ -91,6 +91,10 @@ function loadData(){
 			text:'党员维护',
 			iconCls: 'icon-large-clipart',
 			handler: function(){partyMbrRow('edit');}
+		},{
+			text:'导出Excel',
+			iconCls: 'icon-excel_report1',
+			handler: function(){exportExcel();}
 		}];
 	}else{
 		options.toolbar = [{
@@ -135,6 +139,15 @@ function loadData(){
 	}
 	$('#gridPanel').datagrid(options);
 	
+}
+
+/**
+ * 导出所有数据到excel
+ */
+function exportExcel(){
+	debugger;
+	var params = getQueryParams();
+	window.location.href=ctx + "/unpublic/exportUnpublicExcel?params="+params;
 }
 
 function reloadData(){
