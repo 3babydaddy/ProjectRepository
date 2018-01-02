@@ -472,7 +472,19 @@ public class ExcelUtils<E> {
 						String transferFiled = transferFiled(excel.dictCode(), field.get(t).toString());
 						cell.setCellValue(transferFiled != null ? transferFiled : "");
 					} else {
-						cell.setCellValue(field.get(t).toString());
+						// 注解不为空则翻译注解内容
+						if (StringUtils.isNotEmpty(excel.content())) {
+							String content = excel.content();
+							if (isJsonStr(content)) {
+								content = content.replace("{", "{\"").replace(":", "\":\"").replace(",", "\",\"")
+										.replace("}", "\"}");
+								JSONObject object = JSONObject.fromObject(content);
+								Object object2 = object.get(o.toString());
+								cell.setCellValue(object2.toString());
+							}
+						} else {
+							cell.setCellValue(field.get(t).toString());
+						}
 					}
 				}
 
