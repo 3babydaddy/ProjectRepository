@@ -30,4 +30,8 @@ public class SpringContextHolder implements ApplicationContextAware {
 	public static <T> T getBean(String name) {
 		return (T) context.getBean(name);
 	}
+	
+	public static <T> T getBean(Class<T> baseType){
+        return (T) context.getBean(baseType);
+    }
 }

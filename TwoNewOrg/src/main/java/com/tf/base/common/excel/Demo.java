@@ -5,7 +5,7 @@ import java.util.Date;
 
 public class Demo {
 
-	@Excel(number = true)
+	@Excel(name = "序号", number = true)
 	private int number;
 
 	@Excel(name = "姓名", width = 30)
@@ -17,7 +17,7 @@ public class Demo {
 	@Excel(skip = true)
 	private String password;
 
-	@Excel(content = "{0:开启,1:关闭}")
+	@Excel(name = "状态", content = "{0:开启,1:关闭}")
 	private String status;
 
 	@Excel(name = "xx")

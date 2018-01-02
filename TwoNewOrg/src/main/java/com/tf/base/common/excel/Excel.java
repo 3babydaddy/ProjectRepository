@@ -5,6 +5,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.tf.base.common.constants.CommonConstants;
+
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.FIELD, ElementType.TYPE })
 public @interface Excel {
@@ -42,4 +44,10 @@ public @interface Excel {
 	 * @return
 	 */
 	boolean number() default false;
+	
+	/**
+	 * 数据字典码值
+	 * @return
+	 */
+	String dictCode() default "";
 }

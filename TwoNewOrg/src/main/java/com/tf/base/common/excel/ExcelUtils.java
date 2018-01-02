@@ -36,26 +36,23 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-//import org.xdemo.superutil.j2se.ReflectUtils;
 
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
+import com.tf.base.common.domain.DictionaryRepository;
+import com.tf.base.common.utils.SpringContextHolder;
 
-import ch.qos.logback.core.joran.conditional.ElseAction;
 import net.sf.json.JSONObject;
 
 public class ExcelUtils<E> {
-	private E e;
+
+	private Class<E> clazz;
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private int etimes = 0;
 
-	public ExcelUtils(E e) {
-		this.e = e;
-	}
-
-	@SuppressWarnings("unchecked")
-	public E get() throws InstantiationException, IllegalAccessException {
-		return (E) e.getClass().newInstance();
+	public ExcelUtils(Class<E> clazz) {
+		this.clazz = clazz;
 	}
 
 	/**
@@ -74,7 +71,7 @@ public class ExcelUtils<E> {
 	 * @throws IOException
 	 *             IO异常
 	 */
-	public static void writeToFile(String filePath, String[] sheetName, List<? extends Object[]> title,
+	public void writeToFile(String filePath, String[] sheetName, List<? extends Object[]> title,
 			List<? extends List<? extends Object[]>> data) throws FileNotFoundException, IOException {
 		// 创建并获取工作簿对象
 		Workbook wb = getWorkBook(sheetName, title, data);
@@ -96,7 +93,7 @@ public class ExcelUtils<E> {
 	 *            文件路径
 	 * @throws Exception
 	 */
-	public static <T> void writeToFile(List<T> list, ExcelDataFormatter edf, String filePath) throws Exception {
+	public <T> void writeToFile(List<T> list, ExcelDataFormatter edf, String filePath) throws Exception {
 		// 创建并获取工作簿对象
 		Workbook wb = getWorkBook(list, edf);
 		// 写入到文件
@@ -105,16 +102,36 @@ public class ExcelUtils<E> {
 		out.close();
 	}
 
-	public static <T> void writeToFile(List<T> list, String filePath, int startRow) throws Exception {
+	public <T> void writeToFile(List<T> list, HttpServletResponse response, String fileName) throws IOException {
+		// 写入到文件
+		response.reset();
+		response.setContentType("application/vnd.ms-excel;charset=utf-8");
+		response.setHeader("Content-Disposition", "attachment;filename=" + fileName + ".xlsx");
+		response.setCharacterEncoding("utf-8");
+		OutputStream ouputStream = null;
+		try {
+			ouputStream = response.getOutputStream();
+			// 创建并获取工作簿对象
+			Workbook wb = getWorkBook(list, null);
+			wb.write(ouputStream);// 写入到输出流
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			ouputStream.flush();
+			ouputStream.close();
+		}
+	}
+
+	public <T> void writeToFile(List<T> list, String filePath, int startRow) throws Exception {
 		// 创建并获取工作簿对象
-		Workbook wb = getWorkBook(list, startRow,"");
+		Workbook wb = getWorkBook(list, startRow, "");
 		// 写入到文件
 		FileOutputStream out = new FileOutputStream(filePath);
 		wb.write(out);
 		out.close();
 	}
 
-	public static <T> void writeToFile(List<T> list, int startRow, HttpServletResponse response, String flag)
+	public <T> void writeToFile(List<T> list, int startRow, HttpServletResponse response, String flag)
 			throws Exception {
 		// 写入到文件
 		response.reset();
@@ -156,7 +173,7 @@ public class ExcelUtils<E> {
 	 * @throws IOException
 	 *             IO异常
 	 */
-	public static Workbook getWorkBook(String[] sheetName, List<? extends Object[]> title,
+	public Workbook getWorkBook(String[] sheetName, List<? extends Object[]> title,
 			List<? extends List<? extends Object[]>> data) throws FileNotFoundException, IOException {
 
 		// 创建工作簿
@@ -243,13 +260,13 @@ public class ExcelUtils<E> {
 	 * @return Workbook
 	 * @throws Exception
 	 */
-	public static <T> Workbook getWorkBook(List<T> list, int startRow, String flag) throws Exception {	
+	public <T> Workbook getWorkBook(List<T> list, int startRow, String flag) throws Exception {
 		String path = ExcelUtils.class.getClassLoader().getResource("").getPath();
 		FileInputStream fis = null;
-		if("unpublic".equals(flag)){
-			fis = new FileInputStream(path+"/templet/unpublic.xlsx");
-		}else if("socialorg".equals(flag)){
-			fis = new FileInputStream(path+"/templet/social.xlsx");
+		if ("unpublic".equals(flag)) {
+			fis = new FileInputStream(path + "/templet/unpublic.xlsx");
+		} else if ("socialorg".equals(flag)) {
+			fis = new FileInputStream(path + "/templet/social.xlsx");
 		}
 		// 创建工作簿
 		XSSFWorkbook wb = new XSSFWorkbook(fis);
@@ -342,7 +359,7 @@ public class ExcelUtils<E> {
 	 * @return Workbook
 	 * @throws Exception
 	 */
-	public static <T> Workbook getWorkBook(List<T> list, ExcelDataFormatter edf) throws Exception {
+	public <T> Workbook getWorkBook(List<T> list, ExcelDataFormatter edf) throws Exception {
 		// 创建工作簿
 		Workbook wb = new SXSSFWorkbook();
 
@@ -366,11 +383,11 @@ public class ExcelUtils<E> {
 		XSSFCellStyle titleStyle = (XSSFCellStyle) wb.createCellStyle();
 		titleStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
 		// 设置前景色
-		titleStyle.setFillForegroundColor(new XSSFColor(new java.awt.Color(159, 213, 183)));
+		titleStyle.setFillForegroundColor(new XSSFColor(new java.awt.Color(192, 192, 192)));
 		titleStyle.setAlignment(CellStyle.ALIGN_CENTER);
 
 		Font font = wb.createFont();
-		font.setColor(HSSFColor.BROWN.index);
+		font.setColor(HSSFColor.BLACK.index);
 		font.setBoldweight(Font.BOLDWEIGHT_BOLD);
 		// 设置字体
 		titleStyle.setFont(font);
@@ -392,11 +409,9 @@ public class ExcelUtils<E> {
 
 			columnIndex++;
 		}
-
+		// 数据行
 		int rowIndex = 1;
-
 		CellStyle cs = wb.createCellStyle();
-
 		for (T t : list) {
 			row = sheet.createRow(rowIndex);
 			columnIndex = 0;
@@ -413,19 +428,21 @@ public class ExcelUtils<E> {
 
 				// 数据
 				cell = row.createCell(columnIndex);
+				Font datafont = wb.createFont();
+				datafont.setFontHeightInPoints((short) 10);// 设置字体大小
+				cs.setFont(datafont);
+				cell.setCellStyle(cs);
 
 				o = field.get(t);
 				// 如果数据为空，跳过
-				if (o == null)
-					continue;
-
-				// 处理日期类型
-				if (o instanceof Date) {
+				if (o == null) {
+					cell.setCellValue("");
+				} else if (o instanceof Date) {
 					cs.setDataFormat(createHelper.createDataFormat().getFormat("yyyy-MM-dd HH:mm:ss"));
 					cell.setCellStyle(cs);
 					cell.setCellValue((Date) field.get(t));
 				} else if (o instanceof Double || o instanceof Float) {
-					cell.setCellValue((Double) field.get(t));
+					cell.setCellValue(Double.parseDouble(String.valueOf(field.get(t))));
 				} else if (o instanceof Boolean) {
 					Boolean bool = (Boolean) field.get(t);
 					if (edf == null) {
@@ -438,11 +455,8 @@ public class ExcelUtils<E> {
 							cell.setCellValue(map.get(bool.toString().toLowerCase()));
 						}
 					}
-
 				} else if (o instanceof Integer) {
-
 					Integer intValue = (Integer) field.get(t);
-
 					if (edf == null) {
 						cell.setCellValue(intValue);
 					} else {
@@ -454,7 +468,12 @@ public class ExcelUtils<E> {
 						}
 					}
 				} else {
-					cell.setCellValue(field.get(t).toString());
+					if (StringUtils.isNotEmpty(excel.dictCode())) {
+						String transferFiled = transferFiled(excel.dictCode(), field.get(t).toString());
+						cell.setCellValue(transferFiled != null ? transferFiled : "");
+					} else {
+						cell.setCellValue(field.get(t).toString());
+					}
 				}
 
 				columnIndex++;
@@ -462,7 +481,6 @@ public class ExcelUtils<E> {
 
 			rowIndex++;
 		}
-
 		return wb;
 	}
 
@@ -495,7 +513,6 @@ public class ExcelUtils<E> {
 		u.setYy(new Date());
 		u.setLocked(false);
 		u.setDb(new BigDecimal(2344));
-		u.setStatus("1");
 		list.add(u);
 
 		u = new Demo();
@@ -513,13 +530,12 @@ public class ExcelUtils<E> {
 		map.put("false", "假");
 		edf.set("locked", map);
 
-		writeToFile(list, "D:\\x.xlsx", 7);
+		// writeToFile(list, "D:\\x.xlsx", 7);
 
 		// writeToFile(list, edf, "D:\\x.xlsx");
 
-		// List<Demo> xx = new ExcelUtils<Demo>(new Demo()).readFromFile(edf,
-		// new File("D:\\x.xlsx"));
-		// System.out.println(new GsonBuilder().create().toJson(xx));
+		List<Demo> xx = new ExcelUtils<Demo>(Demo.class).readFromFile(edf, new File("D:\\x.xlsx"));
+		System.out.println(new GsonBuilder().create().toJson(xx));
 
 	}
 
@@ -536,7 +552,7 @@ public class ExcelUtils<E> {
 	 */
 	public List<E> readFromFile(ExcelDataFormatter edf, File file) throws Exception {
 
-		Field[] fields = e.getClass().getDeclaredFields();
+		Field[] fields = clazz.getDeclaredFields();
 
 		// Field[] fields =
 		// ReflectUtils.getClassFieldsAndSuperClassFields(e.getClass());
@@ -567,7 +583,7 @@ public class ExcelUtils<E> {
 
 		List<E> list = new ArrayList<E>();
 
-		E e = null;
+		E e = clazz.newInstance();
 
 		int rowIndex = 0;
 		int columnCount = titles.length;
@@ -584,8 +600,6 @@ public class ExcelUtils<E> {
 			if (row == null) {
 				break;
 			}
-
-			e = get();
 
 			for (int i = 0; i < columnCount; i++) {
 				cell = row.getCell(i);
@@ -756,6 +770,31 @@ public class ExcelUtils<E> {
 			System.out.println("bad json: " + json);
 			return false;
 		}
+	}
+
+	private String transferFiled(String code, String value) {
+		StringBuffer sb = new StringBuffer();
+
+		if (value == null || value.equals(""))
+			return "";
+		if (value.indexOf(",") > -1) {
+			String values[] = value.split(",");
+			if (values.length > 0) {
+				for (String v : values) {
+					DictionaryRepository dict = SpringContextHolder.getBean(DictionaryRepository.class);
+					sb.append(dict.getValueByCode(code, v));
+					sb.append(",");
+				}
+				return (!sb.toString().equals("") ? sb.toString().substring(0, sb.toString().length() - 1)
+						: sb.toString());
+			} else {
+				return "";
+			}
+		} else {
+			DictionaryRepository dict = SpringContextHolder.getBean(DictionaryRepository.class);
+			return dict.getValueByCode(code, value);
+		}
+
 	}
 
 }
