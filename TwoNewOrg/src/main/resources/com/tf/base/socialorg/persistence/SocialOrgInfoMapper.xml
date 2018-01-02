@@ -79,4 +79,18 @@
   		</if>
   	</where>
   </sql>
+   <update id="updateOrgPartyOrgId">
+  		update social_org_info set social_party_org_id = null where social_party_org_id = #{partyOrgId} and status = '2'
+  </update>
+  <select id="getList" resultMap="BaseResultMap">
+  		select * from social_org_info main
+  		<where>
+	  		 main.status = '2' 
+	  		 and main.social_party_org_id is null 
+	  		 and main.cover_party_org_id is null
+	  		<if test="params.name != null and params.name != ''">
+	  			and main.name LIKE CONCAT(CONCAT('%',#{params.name}),'%')
+	  		</if>
+  		</where>
+  </select>
 </mapper>

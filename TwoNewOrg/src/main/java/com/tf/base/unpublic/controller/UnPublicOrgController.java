@@ -212,7 +212,7 @@ public class UnPublicOrgController {
 	 * @return
 	 */
 	@RequestMapping(value="/unpublic/orgedit",method=RequestMethod.GET)
-	public String orgedit(String id,Model model){
+	public String orgedit(String id, String clickSign, Model model){
 		boolean flag = false;
 		if(!StringUtils.isEmpty(id)){
 			Integer mainId = Integer.parseInt(id);
@@ -272,6 +272,7 @@ public class UnPublicOrgController {
 			model.addAttribute("addressList", addressList);
 			model.addAttribute("otherCounts", otherCounts);
 			model.addAttribute("flag", flag);
+			model.addAttribute("clickSign", clickSign);
 		}else{
 			UnpublicOrgInfo main = new UnpublicOrgInfo();
 			model.addAttribute("main", main);

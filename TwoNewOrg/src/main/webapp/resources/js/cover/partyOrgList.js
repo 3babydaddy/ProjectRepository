@@ -48,7 +48,13 @@ function loadData(){
 	            ,{field :"statusTxt",title :"状态",width :"6%", align:"center",formatter:ifNullShowHeng},
 	            {field : 'statusAndDo',title : '操作',width : "6%" ,align:'center',
 					formatter:function(value,row,index){
-						return '<a href="javascript:void(0)" class="easyui-linkbutton" name="editBtn" onclick="editOrgInfo(\''+ row.id  + '\',\'edit\')">查看</a>';
+						var str = "";
+						if(row.status == '1'){
+							str = '<a href="javascript:void(0)" class="easyui-linkbutton" name="editBtn" onclick="reportHigherOption(\''+ row.id  + '\',\'clickSign\')">上报&nbsp&nbsp</a>';
+						}else{
+							str = '<span>上报&nbsp&nbsp</span>';
+						}
+						return str + '<a href="javascript:void(0)" class="easyui-linkbutton" name="editBtn" onclick="editOrgInfo(\''+ row.id  + '\',\'edit\')">&nbsp&nbsp查看</a>';
 		            }	
 	             }
 	         ] ],
@@ -490,6 +496,18 @@ function editOrgInfo(coverPartyOrgId, method){
 	//openWin("撤销原因", url,"50%","90%",function(){reloadData()});
 	utils.e.openWin('coverwin','覆盖的组织列表',url,"80%","80%",function(){
 		reloadData()
+	});
+}
+
+/**
+ * 列表页上的上报功能
+ * @param id
+ * @returns
+ */
+function reportHigherOption(orgId, sign){
+	var url = ctx + '/cover/partyorgedit?id='+orgId+'&clickSign='+sign;
+	utils.e.openWin('editwin','编辑',url,"80%","80%",function(){
+		reloadData();
 	});
 }
 

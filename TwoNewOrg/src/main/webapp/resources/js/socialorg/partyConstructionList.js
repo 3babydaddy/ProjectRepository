@@ -446,6 +446,7 @@ function reportHigherRow(){
 		}
 	});
 }
+
 function showDept(){
 	showDeptTree("createOrg","createOrgTxt");
 }

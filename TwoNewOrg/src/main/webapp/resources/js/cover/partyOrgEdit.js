@@ -46,6 +46,10 @@ $(function(){
 				j--;
 		});
 		
+		//点击列表页上的上报按钮事件
+		if($("#clickSign").val() == 'clickSign'){
+			submitReport();
+		}
 });
 
 function getQueryParams() {
@@ -154,7 +158,8 @@ function validate(){
 	    	  required: true
 	      },
 	      partyOrgTel:{
-	    	  required: true
+	    	  required: true,
+	    	  isMobile:true
 	      },
 	      secretaryName:{
 	    	  required: true

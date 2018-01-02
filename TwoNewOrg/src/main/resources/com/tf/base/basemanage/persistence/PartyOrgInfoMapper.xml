@@ -10,6 +10,11 @@
 					t.parent_party_org as parentPartyOrg,
 					t.status
 		FROM party_org_info t
+		<where> 1=1
+			<if test="deptId != '' and deptId !=null ">  
+	           and t.create_org = #{deptId}  or (t.id = '30000')
+	        </if>
+		</where>
   ORDER BY  t.id desc
 	</select>
 	
@@ -23,6 +28,9 @@
  			1=1
 	         <if test="name != '' and name!=null">  
 	           and t.party_org_name  LIKE  CONCAT('%',#{name},'%')
+	        </if>
+	        <if test="deptId != '' and deptId !=null ">  
+	           and t.create_org = #{deptId}  or (id = '30000')
 	        </if>
 	    </where>
 	</select>

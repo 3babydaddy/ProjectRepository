@@ -32,11 +32,16 @@
 				 	</colgroup>
 					<tr>
 						<td style="text-align: right;">建立党组织单位：</td>
-	                    <td style="text-align: left;" title="${orgNames}">
-	                    	<input class="form-control" disabled="disabled" value="${orgNames}" maxlength="20"/>
-	                    	<input class="form-control" type="hidden" name="orgNames" value="${orgNames}"/>
-	                    	<input class="form-control" type="hidden" name="partyOrgIds" value="${orgIds}"/>
+	                    <td style="text-align: left;" colspan="5">
+	                    		<div  class="form-control" id="partyOrgDiv" style="height: 70px;width:780px;float:left;">
+	                    			<c:forEach var="it" items="${unitList}">
+										<button class="btn btn-xs" value="${it.code }" name="btn_org_name">${it.value }<span class="glyphicon glyphicon-remove"></span></button>
+									</c:forEach>
+								</div>
+								<input type="button" class="btn" value="添加" onclick="showOrgInfoPop();" style="float:left;margin:35px 0 0 10px;" />
 	                    </td>
+	                </tr>
+	                <tr>
 						<td style="text-align: right;"><font color="red">*</font>是否成立党组织：</td>
 						<td style="text-align: left;">
 							<select class="form-control" name="isSetUpPartyOrg" id="isSetUpPartyOrg">
@@ -55,8 +60,6 @@
 								</c:forEach>
 							</select>
 						</td>
-					</tr>
-					<tr>
 						<td style="text-align: right;"><font color="red">*</font>党组织组建形式：</td>
 						<td style="text-align: left;">
 							<select id="partyOrgForm" name="partyOrgForm" class="form-control">
@@ -66,6 +69,8 @@
 								</c:forEach>
 							</select>
 						</td>
+					</tr>
+					<tr>
 						<td style="text-align: right;"><font color="red">*</font>党组织类别：</td>
 						<td style="text-align: left;">
 							<select id="partyOrgType" name="partyOrgType" class="form-control">
@@ -84,10 +89,10 @@
 								</c:forEach>
 							</select>
 						</td>
-					</tr>
-					<tr>
 						<td style="text-align: right;"><font color="red">*</font>党组织成立时间：</td>
 						<td style="text-align: left;"><input class="form-control" name="partyOrgTimeTxt" type="text" onClick="WdatePicker({maxDate:'%y-%M-%d'})" value="${main.partyOrgTimeTxt }" /></td>
+					</tr>
+					<tr>
 						<td style="text-align: right;"><font color="red">*</font>党组织成立相关附件：</td>
 						<td style="text-align: left;">
 							<input class="form-control" type="text" id="filepartyOrgAttachment" name="filepartyOrgAttachment" value="${main.filepartyOrgAttachment }" onclick="showUpload(this,4)"/>
@@ -529,6 +534,7 @@
 				</table>
 		   </div>
 		</div>
+		<input type="hidden" id="partyOrgIds" name="partyOrgIds" value="${orgIds}"/>
 		<input type="hidden" id="mainId" name="mainId" value="${main.id }" />
 		<input type="hidden" id="reportHigher" name="reportHigher"/>
 		<input type="hidden" id="subjectionPartyId" name="subjectionPartyId" value="${main.subjectionPartyId}" />
@@ -541,6 +547,7 @@
 		<input type="hidden" id="instructSize" name="instructSize" value="${instructSize }" /> 
 		<input type="hidden" id="modular" name="modular" value="2" />
 		<input type="hidden" id="type" name="type" value="1" />
+		<input type="hidden" id="clickSign" name="clickSign" value="${clickSign }" />
 		<div align="center" border="false" style="position:fixed;right:10px;bottom:10px;" id="returnDiv">
     		<div class="btn-group">
 			  <button type="button" class="btn btn-primary" onclick="javascript:save(0);">保存</button>

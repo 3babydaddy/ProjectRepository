@@ -54,13 +54,13 @@
 	                    </td>
 		    			<td style="text-align: right;"><font style="font-size:14px;">党组织成立时间：</font></td>
 		    			<td style="text-align: left;">
-		    				<input class="form-control" type="date" id="partySetUpTime" name="partySetUpTime" value="${partySetUpTimeStr}" maxlength="20"/>
+		    				<input class="form-control" type="text" onClick="WdatePicker()" id="partySetUpTime" name="partySetUpTime" value="${partySetUpTimeStr}" maxlength="20"/>
 		    			</td>
 					</tr>
 					<tr>
 						<td style="text-align: right;"><font style="font-size:14px;">本届党组织开始时间：</font></td>
 		    			<td style="text-align: left;">
-		    				<input  type="date" class="form-control" id="partyStartTime" name="partyStartTime" value="${partyStartTimeStr}" />
+		    				<input class="form-control" type="text" onClick="WdatePicker()" id="partyStartTime" name="partyStartTime" value="${partyStartTimeStr}" />
 		    			</td>
 		    			
 		    			<td style="text-align: right;"><font style="font-size:14px;">上级部门：</font></td>

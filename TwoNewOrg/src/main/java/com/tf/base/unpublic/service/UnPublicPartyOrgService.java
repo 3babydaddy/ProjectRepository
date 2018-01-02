@@ -139,7 +139,7 @@ public class UnPublicPartyOrgService {
 	 */
 	@Transactional
 	public void updateOrg(UnpublicPartyOrgInfo unpublicPartyOrgInfo, List<UnpublicPartyOrgChangeInfo> pociList, 
-			List<DeputySecretaryInfo> dsiList, List<PartyInstructorInfo> instructList, List<LowerPartyOrg> lowerPartyOrgList)throws Exception {
+			List<DeputySecretaryInfo> dsiList, List<PartyInstructorInfo> instructList, List<LowerPartyOrg> lowerPartyOrgList, String[] orgInfoArray)throws Exception {
 		SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd" );
 		if(unpublicPartyOrgInfo.getPartyOrgTimeTxt() != null && unpublicPartyOrgInfo.getPartyOrgTimeTxt().length()>0){
 			unpublicPartyOrgInfo.setPartyOrgTime(sdf.parse(unpublicPartyOrgInfo.getPartyOrgTimeTxt()));
@@ -197,6 +197,13 @@ public class UnPublicPartyOrgService {
 		}
 		if(lowerPartyOrgList.size() > 0){
 			lowerPartyOrgMapper.insertList(lowerPartyOrgList);
+		}
+		//更新党组织信息
+		unpublicOrgInfoMapper.updateOrgPartyOrgId(unpublicPartyOrgInfo.getId()+"");
+		for(int j = 0; j < orgInfoArray.length; j++){
+			UnpublicOrgInfo unpublicOrgInfo = unpublicOrgInfoMapper.selectByPrimaryKey(Integer.valueOf(orgInfoArray[j]));
+			unpublicOrgInfo.setUnpublicPartyOrgId(unpublicPartyOrgInfo.getId()+"");
+			unpublicOrgInfoMapper.updateByPrimaryKeySelective(unpublicOrgInfo);
 		}
 		
 	}

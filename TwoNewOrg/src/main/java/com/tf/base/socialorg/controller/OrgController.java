@@ -213,7 +213,7 @@ public class OrgController {
 	 * @return
 	 */
 	@RequestMapping(value="/socialorg/orgedit",method=RequestMethod.GET)
-	public String orgedit(String id,Model model){
+	public String orgedit(String id, String clickSign, Model model){
 		boolean flag = false;
 		if(!StringUtils.isEmpty(id)){
 			Integer mainId = Integer.parseInt(id);
@@ -256,6 +256,7 @@ public class OrgController {
 			model.addAttribute("pmbrCount", pmbrCount);
 			model.addAttribute("otherCounts", otherCounts);
 			model.addAttribute("flag", flag);
+			model.addAttribute("clickSign", clickSign);
 		}else{
 			SocialOrgInfo main = new SocialOrgInfo();
 			main.setBusinessDirectorOrg(baseService.getDeptName());

@@ -2,7 +2,6 @@
 $(function(){
 	
 	validate();
-	
 });
 
 function save(flag){

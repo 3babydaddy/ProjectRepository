@@ -9,9 +9,9 @@ import tk.mybatis.mapper.common.MySqlMapper;
 
 public interface PartyOrgInfoMapper extends MySqlMapper<PartyOrgInfo>, Mapper<PartyOrgInfo> {
 	
-	List<PartyOrgInfo> getAllPartyOrgInfo();
+	List<PartyOrgInfo> getAllPartyOrgInfo(@Param("deptId") String deptId);
 	
-	List<PartyOrgInfo> getPartyOrgInfosByNameLike(@Param(value="name") String name);
+	List<PartyOrgInfo> getPartyOrgInfosByNameLike(@Param(value="name") String name, @Param(value="deptId") String deptId);
 	
 	PartyOrgInfo getDepartmentInfosByName(@Param(value="name") String name);
 	

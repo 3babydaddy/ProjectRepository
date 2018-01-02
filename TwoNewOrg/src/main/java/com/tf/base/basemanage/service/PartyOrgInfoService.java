@@ -17,17 +17,16 @@ public class PartyOrgInfoService {
 
 	@Autowired
 	private PartyOrgInfoMapper partyOrgInfoMapper;
-	
 	/**
 	 * 根据部门名称查询部门的所有上级机构（包含本部门）
 	 * @param name 部门名称
 	 * @return
 	 */
-	public List<PartyOrgInfo> getDepartmentInfosWithParentsByName(String name){
+	public List<PartyOrgInfo> getDepartmentInfosWithParentsByName(String name, String deptId){
 		
 		if(!StringUtils.isEmpty(name)){
 			List<PartyOrgInfo> partyOrgInfoList = new ArrayList<PartyOrgInfo>();
-			List<PartyOrgInfo> queryPartyOrgInfo = partyOrgInfoMapper.getPartyOrgInfosByNameLike(name);
+			List<PartyOrgInfo> queryPartyOrgInfo = partyOrgInfoMapper.getPartyOrgInfosByNameLike(name, deptId);
 			partyOrgInfoList.addAll(queryPartyOrgInfo);
 			if (queryPartyOrgInfo != null && !queryPartyOrgInfo.isEmpty()) {
 				for (PartyOrgInfo partyOrgInfo : queryPartyOrgInfo) {
@@ -38,27 +37,6 @@ public class PartyOrgInfoService {
 		}
 		return null;
 	}
-	/**
-	 * 根据部门名称查询部门的所有下级机构（包含本部门）
-	 * @param name 部门名称
-	 * @return
-	 */
-	public List<PartyOrgInfo> getDepartmentInfosWithChildByName(String name){
-		
-		if(!StringUtils.isEmpty(name)){
-			List<PartyOrgInfo> departmentInfoList = new ArrayList<PartyOrgInfo>();
-			List<PartyOrgInfo> queryDepartmentInfo = partyOrgInfoMapper.getPartyOrgInfosByNameLike(name);
-			departmentInfoList.addAll(queryDepartmentInfo);
-			if (queryDepartmentInfo != null && !queryDepartmentInfo.isEmpty()) {
-				for (PartyOrgInfo departmentInfo : queryDepartmentInfo) {
-					queryParemntDepartmentWithChildInfo(departmentInfo, departmentInfoList);
-				}
-			}
-			return departmentInfoList;
-		}
-		return null;
-	}
-	
 	
 	private void queryParemntDepartmentWithParentsInfo(PartyOrgInfo departmentInfo,List<PartyOrgInfo> departmentInfoList){
 		boolean flag = true;
@@ -80,18 +58,5 @@ public class PartyOrgInfoService {
 	}
 
 
-	private void queryParemntDepartmentWithChildInfo(PartyOrgInfo departmentInfo,List<PartyOrgInfo> departmentInfoList){
-		if (departmentInfo != null && !StringUtils.isEmpty(departmentInfo.getParentPartyOrg())) {
-			List<PartyOrgInfo> parentList = partyOrgInfoMapper.getDepartmentInfoByParentId(departmentInfo.getId()+"");
-			if (parentList != null && !parentList.isEmpty()) {
-				
-				for (PartyOrgInfo departmentInfo2 : parentList) {
-					if (!departmentInfoList.contains(departmentInfo2)) {
-						departmentInfoList.add(departmentInfo2);
-					}
-					queryParemntDepartmentWithParentsInfo(departmentInfo2, departmentInfoList);
-				}
-			}
-		}
-	}
+	
 }

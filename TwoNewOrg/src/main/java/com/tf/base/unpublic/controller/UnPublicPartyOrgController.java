@@ -233,11 +233,15 @@ public class UnPublicPartyOrgController {
 	/**
 	 * 编辑党组织信息
 	 * @param id
+	 * @param orgIds
+	 * @param orgNames
+	 * @param clickSign
 	 * @param model
 	 * @return
+	 * @throws Exception
 	 */
 	@RequestMapping(value="/unpublic/partyorgedit",method=RequestMethod.GET)
-	public String orgedit(String id, String orgIds, String orgNames, Model model)throws Exception{
+	public String orgedit(String id, String orgIds, String orgNames, String clickSign, Model model)throws Exception{
 		List<UnpublicPartyOrgChangeInfo> changeDateList = new ArrayList<>();
 		List<DeputySecretaryInfo> deputsecList = new ArrayList<>();
 		List<PartyInstructorInfo> instructList = new ArrayList<>();
@@ -318,6 +322,7 @@ public class UnPublicPartyOrgController {
 			model.addAttribute("orgNames", orgNames1);
 			model.addAttribute("orgIds", orgIds1);
 			model.addAttribute("opcInfo", opcInfo);
+			model.addAttribute("clickSign", clickSign);
 		}else{
 			String[] orgIdArray = orgIds.split(",");
 			UnpublicOrgPmbrCount opcInfo = unpublicOrgPmbrCountMapper.getPmbrCount(orgIdArray);
@@ -339,9 +344,12 @@ public class UnPublicPartyOrgController {
 	
 	/**
 	 * 保存党组织信息
+	 * @param partyOrgIds
+	 * @param unpublicPartyOrgInfo
+	 * @param request
 	 * @param model
-	 * @param params
 	 * @return
+	 * @throws Exception
 	 */
 	@RequestMapping(value="/unpublic/partyorgedit",method=RequestMethod.POST)
 	@ResponseBody
@@ -419,7 +427,7 @@ public class UnPublicPartyOrgController {
 			}
 		}else{
 			try {
-				unPublicPartyOrgService.updateOrg(unpublicPartyOrgInfo, pociList, dsiList, instructList, lowerPartyOrgList);
+				unPublicPartyOrgService.updateOrg(unpublicPartyOrgInfo, pociList, dsiList, instructList, lowerPartyOrgList, orgInfoArray);
 				if(unpublicPartyOrgInfo.getReportHigher() == 0){
 					msg = "修改成功";
 				}
@@ -434,6 +442,7 @@ public class UnPublicPartyOrgController {
 	 * 党组织信息退回
 	 * @param model
 	 * @param id
+	 * @param status
 	 * @return
 	 */
 	@RequestMapping(value="/unpublic/partyOrgSetStatus",method=RequestMethod.POST)
@@ -447,7 +456,8 @@ public class UnPublicPartyOrgController {
 	/**
 	 * 党组织信息上报审核
 	 * @param model
-	 * @param id
+	 * @param partyOrgIds
+	 * @param status
 	 * @return
 	 */
 	@RequestMapping(value="/unpublic/partyOrgsSetStatus",method=RequestMethod.POST)
@@ -575,7 +585,7 @@ public class UnPublicPartyOrgController {
 	/**
 	 * 审核
 	 * @param model
-	 * @param id
+	 * @param partyOrgIds
 	 * @param remarks
 	 * @return
 	 */
@@ -605,11 +615,12 @@ public class UnPublicPartyOrgController {
 	
 	/**
 	 * 文件上传页面
-	 * @param id
+	 * @param attachmentCommonInfo
+	 * @param sign
 	 * @param method
 	 * @param model
 	 * @return
-	 * @throws UnsupportedEncodingException 
+	 * @throws UnsupportedEncodingException
 	 */
 	@RequestMapping(value="/unpublic/uploadFile",method=RequestMethod.GET)     
 	public String fileUploadShow(AttachmentCommonInfo attachmentCommonInfo,String sign, String method,Model model) throws UnsupportedEncodingException{
@@ -647,8 +658,7 @@ public class UnPublicPartyOrgController {
 	
 	/**
 	 * 展示党员基本信息页面
-	 * @param id
-	 * @param method
+	 * @param orgIds
 	 * @param model
 	 * @return
 	 */
@@ -661,10 +671,10 @@ public class UnPublicPartyOrgController {
 	
 	/**
 	 * 展示党员基本信息页面
-	 * @param id
-	 * @param method
-	 * @param model
-	 * @return
+	 * @param response
+	 * @param page
+	 * @param rows
+	 * @param params
 	 */
 	@RequestMapping(value="/unpublic/showPartyInfo",method=RequestMethod.POST)
 	public void showPartyInfo(HttpServletResponse response, int page, int rows, QueryPmbrParams params){
@@ -682,6 +692,35 @@ public class UnPublicPartyOrgController {
 			unpublicOrgPmbrInfo.setEducation(dict.getValueByCode(CommonConstants.FINAL_EDUCATION, unpublicOrgPmbrInfo.getEducation()));
 		}
 		PageUtil.returnPage(response, new PageInfo<UnpublicOrgPmbrInfo>(list));
+	}
+	
+	/**
+	 * 展示组织信息弹窗
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="/unpublic/showOrgInfoPop",method=RequestMethod.GET)
+	public String jumpshowOrgInfoPop(Model model){
+		
+		return "unpublic/unpublicOrgInfoPop";
+	}
+	
+	/**
+	 * 展示组织信息弹窗
+	 * @param response
+	 * @param page
+	 * @param rows
+	 * @param params
+	 */
+	@RequestMapping(value="/unpublic/showOrgInfoPop",method=RequestMethod.POST)
+	public void showOrgInfoPop(HttpServletResponse response, int page, int rows, QueryPmbrParams params){
+		
+		PageHelper.startPage(page, rows, true);
+		List<UnpublicOrgInfo> list = unpublicOrgInfoMapper.getList(params);
+		for (UnpublicOrgInfo unpublicOrgInfo : list) {
+			unpublicOrgInfo.setCreateOrgTxt(baseService.getDeptNameById(unpublicOrgInfo.getCreateOrg()));
+		}
+		PageUtil.returnPage(response, new PageInfo<UnpublicOrgInfo>(list));
 	}
 	
 	/**
@@ -764,11 +803,13 @@ public class UnPublicPartyOrgController {
 		List<DataDictionary> unitList = new ArrayList<>();
 		String[] orgIdArray = orgIds.split(",");
 		String[] orgNameArray = orgNames.split(",");
-		for(int i = 0; i < orgIdArray.length; i++){
-			DataDictionary data = new DataDictionary();
-			data.setCode(orgIdArray[i]);
-			data.setValue(orgNameArray[i]);
-			unitList.add(data);
+		if(orgIdArray[0].length() > 0 && orgNameArray[0].length() > 0){
+			for(int i = 0; i < orgIdArray.length; i++){
+				DataDictionary data = new DataDictionary();
+				data.setCode(orgIdArray[i]);
+				data.setValue(orgNameArray[i]);
+				unitList.add(data);
+			}
 		}
 		model.addAttribute("unitList", unitList);
 	}

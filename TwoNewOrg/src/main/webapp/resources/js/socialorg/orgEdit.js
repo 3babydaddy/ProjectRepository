@@ -2,7 +2,6 @@ $(function(){
 	
 	validate();
 	
-	
 	$("#otherCheckbox").click(function(){
 		if($(this).get(0).checked)
 			$("#otherTxt").prop("disabled",false);
@@ -33,6 +32,11 @@ $(function(){
 		eduactionSign();
 	});
 	eduactionSign();
+	
+	//点击列表页上的上报按钮事件
+	if($("#clickSign").val() == 'clickSign'){
+		reportHigher();
+	}
 });
 
 function eduactionSign(){

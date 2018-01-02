@@ -119,6 +119,14 @@ $(function(){
 		});
 		showLowerPartyInfo();
 	
+		//点击列表页上的上报按钮事件
+		if($("#clickSign").val() == 'clickSign'){
+			submitReport();
+		}
+		
+		$("button[name='btn_org_name']").on('click',function(){
+			$(this).remove();
+		});
 });
 
 function getQueryParams() {
@@ -239,6 +247,22 @@ function submitReport(){
 function submit(flag){
 	//var formdata=new FormData($("#editForm")[0]);
 	//alert($("#editForm").serialize());
+	var orgIds = "";
+	//选择的组织数据
+	var orgIdArray = document.getElementsByName('btn_org_name');
+	if(orgIdArray.length > 0){
+		for(var t = 0; t < orgIdArray.length; t++){
+			if(orgIds == ""){
+				orgIds = orgIdArray[t].value;
+			}else{
+				orgIds = orgIds + ',' + orgIdArray[t].value;
+			}
+		}
+	}else{
+		$.messager.alert("请选择建立党组织的企业！");
+		return;
+	}
+	$("#partyOrgIds").val(orgIds);
 	lowerPartyInfoConver();
 	instructConver();
 	changeInfoConver();
@@ -309,7 +333,8 @@ function validate(){
 	    	  required: true
 	      },
 	      partyOrgTel:{
-	    	  required: true
+	    	  required: true,
+	    	  isMobile:true
 	      },
 	      secretaryName:{
 	    	  required: true
@@ -349,6 +374,12 @@ function validate(){
 	      },
 	      otherInfo:{
 	    	  required: true
+	      },
+	      isPartyIntoSchool:{
+	    	  required: true
+	      },
+	      parentPartyOrgType:{
+	    	  required: true
 	      }
 	    },
 	    messages: {
@@ -369,16 +400,16 @@ function validate(){
 	    		required: "请选择是否选派党建工作指导员或联络员"
 		    },
 		    instructorName: {
-	    		required: "请填写选派党建工作指导员或联络员的姓名"
+	    		required: "请填写指导员或联络员的姓名"
 		    },
 		    instructorUnitTxt: {
-	    		required: "请选择选派党建工作指导员或联络员的单位"
+	    		required: "请填写指导员或联络员的单位"
 		    },
 		    instructorJob: {
-	    		required: "请选择是否选派党建工作指导员或联络员"
+	    		required: "请填写指导员或联络员职务"
 		    },
 		    partyOrgTimeTxt: {
-	    		required: "请填写选派党建工作指导员或联络员的职务"
+	    		required: "请填写党组织成立时间"
 		    },
 		    filepartyOrgAttachment: {
 	    		required: "请上传党组织成立相关附件"
@@ -421,6 +452,12 @@ function validate(){
 		    },
 		    otherInfo: {
 	    		required: "请输入其他"
+		    },
+		    isPartyIntoSchool: {
+	    		required: "请选择是否纳入学校章程"
+		    },
+		    parentPartyOrgType: {
+	    		required: "请选择隶属上级党组织类别"
 		    }
 	    },
 	    submitHandler:function(form){
@@ -452,7 +489,7 @@ function initPartyOrgTree(){
 		type : "POST",
 		data : {
 			name : '',
-			avail:'0'
+			status:'1'
 		},
 		success : function(data) {
 			var tree = $.fn.zTree.init($("#parentDepartMent"), departmentSetting, data);
@@ -531,6 +568,13 @@ function showUpload(obj, action){
 function showPartyInfo(orgIds){
 	var url = ctx + '/socialorg/showPartyInfo?orgIds='+orgIds;
 	utils.e.openWin('showPartyInfoWin','党员基本信息',url,"80%","50%",function(){
+		//reloadData()
+	});
+}
+
+function showOrgInfoPop(){
+	var url = ctx + '/social/showOrgInfoPop';
+	utils.e.openWin('showOrgInfoPop','组织信息',url,"60%","20%",function(){
 		//reloadData()
 	});
 }

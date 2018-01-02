@@ -19,8 +19,7 @@ import com.tf.base.basemanage.service.PartyOrgInfoService;
 import com.tf.base.common.constants.CommonConstants;
 import com.tf.base.common.domain.DataDictionary;
 import com.tf.base.common.domain.DictionaryRepository;
-import com.tf.permission.client.constants.PermissionConstants;
-import com.tf.permission.client.entity.User;
+import com.tf.base.common.service.BaseService;
 
 
 @Controller
@@ -28,6 +27,9 @@ public class PartyOrgInfoController {
 
 	@Autowired
 	private DictionaryRepository dict;
+	
+	@Autowired
+	private BaseService baseService;
 	
 	@Autowired
 	private PartyOrgInfoService partyOrgInfoService;
@@ -45,11 +47,14 @@ public class PartyOrgInfoController {
 	@ResponseBody
 	public List<PartyOrgInfo> query(PartyOrgInfo partyOrgInfo) {
 		List<PartyOrgInfo> result = null;
+		String deptId = "";
+		if(!baseService.isQuWeiDept()){
+			deptId = baseService.getCurrentUserDeptId();
+		}
 		if (!StringUtils.isEmpty(partyOrgInfo.getName())) {
-			result = partyOrgInfoService.getDepartmentInfosWithParentsByName(partyOrgInfo.getName());
-			
+			result = partyOrgInfoService.getDepartmentInfosWithParentsByName(partyOrgInfo.getName(), deptId);
 		}else{
-			result = partyOrgInfoMapper.getAllPartyOrgInfo();			
+			result = partyOrgInfoMapper.getAllPartyOrgInfo(deptId);			
 		}
 		if(!StringUtils.isEmpty(partyOrgInfo.getStatus())){
 			
@@ -86,8 +91,8 @@ public class PartyOrgInfoController {
 			}else{
 				partyOrgInfo.setPartySetUpTime(partySetUpTimeStr.isEmpty()?null:sdf.parse(partySetUpTimeStr));
 				partyOrgInfo.setPartyStartTime(partyStartTimeStr.isEmpty()?null:sdf.parse(partyStartTimeStr));
-				User user = (User) session.getAttribute(PermissionConstants.CURRENT_USER);
-				partyOrgInfo.setCreater(user.getLoginName());
+				partyOrgInfo.setCreater(baseService.getUserName());
+				partyOrgInfo.setCreateOrg(baseService.getCurrentUserDeptId());
 				partyOrgInfo.setCreateTime(new Date());
 				partyOrgInfoMapper.insertSelective(partyOrgInfo);
 			}
@@ -120,8 +125,9 @@ public class PartyOrgInfoController {
 		try{
 			partyOrgInfo.setPartySetUpTime(partySetUpTimeStr.isEmpty()?null:sdf.parse(partySetUpTimeStr));
 			partyOrgInfo.setPartyStartTime(partyStartTimeStr.isEmpty()?null:sdf.parse(partyStartTimeStr));
-			User user = (User) session.getAttribute(PermissionConstants.CURRENT_USER);
-			partyOrgInfo.setCreater(user.getLoginName());
+			//User user = (User) session.getAttribute(PermissionConstants.CURRENT_USER);
+			partyOrgInfo.setCreater(baseService.getUserName());
+			partyOrgInfo.setCreateOrg(baseService.getCurrentUserDeptId());
 			partyOrgInfo.setCreateTime(new Date());
 			partyOrgInfoMapper.updateByPrimaryKeySelective(partyOrgInfo);
 		}catch(Exception e){

@@ -31,7 +31,15 @@
 				 	</colgroup>
 					<tr>
 						<td style="text-align: right;">建立党组织单位：</td>
-	                    <td style="text-align: left;">${orgNames}</td>
+	                    <td style="text-align: left;" colspan="5">
+                    		<div  class="form-control" id="partyOrgDiv" style="height: 70px;float:left;">
+                    			<c:forEach var="it" items="${unitList}">
+									<button class="btn btn-xs" value="${it.code }" disabled="disabled" name="btn_org_name">${it.value }</button>
+								</c:forEach>
+							</div>
+	                    </td>
+	                 </tr>
+					<tr>
 						<td style="text-align: right;"><font color="red">*</font>是否成立党组织：</td>
 						<td style="text-align: left;">
 							<c:if test="${main.isSetUpPartyOrg eq '1' }">是</c:if>
@@ -46,8 +54,6 @@
 								</c:forEach>
 							</select>
 						</td>
-					</tr>
-					<tr>
 						<td style="text-align: right;">党组织组建形式：</td>
 						<td style="text-align: left;">
 							<select id="partyOrgForm" name="partyOrgForm" class="form-control" disabled="disabled">
@@ -57,6 +63,8 @@
 								</c:forEach>
 							</select>
 						</td>
+					</tr>
+					<tr>
 						<td style="text-align: right;">党组织类别：</td>
 						<td style="text-align: left;">
 							<select id="partyOrgType" name="partyOrgType" class="form-control" disabled="disabled">
@@ -71,10 +79,10 @@
 							<c:if test="${main.isInstructor eq '1' }">是</c:if>
 							<c:if test="${main.isInstructor eq '0' }">否</c:if>
 						</td>
-					</tr>
-					<tr>
 						<td style="text-align: right;"><font color="red">*</font>党组织成立时间：</td>
 						<td style="text-align: left;">${main.partyOrgTimeTxt }</td>
+					</tr>
+					<tr>
 						<td style="text-align: right;"><font color="red">*</font>党组织成立相关附件：</td>
 						<td style="text-align: left;">
 							<input class="form-control" type="text" id="filepartyOrgAttachment" name="filepartyOrgAttachment" value="${main.filepartyOrgAttachment }" onclick="showUpload(this,4)"/>
@@ -467,6 +475,7 @@ $(function(){
 	 if(instructSize == 0){
 			$("#instruct").hide();
 	 }
+
 });
 
 	function showUpload(obj, action){

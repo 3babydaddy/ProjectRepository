@@ -42,13 +42,20 @@ function loadData(){
 				,{field :"partyOrgName",title :"党组织名称",width :"8%", align:"center",formatter:ifNullShowHeng}
 				,{field :"partyOrgFormTxt",title :"党组织组建形式",width :"8%", align:"center",formatter:ifNullShowHeng}
 				,{field :"partyOrgTypeTxt",title :"党组织类别",width :"6%", align:"center",formatter:ifNullShowHeng}
-				,{field :"partyOrgTel",title :"党组织联系电话",width :"10%", align:"center",formatter:ifNullShowHeng}
+				,{field :"partyOrgTel",title :"党组织联系电话",width :"8%", align:"center",formatter:ifNullShowHeng}
 				,{field :"subjectionPartyName",title :"隶属党组织名称",width :"8%", align:"center",formatter:ifNullShowHeng}
-				,{field :"secretaryName",title :"书记名称",width :"8%", align:"center",formatter:ifNullShowHeng}   
+				,{field :"secretaryName",title :"书记名称",width :"6%", align:"center",formatter:ifNullShowHeng}   
 	            ,{field :"secretarySourceTxt",title :"书记来源",width :"6%", align:"center",formatter:ifNullShowHeng}
 	            ,{field :"partyOrgTimeTxt",title :"党组织成立时间",width :"10%", align:"center",formatter:ifNullShowHeng}
-	            ,{field :"creater",title :"创建人",width :"6%", align:"center",formatter:ifNullShowHeng}
+	            ,{field :"creater",title :"创建人",width :"5%", align:"center",formatter:ifNullShowHeng}
 	            ,{field :"statusTxt",title :"状态",width :"6%", align:"center",formatter:ifNullShowHeng}
+	            ,{field : 'statusAndDo',title : '操作',width : "6%" ,align:'center',
+					formatter:function(value,row,index){
+						if(row.status == '1'){
+							return '<a href="javascript:void(0)" class="easyui-linkbutton" name="editBtn" onclick="reportHigherOption(\''+ row.id  + '\',\'clickSign\',\''+ row.nature + '\')">上报</a>';
+						}
+		            }	
+	             }
 	         ] ],
 	      onLoadSuccess : function(data) {
 
@@ -135,12 +142,12 @@ function reloadData(){
 
 
 function addRow(){
-	var orgIdStr = null;
-	var orgNameStr = null;
+	var orgIdStr = "";
+	var orgNameStr = "";
+	var nature = "";
 	var row = getCheckedRow();
-	if(row.length == 0){
-		layer.alert('请选择一条记录！')
-		return;
+	if(row.length > 0){
+		nature = row[0].nature;
 	}
 	for(var i=0; i< row.length; i++){
 		if(row[i].status > 0){
@@ -149,7 +156,7 @@ function addRow(){
 		}
 	}
 	for(var i = 0; i < row.length; i++){
-		if(orgIdStr == null){
+		if(orgIdStr == "" && orgNameStr==""){
 			orgIdStr = row[i].orgId;
 			orgNameStr = row[i].orgName;
 		}else{
@@ -157,7 +164,6 @@ function addRow(){
 			orgNameStr = orgNameStr + "," + row[i].orgName;
 		}
 	}
-	var nature = row[0].nature;
 	var url = ctx + '/socialorg/partyorgedit?id=&orgIds='+orgIdStr+'&orgNames='+orgNameStr+'&nature='+nature;
 	//openWin("编辑", url,"90%","90%",function(){reloadData()});
 	
@@ -462,6 +468,19 @@ function reportHigherRow(){
 		}
 	});
 }
+
+/**
+ * 列表页上的上报功能
+ * @param id
+ * @returns
+ */
+function reportHigherOption(partyOrgId, sign, nature){
+	var url = ctx + '/socialorg/partyorgedit?id='+partyOrgId+'&clickSign='+sign+'&nature='+nature;
+	utils.e.openWin('editwin','编辑',url,"80%","80%",function(){
+		reloadData();
+	});
+}
+
 function showDept(){
 	showDeptTree("createOrg","createOrgTxt");
 }

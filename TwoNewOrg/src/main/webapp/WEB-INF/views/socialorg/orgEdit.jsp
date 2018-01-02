@@ -261,6 +261,7 @@
 		<input type="hidden" id="pmbrCountId" name="pmbrCountId" value="${pmbrCount.id }"/>
 		<input type="hidden" id="chargeId" name="chargeId" value="${charge.id }"/>
 		<input type="hidden" id="flag" name="flag" value="${flag}"/>
+		<input type="hidden" id="clickSign" name="clickSign" value="${clickSign}"/>
 		
 		<input type="hidden" id="chargeTwodeputyAcommitteeType" name="chargeTwodeputyAcommitteeType"/>
 		</form>

@@ -86,4 +86,18 @@
   	</where>
   	order by ${orderby}
   </select>
+  <update id="updateOrgPartyOrgId">
+  		update unpublic_org_info set unpublic_party_org_id = null where unpublic_party_org_id = #{partyOrgId} and status = '2'
+  </update>
+  <select id="getList" resultMap="BaseResultMap">
+  		select * from unpublic_org_info main
+  		<where>
+	  		 main.status = '2' 
+	  		 and main.unpublic_party_org_id is null 
+	  		 and main.cover_party_org_id is null
+	  		<if test="params.name != null and params.name != ''">
+	  			and main.name LIKE CONCAT(CONCAT('%',#{params.name}),'%')
+	  		</if>
+  		</where>
+  </select>
 </mapper>

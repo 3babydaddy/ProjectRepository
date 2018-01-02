@@ -45,6 +45,13 @@ function loadData(){
 	            ,{field :"address",title :"住地",width :"10%", align:"center",formatter:ifNullShowHeng}
 	            ,{field :"creator",title :"创建人",width :"10%", align:"center",formatter:ifNullShowHeng}
 	            ,{field :"statusTxt",title :"状态",width :"10%", align:"center",formatter:ifNullShowHeng}
+	            ,{field : 'statusAndDo',title : '操作',width : "6%" ,align:'center',
+					formatter:function(value,row,index){
+						if(row.status == '1'){
+							return '<a href="javascript:void(0)" class="easyui-linkbutton" name="editBtn" onclick="reportHigherOption(\''+ row.id  + '\',\'clickSign\')">上报</a>';
+						}
+		            }	
+	             }
 	         ] ],
 	      onLoadSuccess : function(data) {
 
@@ -179,6 +186,7 @@ function editRow(id){
 		reloadData();
 	},true);
 }
+
 /**
  * 查看
  * @param id
@@ -507,5 +515,17 @@ function batchReportFun(){
 					layer.alert(result.msg);
 			}
 		});
+	});
+}
+
+/**
+ * 列表页上的上报功能
+ * @param id
+ * @returns
+ */
+function reportHigherOption(orgId, sign){
+	var url = ctx + '/socialorg/orgedit?id='+orgId+'&clickSign='+sign;
+	utils.e.openWin('editwin','编辑',url,"80%","80%",function(){
+		reloadData();
 	});
 }

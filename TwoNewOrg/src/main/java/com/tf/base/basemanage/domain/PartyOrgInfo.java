@@ -56,6 +56,12 @@ public class PartyOrgInfo {
     private Date createTime;
     
     /**
+     * 创建单位
+     */
+    @Column(name = "create_org")
+    private String createOrg;
+    
+    /**
      * 状态 1.是 0.否
      */
     private String status;
@@ -150,6 +156,13 @@ public class PartyOrgInfo {
 	}
 
 
+	public String getCreateOrg() {
+		return createOrg;
+	}
+
+	public void setCreateOrg(String createOrg) {
+		this.createOrg = createOrg;
+	}
 
 	public String getStatus() {
 		return status;

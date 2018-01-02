@@ -363,6 +363,7 @@
 		<input type="hidden" id="deputySecretaryList" name="deputySecretaryList" /> 
 		<input type="hidden" id="modular" name="modular" value="3" />
 		<input type="hidden" id="type" name="type" value="1" />
+		<input type="hidden" id="clickSign" name="clickSign" value="${clickSign }" />
 		<div align="center" border="false" style="position:fixed;right:10px;bottom:10px;" id="returnDiv">
     		<div class="btn-group">
 			  <button type="button" class="btn btn-primary" onclick="javascript:save(0);">保存</button>

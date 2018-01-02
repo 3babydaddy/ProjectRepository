@@ -44,13 +44,19 @@ function loadData(){
 //	            ,{field :"business_director_org",title :"园区级别",width :"8%", align:"center",formatter:ifNullShowHeng}
 //	            ,{field :"address",title :"是否为亿元楼宇",width :"8%", align:"center",formatter:ifNullShowHeng}
 //	            ,{field :"address",title :"所在园区、商务楼名称",width :"10%", align:"center",formatter:ifNullShowHeng}
-	            ,{field :"contactPhone",title :"联系电话",width :"10%", align:"center",formatter:ifNullShowHeng}
+	            ,{field :"contactPhone",title :"联系电话",width :"8%", align:"center",formatter:ifNullShowHeng}
 	            ,{field :"businessVolume",title :"年营业收入（万元）",width :"10%", align:"center",formatter:ifNullShowHeng}
 	            ,{field :"jobinTotalnum",title :"从业人员数量（名）",width :"10%", align:"center",formatter:ifNullShowHeng}
 	            ,{field :"onScaleIsTxt",title :"是否规模以上企业",width :"10%", align:"center",formatter:ifNullShowHeng}
-	            ,{field :"creator",title :"创建人",width :"6%", align:"center",formatter:ifNullShowHeng}
-	            ,{field :"statusTxt",title :"状态",width :"6%", align:"center",formatter:ifNullShowHeng}
-	          
+	            ,{field :"creator",title :"创建人",width :"5%", align:"center",formatter:ifNullShowHeng}
+	            ,{field :"statusTxt",title :"状态",width :"5%", align:"center",formatter:ifNullShowHeng}
+	            ,{field : 'statusAndDo',title : '操作',width : "6%" ,align:'center',
+					formatter:function(value,row,index){
+						if(row.status == '1'){
+							return '<a href="javascript:void(0)" class="easyui-linkbutton" name="editBtn" onclick="reportHigherOption(\''+ row.id  + '\',\'clickSign\')">上报</a>';
+						}
+		            }	
+	             }
 	         ] ],
 	      onLoadSuccess : function(data) {
 
@@ -514,5 +520,17 @@ function batchReportFun(){
 					layer.alert(result.msg);
 			}
 		});
+	});
+}
+
+/**
+ * 列表页上的上报功能
+ * @param id
+ * @returns
+ */
+function reportHigherOption(orgId, sign){
+	var url = ctx + '/unpublic/orgedit?id='+orgId+'&clickSign='+sign;
+	utils.e.openWin('editwin','编辑',url,"80%","80%",function(){
+		reloadData();
 	});
 }

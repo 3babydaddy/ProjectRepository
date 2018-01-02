@@ -428,6 +428,7 @@
 		<input type="hidden" id="pmbrCountId" name="pmbrCountId" value="${pmbrCount.id }"/>
 		<input type="hidden" id="sponsorId" name="sponsorId" value="${sponsor.id }"/>
 		<input type="hidden" id="flag" name="flag" value="${flag}"/>
+		<input type="hidden" id="clickSign" name="clickSign" value="${clickSign}"/>
 		
 		<input type="hidden" id="sponsorTwodeputyAcommitteeType" name="sponsorTwodeputyAcommitteeType"/>
 		<input type="hidden" name="nationality"/>

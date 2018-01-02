@@ -104,8 +104,10 @@ public class CoverPartyConstructionController {
 	/**
 	 * 查看年度党建情况
 	 * @param id
+	 * @param partyOrgName
 	 * @param model
 	 * @return
+	 * @throws Exception
 	 */
 	@RequestMapping(value="/cover/partyconstructionlook",method=RequestMethod.GET)
 	public String orglook(String id, String partyOrgName, Model model)throws Exception{
@@ -128,8 +130,11 @@ public class CoverPartyConstructionController {
 	/**
 	 * 新增或者编辑年度党建情况
 	 * @param id
+	 * @param partyOrgId
+	 * @param partyOrgName
 	 * @param model
 	 * @return
+	 * @throws Exception
 	 */
 	@RequestMapping(value="/cover/partyconstructionedit",method=RequestMethod.GET)
 	public String orgedit(String id, String partyOrgId, String partyOrgName, Model model)throws Exception{
@@ -156,7 +161,7 @@ public class CoverPartyConstructionController {
 	/**
 	 * 保存年度党建情况
 	 * @param model
-	 * @param params
+	 * @param main
 	 * @return
 	 */
 	@RequestMapping(value="/cover/partyconstructionedit",method=RequestMethod.POST)
@@ -198,7 +203,8 @@ public class CoverPartyConstructionController {
 	/**
 	 * 年度党建上报审核
 	 * @param model
-	 * @param id
+	 * @param partyOrgIds
+	 * @param status
 	 * @return
 	 */
 	@RequestMapping(value="/cover/partyConstructionsSetStatus",method=RequestMethod.POST)
@@ -218,6 +224,7 @@ public class CoverPartyConstructionController {
 	 * 年度党建退回
 	 * @param model
 	 * @param id
+	 * @param status
 	 * @return
 	 */
 	@RequestMapping(value="/cover/partyConstructionSetStatus",method=RequestMethod.POST)
@@ -366,7 +373,7 @@ public class CoverPartyConstructionController {
 	/**
 	 * 审核
 	 * @param model
-	 * @param id
+	 * @param partyOrgIds
 	 * @param remarks
 	 * @return
 	 */

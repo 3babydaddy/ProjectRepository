@@ -178,11 +178,13 @@ public class CoverPartyOrgController {
 	/**
 	 * 编辑党组织信息
 	 * @param id
+	 * @param clickSign
 	 * @param model
 	 * @return
+	 * @throws Exception
 	 */
 	@RequestMapping(value="/cover/partyorgedit",method=RequestMethod.GET)
-	public String orgedit(String id, Model model)throws Exception{
+	public String orgedit(String id, String clickSign, Model model)throws Exception{
 		List<CoverPartyOrgChangeInfo> changeDateList = new ArrayList<>();
 		List<DeputySecretaryInfo> deputsecList = new ArrayList<>();
 		SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd" );
@@ -225,6 +227,7 @@ public class CoverPartyOrgController {
 			model.addAttribute("changeDateList", changeDateList);
 			model.addAttribute("deputsecList", deputsecList);
 			model.addAttribute("copc", copc);
+			model.addAttribute("clickSign", clickSign);
 		}else{
 						
 			CoverPartyOrgInfo main = new CoverPartyOrgInfo();
@@ -240,9 +243,11 @@ public class CoverPartyOrgController {
 	
 	/**
 	 * 保存党组织信息
+	 * @param coverPartyOrgInfo
+	 * @param request
 	 * @param model
-	 * @param params
 	 * @return
+	 * @throws Exception
 	 */
 	@RequestMapping(value="/cover/partyorgedit",method=RequestMethod.POST)
 	@ResponseBody
@@ -308,6 +313,7 @@ public class CoverPartyOrgController {
 	 * 党组织信息退回
 	 * @param model
 	 * @param id
+	 * @param status
 	 * @return
 	 */
 	@RequestMapping(value="/cover/partyOrgSetStatus",method=RequestMethod.POST)
@@ -322,7 +328,8 @@ public class CoverPartyOrgController {
 	/**
 	 * 党组织信息上报审核
 	 * @param model
-	 * @param id
+	 * @param partyOrgIds
+	 * @param status
 	 * @return
 	 */
 	@RequestMapping(value="/cover/partyOrgsSetStatus",method=RequestMethod.POST)
@@ -480,7 +487,7 @@ public class CoverPartyOrgController {
 	/**
 	 * 审核
 	 * @param model
-	 * @param id
+	 * @param partyOrgIds
 	 * @param remarks
 	 * @return
 	 */
@@ -511,12 +518,13 @@ public class CoverPartyOrgController {
 	
 	
 	/**
-	 * 文件上传页面
-	 * @param id
+	 *  文件上传页面
+	 * @param attachmentCommonInfo
+	 * @param sign
 	 * @param method
 	 * @param model
 	 * @return
-	 * @throws UnsupportedEncodingException 
+	 * @throws UnsupportedEncodingException
 	 */
 	@RequestMapping(value="/cover/uploadFile",method=RequestMethod.GET)     
 	public String fileUploadShow(AttachmentCommonInfo attachmentCommonInfo,String sign, String method,Model model) throws UnsupportedEncodingException{
@@ -554,8 +562,7 @@ public class CoverPartyOrgController {
 	
 	/**
 	 * 展示党员基本信息页面
-	 * @param id
-	 * @param method
+	 * @param partyOrgId
 	 * @param model
 	 * @return
 	 */
@@ -568,10 +575,10 @@ public class CoverPartyOrgController {
 	
 	/**
 	 * 展示党员基本信息页面
-	 * @param id
-	 * @param method
-	 * @param model
-	 * @return
+	 * @param response
+	 * @param page
+	 * @param rows
+	 * @param params
 	 */
 	@RequestMapping(value="/cover/showPartyInfo",method=RequestMethod.POST)
 	public void showPartyInfo(HttpServletResponse response, int page, int rows, QueryPmbrParams params){

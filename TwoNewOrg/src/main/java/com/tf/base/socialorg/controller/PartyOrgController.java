@@ -134,6 +134,7 @@ public class PartyOrgController {
 	/**
 	 * 查看党组织信息
 	 * @param id
+	 * @param nature
 	 * @param model
 	 * @return
 	 */
@@ -231,11 +232,16 @@ public class PartyOrgController {
 	/**
 	 * 编辑党组织信息
 	 * @param id
+	 * @param orgIds
+	 * @param orgNames
+	 * @param nature
+	 * @param clickSign
 	 * @param model
 	 * @return
+	 * @throws Exception
 	 */
 	@RequestMapping(value="/socialorg/partyorgedit",method=RequestMethod.GET)
-	public String orgedit(String id, String orgIds, String orgNames, String nature, Model model)throws Exception{
+	public String orgedit(String id, String orgIds, String orgNames, String nature, String clickSign, Model model)throws Exception{
 		List<SocialPartyOrgChangeInfo> changeDateList = new ArrayList<>();
 		List<DeputySecretaryInfo> deputsecList = new ArrayList<>();
 		List<PartyInstructorInfo> instructList = new ArrayList<>();
@@ -316,6 +322,7 @@ public class PartyOrgController {
 			model.addAttribute("orgIds", orgIds1);
 			model.addAttribute("opcInfo", opcInfo);
 			model.addAttribute("nature", nature);
+			model.addAttribute("clickSign", clickSign);
 		}else{
 			String[] orgIdArray = orgIds.split(",");
 			SocialOrgPmbrCount opcInfo = socialOrgPmbrCountMapper.getPmbrCount(orgIdArray);
@@ -338,9 +345,12 @@ public class PartyOrgController {
 	
 	/**
 	 * 保存党组织信息
+	 * @param partyOrgIds
+	 * @param socialPartyOrgInfo
+	 * @param request
 	 * @param model
-	 * @param params
 	 * @return
+	 * @throws Exception
 	 */
 	@RequestMapping(value="/socialorg/partyorgedit",method=RequestMethod.POST)
 	@ResponseBody
@@ -414,7 +424,7 @@ public class PartyOrgController {
 			}
 		}else{
 			try {
-				partyOrgService.updateOrg(socialPartyOrgInfo, pociList, dsiList, instructList, lowerPartyOrgList);
+				partyOrgService.updateOrg(socialPartyOrgInfo, pociList, dsiList, instructList, lowerPartyOrgList, orgInfoArray);
 				if(socialPartyOrgInfo.getReportHigher() == 0){
 					msg = "修改成功";
 				}
@@ -429,6 +439,7 @@ public class PartyOrgController {
 	 * 党组织信息退回
 	 * @param model
 	 * @param id
+	 * @param status
 	 * @return
 	 */
 	@RequestMapping(value="/socialorg/partyOrgSetStatus",method=RequestMethod.POST)
@@ -443,7 +454,8 @@ public class PartyOrgController {
 	/**
 	 * 党组织信息上报审核
 	 * @param model
-	 * @param id
+	 * @param partyOrgIds
+	 * @param status
 	 * @return
 	 */
 	@RequestMapping(value="/socialorg/partyOrgsSetStatus",method=RequestMethod.POST)
@@ -507,7 +519,7 @@ public class PartyOrgController {
 	}
 	
 	/**
-	 * 撤销党组织页面中的文件展示
+	 *  撤销党组织页面中的文件展示
 	 * @param id
 	 * @param page
 	 * @param rows
@@ -601,7 +613,7 @@ public class PartyOrgController {
 	/**
 	 * 审核
 	 * @param model
-	 * @param id
+	 * @param partyOrgIds
 	 * @param remarks
 	 * @return
 	 */
@@ -631,11 +643,12 @@ public class PartyOrgController {
 	
 	/**
 	 * 文件上传页面
-	 * @param id
+	 * @param attachmentCommonInfo
+	 * @param sign
 	 * @param method
 	 * @param model
 	 * @return
-	 * @throws UnsupportedEncodingException 
+	 * @throws UnsupportedEncodingException
 	 */
 	@RequestMapping(value="/socialorg/uploadFile",method=RequestMethod.GET)     
 	public String fileUploadShow(AttachmentCommonInfo attachmentCommonInfo,String sign, String method,Model model) throws UnsupportedEncodingException{
@@ -673,8 +686,7 @@ public class PartyOrgController {
 	
 	/**
 	 * 展示党员基本信息页面
-	 * @param id
-	 * @param method
+	 * @param orgIds
 	 * @param model
 	 * @return
 	 */
@@ -686,11 +698,11 @@ public class PartyOrgController {
 	}
 	
 	/**
-	 * 展示党员基本信息页面
-	 * @param id
-	 * @param method
-	 * @param model
-	 * @return
+	 *  展示党员基本信息页面
+	 * @param response
+	 * @param page
+	 * @param rows
+	 * @param params
 	 */
 	@RequestMapping(value="/socialorg/showPartyInfo",method=RequestMethod.POST)
 	public void showPartyInfo(HttpServletResponse response, int page, int rows, QueryPmbrParams params){
@@ -704,6 +716,35 @@ public class PartyOrgController {
 			socialOrgPmbrInfo.setEducation(dict.getValueByCode(CommonConstants.FINAL_EDUCATION, socialOrgPmbrInfo.getEducation()));
 		}
 		PageUtil.returnPage(response, new PageInfo<SocialOrgPmbrInfo>(list));
+	}
+	
+	/**
+	 *  展示组织信息弹窗
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="/social/showOrgInfoPop",method=RequestMethod.GET)
+	public String jumpshowOrgInfoPop(Model model){
+		
+		return "socialorg/socialOrgInfoPop";
+	}
+	
+	/**
+	 * 展示组织信息弹窗
+	 * @param response
+	 * @param page
+	 * @param rows
+	 * @param params
+	 */
+	@RequestMapping(value="/social/showOrgInfoPop",method=RequestMethod.POST)
+	public void showOrgInfoPop(HttpServletResponse response, int page, int rows, QueryPmbrParams params){
+		
+		PageHelper.startPage(page, rows, true);
+		List<SocialOrgInfo> list = socialOrgInfoMapper.getList(params);
+		for (SocialOrgInfo socialOrgInfo : list) {
+			socialOrgInfo.setCreateOrgTxt(baseService.getDeptNameById(socialOrgInfo.getCreateOrg()));
+		}
+		PageUtil.returnPage(response, new PageInfo<SocialOrgInfo>(list));
 	}
 	
 	/**
@@ -795,11 +836,13 @@ public class PartyOrgController {
 		List<DataDictionary> unitList = new ArrayList<>();
 		String[] orgIdArray = orgIds.split(",");
 		String[] orgNameArray = orgNames.split(",");
-		for(int i = 0; i < orgIdArray.length; i++){
-			DataDictionary data = new DataDictionary();
-			data.setCode(orgIdArray[i]);
-			data.setValue(orgNameArray[i]);
-			unitList.add(data);
+		if(orgIdArray[0].length() > 0 && orgNameArray[0].length() > 0){
+			for(int i = 0; i < orgIdArray.length; i++){
+				DataDictionary data = new DataDictionary();
+				data.setCode(orgIdArray[i]);
+				data.setValue(orgNameArray[i]);
+				unitList.add(data);
+			}
 		}
 		model.addAttribute("unitList", unitList);
 	}

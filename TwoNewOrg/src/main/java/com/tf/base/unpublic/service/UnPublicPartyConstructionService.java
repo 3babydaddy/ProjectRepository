@@ -33,10 +33,7 @@ public class UnPublicPartyConstructionService {
 	/**
 	 * 新增党建信息
 	 * @param main
-	 * @param sponsor
-	 * @param league
-	 * @param pmbrCount
-	 * @param params
+	 * 
 	 */
 	@Transactional
 	public void addOrg(UnpulicPartyOrgBuilding main)throws Exception {
@@ -47,18 +44,16 @@ public class UnPublicPartyConstructionService {
 		main.setYear(cal.get(Calendar.YEAR)+"");
 		unpulicPartyOrgBuildingMapper.insertSelective(main);
 		AttachmentCommonInfo attachmentCommonInfo = attachmentCommonInfoMapper.selectByPrimaryKey(main.getRectifyAtachementId());
-		attachmentCommonInfo.setMainTableId(main.getId());
-		attachmentCommonInfoMapper.updateByPrimaryKeySelective(attachmentCommonInfo);
-		
+		if(attachmentCommonInfo != null){
+			attachmentCommonInfo.setMainTableId(main.getId());
+			attachmentCommonInfoMapper.updateByPrimaryKeySelective(attachmentCommonInfo);
+		}
 	}
 
 	/**
 	 * 修改党建信息
 	 * @param main
-	 * @param sponsor
-	 * @param league
-	 * @param pmbrCount
-	 * @param params
+	 * 
 	 */
 	@Transactional
 	public void updateOrg(UnpulicPartyOrgBuilding main)throws Exception {
@@ -66,14 +61,16 @@ public class UnPublicPartyConstructionService {
 		main.setCreateTime(new Date());
 		unpulicPartyOrgBuildingMapper.updateByPrimaryKeySelective(main);
 		AttachmentCommonInfo attachmentCommonInfo = attachmentCommonInfoMapper.selectByPrimaryKey(main.getRectifyAtachementId());
-		attachmentCommonInfo.setMainTableId(main.getId());
-		attachmentCommonInfoMapper.updateByPrimaryKeySelective(attachmentCommonInfo);
+		if(attachmentCommonInfo != null){
+			attachmentCommonInfo.setMainTableId(main.getId());
+			attachmentCommonInfoMapper.updateByPrimaryKeySelective(attachmentCommonInfo);
+		}
 	}
 
 	/**
 	 * 撤销党组织
-	 * @param id
-	 * @param remarks
+	 * @param reason
+	 * @param info
 	 */
 	@Transactional
 	public void cancelOrg(CancelReasonInfo reason, UnpulicPartyOrgBuilding info) {
@@ -83,8 +80,8 @@ public class UnPublicPartyConstructionService {
 	
 	/**
 	 * 取消撤销党组织
-	 * @param id
-	 * @param remarks
+	 * @param main
+	 * 
 	 */
 	@Transactional
 	public void nocancel(UnpulicPartyOrgBuilding main) {

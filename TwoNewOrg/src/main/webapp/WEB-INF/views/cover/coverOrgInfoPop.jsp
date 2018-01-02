@@ -9,7 +9,7 @@
 <body >
 <div class="easyui-layout" style="width:100%;height:100%;" >
 	<div data-options="region:'north'" class="easyui-panel" title="查询" style="width:100%;height: 90px;" align="center">
-	  <form id="queryForm" action="" name="queryForm" class="easyui-form" method="post" >		
+	  <form id="queryForm" action="" name="queryForm" class="easyui-form" method="post" style="margin-top:5px;" >		
 			<table cellpadding="5" border="0" cellspacing="0">
 				<colgroup>
 			 		<col width="100"/>
@@ -20,7 +20,7 @@
 			 		<col width="120"/>
 			 	</colgroup>
 				<tr>
-					<td align="right">姓　　名：</td>
+					<td align="right">企业名称：</td>
                     <td align="left">
                         <input type="text" class="easyui-textbox" id="name" name="name"/>
                     </td>
@@ -28,6 +28,8 @@
                         class="easyui-linkbutton" icon="icon-search" id="searchBtn">查询</a></td>
                     <td align="right"></td>
 				</tr>
+				<input type="hidden" id="coverPartyOrgId" name="coverPartyOrgId" value="${coverPartyOrgId}">
+				<input type="hidden" id="method" name="method" value="${method}">
 			</table>
 		</form>
 	</div>
@@ -42,8 +44,7 @@
 </div>
 <script type="text/javascript">
 /*************************党员信息******************************/
-var mainId = '${coverPartyOrgId}';
-var method = '${method}';
+
 $(function(){
 	loadData();
 	
@@ -73,9 +74,10 @@ function reloadData(){
 }
 
 function loadData(){
+	
 	var options = {
 			url : ctx+'/cover/coverPartyOrg',
-			queryParams : {name:$("#name").val(),coverPartyOrgId:mainId,method:method},
+			queryParams : getQueryParams(),
 			title: '组织列表',
 			rownumbers:true,
 			fitColumns : true,
@@ -109,7 +111,7 @@ function save(){
 	$.ajax({
 		url:ctx + '/cover/saveCoverInfo',
 		type:'post',
-		data:{mainId:mainId, orgIds:orgIds},
+		data:{mainId:$("#coverPartyOrgId").val(), orgIds:orgIds},
 		dataType:'json',
 		success:function(result){
 			if(result.status ==1){
@@ -125,6 +127,7 @@ function save(){
 
 function converData(orgIdArray){
 	var orgIds = "";
+	var method = $("#method").val();
 	if(method == 'cover'){
 		if(orgIdArray.length < 1){
 			layer.alert('请选择一条记录！')
