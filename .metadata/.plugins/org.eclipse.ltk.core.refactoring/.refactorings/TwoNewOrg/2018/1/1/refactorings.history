@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;TwoNewOrg/src/main/java/com/tf/base/common/excel/ExcelUtils.java&apos; to &apos;ExcelUtil.java&apos;" description="Rename resource &apos;ExcelUtils.java&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="src/main/java/com/tf/base/common/excel/ExcelUtils.java" name="ExcelUtil.java" stamp="1514876604075" updateReferences="true"/>
+</session>

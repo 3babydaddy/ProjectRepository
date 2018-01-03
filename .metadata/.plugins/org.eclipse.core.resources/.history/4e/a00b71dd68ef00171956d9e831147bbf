@@ -1,0 +1,5 @@
+package com.tf.base.common.domain;
+
+public class City {
+
+}

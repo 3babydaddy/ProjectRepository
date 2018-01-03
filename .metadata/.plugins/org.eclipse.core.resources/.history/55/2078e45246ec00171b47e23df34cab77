@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tf.base.unpublic.persistence.UnpublicOrgInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.tf.base.unpublic.domain.UnpublicOrgInfo" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="business_type" property="businessType" jdbcType="VARCHAR" />
+    <result column="nationality" property="nationality" jdbcType="VARCHAR" />
+    <result column="industry_type" property="industryType" jdbcType="VARCHAR" />
+    <result column="register_address" property="registerAddress" jdbcType="VARCHAR" />
+    <result column="register_address_level" property="registerAddressLevel" jdbcType="VARCHAR" />
+    <result column="register_address_province" property="registerAddressProvince" jdbcType="VARCHAR" />
+    <result column="register_address_city" property="registerAddressCity" jdbcType="VARCHAR" />
+    <result column="register_address_district" property="registerAddressDistrict" jdbcType="VARCHAR" />
+    <result column="register_address_street" property="registerAddressStreet" jdbcType="VARCHAR" />
+    <result column="operate_address" property="operateAddress" jdbcType="VARCHAR" />
+    <result column="belocated_address" property="belocatedAddress" jdbcType="VARCHAR" />
+    <result column="level" property="level" jdbcType="VARCHAR" />
+    <result column="million_building_is" property="millionBuildingIs" jdbcType="VARCHAR" />
+    <result column="inpark_name" property="inparkName" jdbcType="VARCHAR" />
+    <result column="building_name" property="buildingName" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="contact_phone" property="contactPhone" jdbcType="VARCHAR" />
+    <result column="business_volume" property="businessVolume" jdbcType="DECIMAL" />
+    <result column="jobin_totalnum" property="jobinTotalnum" jdbcType="INTEGER" />
+    <result column="on_scale_is" property="onScaleIs" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="is_build_partyorg" property="isBuildPartyorg" jdbcType="INTEGER" />
+    <result column="unbuild_reason" property="unbuildReason" jdbcType="VARCHAR" />
+    <result column="init_is" property="initIs" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="creator" property="creator" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="updator" property="updator" jdbcType="VARCHAR" />
+    <result column="create_org" property="createOrg" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    id, business_type, nationality, industry_type, register_address,register_address_level,
+     register_address_province,register_address_city, register_address_district, 
+     register_address_street, operate_address, 
+    belocated_address, level, million_building_is, inpark_name, name, contact_phone, 
+    business_volume, jobin_totalnum, on_scale_is, status, is_build_partyorg, unbuild_reason, 
+    init_is, create_time, creator, create_org,update_time,updator
+  </sql>
+  <select id="queryList" resultMap="BaseResultMap">
+  	select * from unpublic_org_info main
+  	<where>
+  	
+  		and main.status > 0
+  		<if test="params.name != null and params.name != ''">
+  			and main.name LIKE CONCAT(CONCAT('%',#{params.name}),'%')
+  		</if>
+  		<if test="params.industryType != null and params.industryType != ''">
+  			and main.industry_type = #{params.industryType}
+  		</if>
+  		<if test="params.businessType != null and params.businessType != ''">
+  			and main.business_type = #{params.businessType}
+  		</if>
+  		<if test="params.level != null and params.level != ''">
+  			and main.level = #{params.level}
+  		</if>
+  		<if test="params.millionBuildingIs != null and params.millionBuildingIs != ''">
+  			and main.million_building_is = #{params.millionBuildingIs}
+  		</if>
+  		<if test="params.contactPhone != null and params.contactPhone != ''">
+  			and main.contact_phone = #{params.contactPhone}
+  		</if>
+  		<if test="params.createOrg !=null and params.createOrg !='' ">
+  			and main.create_org = #{params.createOrg}
+  		</if>
+  		<if test="params.creator !=null and params.creator !='' ">
+  			and main.creator LIKE CONCAT('%',#{params.creator},'%')
+  		</if>
+  		<if test="params.otherCondition != null  and params.otherCondition != ''">
+  			and  exists (select 1 from unpublic_org_info_other_count t1 where t1.unpublic_org_info_id = main.id 
+                   and t1.field_name=#{params.otherCondition})
+  		</if>
+  		<if test="params.status !=null and params.status !=''">
+  			and main.status = #{params.status}
+  		</if>
+  	</where>
+  	order by ${orderby}
+  </select>
+  <update id="partyOrgId">
+  		update unpublic_org_info set unpublic_party_org_id = null where unpublic_party_org_id = #{partyOrgId} and status = '2'
+  </update>
+  <select id="getList">
+  		select * from unpublic_org_info main
+  		<where>
+	  		 main.status = '2' 
+	  		 and main.unpublic_party_org_id is null 
+	  		 and main.cover_party_org_id is null
+	  		<if test="params.name != null and params.name != ''">
+	  			and main.name LIKE CONCAT(CONCAT('%',#{params.name}),'%')
+	  		</if>
+  		</where>
+  </select>
+</mapper>

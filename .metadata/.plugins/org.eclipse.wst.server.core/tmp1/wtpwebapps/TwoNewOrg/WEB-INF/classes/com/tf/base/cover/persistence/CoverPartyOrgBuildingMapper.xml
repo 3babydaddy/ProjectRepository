@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tf.base.cover.persistence.CoverPartyOrgBuildingMapper">
+  <resultMap id="BaseResultMap" type="com.tf.base.cover.domain.CoverPartyOrgBuilding">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="partyOrgName" jdbcType="VARCHAR" property="partyOrgName" />
+    <result column="three_years_member" jdbcType="INTEGER" property="threeYearsMember" />
+    <result column="three_years_unqualifieds" jdbcType="INTEGER" property="threeYearsUnqualifieds" />
+    <result column="is_training_in_rotation" jdbcType="VARCHAR" property="isTrainingInRotation" />
+    <result column="is_party_member_train" jdbcType="VARCHAR" property="isPartyMemberTrain" />
+    <result column="is_into_manage" jdbcType="VARCHAR" property="isIntoManage" />
+    <result column="is_develop_listen" jdbcType="VARCHAR" property="isDevelopListen" />
+    <result column="is_develop_discussions" jdbcType="VARCHAR" property="isDevelopDiscussions" />
+    <result column="is_develop_analysis" jdbcType="VARCHAR" property="isDevelopAnalysis" />
+    <result column="is_change_everyyear" jdbcType="VARCHAR" property="isChangeEveryyear" />
+    <result column="is_backward_party" jdbcType="VARCHAR" property="isBackwardParty" />
+    <result column="is_rectify_party" jdbcType="VARCHAR" property="isRectifyParty" />
+    <result column="rectify_atachement_id" jdbcType="INTEGER" property="rectifyAtachementId" />
+    <result column="secretary_total_time" jdbcType="INTEGER" property="secretaryTotalTime" />
+    <result column="party_total_time" jdbcType="INTEGER" property="partyTotalTime" />
+    <result column="party_avg_time" jdbcType="INTEGER" property="partyAvgTime" />
+    <result column="partyOrgId" jdbcType="INTEGER" property="coverPartyOrgId" />
+    <result column="year" jdbcType="VARCHAR" property="year" />
+    <result column="creater" jdbcType="VARCHAR" property="creater" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, three_years_member, three_years_unqualifieds, is_training_in_rotation, is_party_member_train, 
+    is_into_manage, is_develop_listen, is_develop_discussions, is_develop_analysis, is_change_everyyear, 
+    is_backward_party, is_rectify_party, rectify_atachement_id, secretary_total_time, 
+    party_total_time, party_avg_time, cover_party_org_id, year, creater, create_time, 
+    status
+  </sql>
+  <select id="queryList" resultMap="BaseResultMap">
+  		SELECT
+			poi.party_org_name AS partyOrgName,
+			poi.cover_party_org_id AS partyOrgId,
+			pob.*
+		FROM
+			cover_party_org_info poi
+		LEFT JOIN cover_org_party_building pob ON poi.cover_party_org_id = pob.cover_party_org_id
+		<where>
+  		poi.status = '2'
+  		<if test="params.isTrainingInRotation != null and params.isTrainingInRotation != ''">
+  			and pob.is_training_in_rotation = #{params.isTrainingInRotation}
+  		</if>
+  		<if test="params.isPartyMemberTrain != null and params.isPartyMemberTrain != ''">
+  			and pob.is_party_member_train = #{params.isPartyMemberTrain}
+  		</if>
+  		<if test="params.isDevelopListen != null and params.isDevelopListen != ''">
+  			and pob.is_develop_listen = #{params.isDevelopListen}
+  		</if>
+  		<if test="params.isDevelopAnalysis != null and params.isDevelopAnalysis != ''">
+  			and pob.is_develop_analysis = #{params.isDevelopAnalysis}
+  		</if>
+  		<if test="params.isChangeEveryyear !=null and params.isChangeEveryyear !='' ">
+  			and pob.is_change_everyyear = #{params.isChangeEveryyear}
+  		</if>
+  		<if test="params.isRectifyParty !=null and params.isRectifyParty !='' ">
+  			and pob.is_rectify_party = #{params.isRectifyParty}
+  		</if>
+  		<if test="params.createOrg !=null and params.createOrg !='' ">
+  			and poi.create_org = #{params.createOrg}
+  		</if>
+  		<if test="params.creater !=null and params.creater !='' ">
+  			and pob.creater like concat('%',#{params.creater},'%') 
+  		</if>
+  		<if test="params.status !=null and params.status !=''">
+  			and pob.status = #{params.status}
+  		</if>
+  		<if test="params.isQuWeiSign !=null and params.isQuWeiSign !='' and params.isQuWeiSign == '1'.toString()">
+  			<![CDATA[ and pob.status is not null ]]>
+  		</if>
+  	</where>
+  	order by pob.status desc, pob.create_time desc
+  </select>
+</mapper>

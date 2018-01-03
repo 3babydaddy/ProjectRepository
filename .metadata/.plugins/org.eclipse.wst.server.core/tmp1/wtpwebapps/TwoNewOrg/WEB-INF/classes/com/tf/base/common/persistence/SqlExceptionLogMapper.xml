@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tf.base.common.persistence.SqlExceptionLogMapper" >
+  <resultMap id="BaseResultMap" type="com.tf.base.common.domain.SqlExceptionLog" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="systemName" property="systemName" jdbcType="VARCHAR" />
+    <result column="sqlId" property="sqlId" jdbcType="VARCHAR" />
+    <result column="sqlSource" property="sqlSource" jdbcType="VARCHAR" />
+    <result column="sqlParameter" property="sqlParameter" jdbcType="VARCHAR" />
+    <result column="sqlType" property="sqlType" jdbcType="VARCHAR" />
+    <result column="exceptionMessage" property="exceptionMessage" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.tf.base.common.domain.SqlExceptionLog" extends="BaseResultMap" >
+    <result column="exceptionStack" property="exceptionStack" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, systemName, sqlId, sqlSource, sqlParameter, sqlType, exceptionMessage, createTime
+  </sql>
+  <sql id="Blob_Column_List" >
+    exceptionStack
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.tf.base.common.domain.SqlExceptionLogExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'false' as QUERYID,
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from sql_exception_log
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.tf.base.common.domain.SqlExceptionLogExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'false' as QUERYID,
+    <include refid="Base_Column_List" />
+    from sql_exception_log
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from sql_exception_log
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sql_exception_log
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tf.base.common.domain.SqlExceptionLog" useGeneratedKeys="true" keyProperty="id" >
+    insert into sql_exception_log (systemName, sqlId, sqlSource, 
+      sqlParameter, sqlType, exceptionMessage, 
+      createTime, exceptionStack)
+    values (#{systemName,jdbcType=VARCHAR}, #{sqlId,jdbcType=VARCHAR}, #{sqlSource,jdbcType=VARCHAR}, 
+      #{sqlParameter,jdbcType=VARCHAR}, #{sqlType,jdbcType=VARCHAR}, #{exceptionMessage,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{exceptionStack,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.tf.base.common.domain.SqlExceptionLog" useGeneratedKeys="true" keyProperty="id" >
+    insert into sql_exception_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="systemName != null" >
+        systemName,
+      </if>
+      <if test="sqlId != null" >
+        sqlId,
+      </if>
+      <if test="sqlSource != null" >
+        sqlSource,
+      </if>
+      <if test="sqlParameter != null" >
+        sqlParameter,
+      </if>
+      <if test="sqlType != null" >
+        sqlType,
+      </if>
+      <if test="exceptionMessage != null" >
+        exceptionMessage,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="exceptionStack != null" >
+        exceptionStack,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="systemName != null" >
+        #{systemName,jdbcType=VARCHAR},
+      </if>
+      <if test="sqlId != null" >
+        #{sqlId,jdbcType=VARCHAR},
+      </if>
+      <if test="sqlSource != null" >
+        #{sqlSource,jdbcType=VARCHAR},
+      </if>
+      <if test="sqlParameter != null" >
+        #{sqlParameter,jdbcType=VARCHAR},
+      </if>
+      <if test="sqlType != null" >
+        #{sqlType,jdbcType=VARCHAR},
+      </if>
+      <if test="exceptionMessage != null" >
+        #{exceptionMessage,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="exceptionStack != null" >
+        #{exceptionStack,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tf.base.common.domain.SqlExceptionLog" >
+    update sql_exception_log
+    <set >
+      <if test="systemName != null" >
+        systemName = #{systemName,jdbcType=VARCHAR},
+      </if>
+      <if test="sqlId != null" >
+        sqlId = #{sqlId,jdbcType=VARCHAR},
+      </if>
+      <if test="sqlSource != null" >
+        sqlSource = #{sqlSource,jdbcType=VARCHAR},
+      </if>
+      <if test="sqlParameter != null" >
+        sqlParameter = #{sqlParameter,jdbcType=VARCHAR},
+      </if>
+      <if test="sqlType != null" >
+        sqlType = #{sqlType,jdbcType=VARCHAR},
+      </if>
+      <if test="exceptionMessage != null" >
+        exceptionMessage = #{exceptionMessage,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="exceptionStack != null" >
+        exceptionStack = #{exceptionStack,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.tf.base.common.domain.SqlExceptionLog" >
+    update sql_exception_log
+    set systemName = #{systemName,jdbcType=VARCHAR},
+      sqlId = #{sqlId,jdbcType=VARCHAR},
+      sqlSource = #{sqlSource,jdbcType=VARCHAR},
+      sqlParameter = #{sqlParameter,jdbcType=VARCHAR},
+      sqlType = #{sqlType,jdbcType=VARCHAR},
+      exceptionMessage = #{exceptionMessage,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      exceptionStack = #{exceptionStack,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tf.base.common.domain.SqlExceptionLog" >
+    update sql_exception_log
+    set systemName = #{systemName,jdbcType=VARCHAR},
+      sqlId = #{sqlId,jdbcType=VARCHAR},
+      sqlSource = #{sqlSource,jdbcType=VARCHAR},
+      sqlParameter = #{sqlParameter,jdbcType=VARCHAR},
+      sqlType = #{sqlType,jdbcType=VARCHAR},
+      exceptionMessage = #{exceptionMessage,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

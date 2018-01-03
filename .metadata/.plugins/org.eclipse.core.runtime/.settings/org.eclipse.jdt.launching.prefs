@@ -1,0 +1,8 @@
+PREF_VM_INSTALL_SYSTEM_PROPERTY.org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType.1514449220252.java.vendor=Oracle Corporation
+PREF_VM_INSTALL_SYSTEM_PROPERTY.org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType.1514449220252.java.vm.info=mixed mode, sharing
+PREF_VM_INSTALL_SYSTEM_PROPERTY.org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType.1514449220252.java.vm.name=Java HotSpot(TM) Client VM
+PREF_VM_INSTALL_SYSTEM_PROPERTY.org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType.1514449220252.java.vm.vendor=Oracle Corporation
+PREF_VM_INSTALL_SYSTEM_PROPERTY.org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType.1514449220252.java.vm.version=24.72-b04
+PREF_VM_INSTALL_SYSTEM_PROPERTY.org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType.1514449220252.os.arch=x86
+eclipse.preferences.version=1
+org.eclipse.jdt.launching.PREF_VM_XML=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?>\r\n<vmSettings defaultVM\="57,org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType13,1514449220252">\r\n<vmType id\="org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType">\r\n<vm id\="1514449220252" javadocURL\="https\://docs.oracle.com/javase/7/docs/api/" name\="jdk1.7.0_72" path\="C\:\\Program Files (x86)\\Java\\jdk1.7.0_72" vmargs\="-Xms256m -Xmx512m"/>\r\n</vmType>\r\n</vmSettings>\r\n

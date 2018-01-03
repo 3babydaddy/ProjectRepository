@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tf.base.test.persistence.UsersMapper" >
+  <resultMap id="BaseResultMap" type="com.tf.base.test.domain.Users" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="age" property="age" jdbcType="INTEGER" />
+    <result column="gender" property="gender" jdbcType="INTEGER" />
+    <result column="tel" property="tel" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    id, name, age, gender, tel
+  </sql>
+  <select id="queryList" resultMap="BaseResultMap">
+  
+   SELECT * from users s
+   
+  <where>
+	  <if test="params.name != ''  and params.name !=null ">  
+		         
+		    and  s.name = #{params.name} 
+	  </if>
+	  <if test="params.gender != ''  and params.gender !=null ">  
+		         
+		    and  s.gender = #{params.gender} 
+	  </if>
+	  <if test="params.age != ''  and params.age !=null ">  
+		         
+		    and  s.age = #{params.age} 
+	  </if>
+	  <if test="params.tel != ''  and params.tel !=null ">  
+		         
+		    and  s.tel = #{params.tel} 
+	  </if> 
+
+  </where>
+  
+  </select>
+</mapper>

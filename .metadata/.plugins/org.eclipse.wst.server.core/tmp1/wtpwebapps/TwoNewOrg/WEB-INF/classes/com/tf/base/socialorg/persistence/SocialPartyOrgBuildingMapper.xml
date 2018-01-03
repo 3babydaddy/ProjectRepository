@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tf.base.socialorg.persistence.SocialPartyOrgBuildingMapper">
+  <resultMap id="BaseResultMap" type="com.tf.base.socialorg.domain.SocialPartyOrgBuilding">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="partyOrgName" jdbcType="VARCHAR" property="partyOrgName" />
+    <result column="partyOrgId" jdbcType="VARCHAR" property="partyOrgId" />
+    <result column="is_party_member_train" jdbcType="VARCHAR" property="isPartyMemberTrain" />
+    <result column="three_years_member" jdbcType="INTEGER" property="threeYearsMember" />
+    <result column="three_years_unqualifieds" jdbcType="INTEGER" property="threeYearsUnqualifieds" />
+    <result column="is_training_in_rotation" jdbcType="VARCHAR" property="isTrainingInRotation" />
+    <result column="total_pay_dues" jdbcType="INTEGER" property="totalPayDues" />
+    <result column="city_funds" jdbcType="DECIMAL" property="cityFunds" />
+    <result column="district_funds" jdbcType="DECIMAL" property="districtFunds" />
+    <result column="social_org_funds" jdbcType="DECIMAL" property="socialOrgFunds" />
+    <result column="other_content" jdbcType="VARCHAR" property="otherContent" />
+    <result column="quarter_party_meeting_times" jdbcType="INTEGER" property="quarterPartyMeetingTimes" />
+    <result column="month_party_meeting_times" jdbcType="INTEGER" property="monthPartyMeetingTimes" />
+    <result column="party_meeting_month" jdbcType="VARCHAR" property="partyMeetingMonth" />
+    <result column="listen_party_class" jdbcType="INTEGER" property="listenPartyClass" />
+    <result column="life_meeting_times" jdbcType="INTEGER" property="lifeMeetingTimes" />
+    <result column="develop_party_branch_no" jdbcType="INTEGER" property="developPartyBranchNo" />
+    <result column="year_total_pay_dues" jdbcType="DECIMAL" property="yearTotalPayDues" />
+    <result column="annual_survey" jdbcType="VARCHAR" property="annualSurvey" />
+    <result column="is_into_manage" jdbcType="VARCHAR" property="isIntoManage" />
+    <result column="social_party_org_id" jdbcType="INTEGER" property="socialPartyOrgId" />
+    <result column="year" jdbcType="VARCHAR" property="year" />
+    <result column="creater" jdbcType="VARCHAR" property="creater" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="nature" jdbcType="VARCHAR" property="nature" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, is_party_member_train, three_years_member, three_years_unqualifieds, is_training_in_rotation, 
+    total_pay_dues, city_funds, district_funds, social_org_funds, other_content, quarter_party_meeting_times, 
+    month_party_meeting_times, party_meeting_month, listen_party_class, life_meeting_times, 
+    develop_party_branch_no, year_total_pay_dues, annual_survey, is_into_manage, social_party_org_id, 
+    year, creater, create_time, status
+  </sql>
+  <select id="queryList" resultMap="BaseResultMap">
+  		SELECT
+  			(select nature from social_org_info where social_party_org_id = poi.id limit 1) as nature,
+			poi.party_org_name AS partyOrgName,
+			poi.id AS partyOrgId,
+			pob.*
+		FROM
+			social_party_org_info poi
+		LEFT JOIN social_party_org_building pob ON poi.id = pob.social_party_org_id
+		<where>
+  		poi.status = '2'
+  		<if test="params.isPartyMemberTrain != null and params.isPartyMemberTrain != ''">
+  			and pob.is_training_in_rotation = #{params.isPartyMemberTrain}
+  		</if>
+  		<if test="params.isTrainingInRotation != null and params.isTrainingInRotation != ''">
+  			and pob.is_training_in_rotation = #{params.isTrainingInRotation}
+  		</if>
+  		<if test="params.partyOrgName !=null and params.partyOrgName !='' ">
+  			and poi.party_org_name like CONCAT('%', #{params.partyOrgName}, '%')
+  		</if>
+  		<if test="params.createOrg !=null and params.createOrg !='' ">
+  			and poi.create_org = #{params.createOrg}
+  		</if>
+  		<if test="params.creater !=null and params.creater !='' ">
+  			and pob.creater like CONCAT('%', #{params.creater}, '%')
+  		</if>
+  		<if test="params.status !=null and params.status !=''">
+  			and pob.status = #{params.status}
+  		</if>
+  		<if test="params.isQuWeiSign !=null and params.isQuWeiSign !='' and params.isQuWeiSign == '1'.toString()">
+  			<![CDATA[ and pob.status is not null ]]>
+  		</if>
+  	</where>
+  	order by pob.status desc, pob.create_time desc
+  </select>
+</mapper>

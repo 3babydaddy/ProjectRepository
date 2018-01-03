@@ -1,0 +1,120 @@
+package com.tf.base.socialorg.domain;
+
+import java.util.Date;
+import javax.persistence.*;
+
+import com.tf.base.common.annotation.LogShowName;
+import com.tf.base.common.constants.CommonConstants;
+import com.tf.base.common.excel.Excel;
+
+
+public class SocialOrgExportBean {
+    
+
+    /**
+     * 名称
+     */
+	@Excel(name = "企业名称")
+    private String name;
+
+    /**
+     * 性质
+     */
+	@Excel(name="性质",dictCode=CommonConstants.ORG_NATURE)
+    private String nature;
+
+    /**
+     * 类别
+     */
+	@Excel(name="类别",dictCode=CommonConstants.ORG_CATEGORY)
+    private String category;
+
+    /**
+     * 登记机构
+     */
+	@Excel(name = "register_org")
+    private String registerOrg;
+
+    /**
+     * 业务主管单位
+     */
+	@Excel(name = "business_director_org")
+    private String businessDirectorOrg;
+
+    /**
+     * 住地
+     */
+	@Excel(name="住地")
+    private String address;
+
+    /**
+     * 状态 1.临时保存 2.正常, 3.撤销申请中, 4.已撤销 0.已删除
+     */
+    private String status;
+
+    /**
+     * 是否建立党组织
+     */
+    @Excel(name = "is_build_partyorg")
+    private Integer isBuildPartyorg;
+
+    /**
+     * 未建立原因
+     */
+    @Excel(name = "unbuild_reason")
+    private String unbuildReason;
+
+    /**
+     * 是否首次 1.是 0.否
+     */
+    @Excel(name = "init_is")
+    private Integer initIs;
+
+    @Excel(name = "create_time")
+    private Date createTime;
+
+    @Excel(name = "update_time")
+    private Date updateTime;
+    
+    /**
+     * 社会党组织id
+     */
+    @Excel(name = "social_party_org_id")
+    private String socialPartyOrgId;
+    /**
+     * 覆盖社会党组织id
+     */
+    @Excel(name = "cover_party_org_id")
+    private String coverPartyOrgId;
+    /**
+     * 是否设立思想政治教育工作机构
+     */
+    @Excel(name = "is_ideological_political_org")
+    private String isIdeologicalPoliticalOrg;
+    /**
+     * 是否设立德育工作机构
+     */
+    @Excel(name = "is_moral_education_org")
+    private String isMoralEducationOrg;
+    /**
+     * 填报单位
+     */
+    @Excel(name = "create_org")
+    private String createOrg;
+    
+    @Transient
+    private String statusTxt;
+    @Transient
+    private String natureTxt;
+    @Transient
+    private String categoryTxt;
+    @Transient
+    private String createOrgTxt;
+    @Transient
+    private String otherCondition;
+    @Transient
+    private String isIdeologicalPoliticalOrgTxt;
+    @Transient
+    private String isMoralEducationOrgTxt;
+
+}

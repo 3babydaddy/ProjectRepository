@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tf.base.socialorg.persistence.SocialOrgInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.tf.base.socialorg.domain.SocialOrgInfo" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="nature" property="nature" jdbcType="VARCHAR" />
+    <result column="category" property="category" jdbcType="VARCHAR" />
+    <result column="register_org" property="registerOrg" jdbcType="VARCHAR" />
+    <result column="business_director_org" property="businessDirectorOrg" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="is_build_partyorg" property="isBuildPartyorg" jdbcType="INTEGER" />
+    <result column="unbuild_reason" property="unbuildReason" jdbcType="VARCHAR" />
+    <result column="init_is" property="initIs" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="creator" property="creator" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="updator" property="updator" jdbcType="VARCHAR" />
+    <result column="create_org" property="createOrg" jdbcType="VARCHAR" />
+    <result column="social_party_org_id" property="socialPartyOrgId" jdbcType="VARCHAR" />
+    <result column="cover_party_org_id" property="coverPartyOrgId" jdbcType="VARCHAR" />
+    <result column="is_ideological_political_org" property="isIdeologicalPoliticalOrg" jdbcType="VARCHAR" />
+    <result column="is_moral_education_org" property="isMoralEducationOrg" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    id, name, nature, category, register_org, business_director_org, address, status, 
+    is_build_partyorg, unbuild_reason, init_is, create_time, creator, create_org,update_time,updator
+  </sql>
+  
+  <select id="queryList" resultMap="BaseResultMap">
+  	select * from social_org_info main 
+  	
+  	<include refid="queryWhere"></include>
+  	order by ${orderby}
+  </select>
+  <select id="queryListCount" resultType="int">
+  	select count(*) from social_org_info main
+  </select>
+  <sql id="queryWhere">
+  	<where>
+  		and main.status > 0 
+  		<if test="params.name !=null and params.name !='' ">
+  			and main.name LIKE CONCAT(CONCAT('%',#{params.name}),'%')
+  		</if>
+  		<if test="params.nature !=null and params.nature !='' ">
+  			and main.nature = #{params.nature}
+  		</if>
+  		<if test="params.category !=null and params.category !='' ">
+  			and main.category = #{params.category}
+  		</if>
+  		<if test="params.registerOrg !=null and params.registerOrg !='' ">
+  			and main.register_org = #{params.registerOrg}
+  		</if>
+  		<if test="params.businessDirectorOrg !=null and params.businessDirectorOrg !='' ">
+  			and main.business_director_org = #{params.businessDirectorOrg}
+  		</if>
+  		<if test="params.address !=null and params.address !='' ">
+  			and main.address LIKE CONCAT(CONCAT('%',#{params.address}),'%')
+  		</if>
+  		<if test="params.createOrg !=null and params.createOrg !='' ">
+  			and main.create_org = #{params.createOrg}
+  		</if>
+  		<if test="params.creator !=null and params.creator !='' ">
+  			and main.creator LIKE CONCAT('%',#{params.creator},'%')
+  		</if>
+  		<if test="params.otherCondition != null  and params.otherCondition != ''">
+  			and  exists (select 1 from social_org_info_other_count t1 where t1.social_org_info_id = main.id 
+                   and t1.field_name=#{params.otherCondition})
+  		</if>
+  		<if test="params.status !=null and params.status !=''">
+  			and main.status = #{params.status}
+  		</if>
+  	</where>
+  </sql>
+   <update id="updateOrgPartyOrgId">
+  		update social_org_info set social_party_org_id = null where social_party_org_id = #{partyOrgId} and status = '2'
+  </update>
+  <select id="getList" resultMap="BaseResultMap">
+  		select 
+  			
+  		from social_org_info main
+  		<where>
+	  		 main.status = '2' 
+	  		 and main.social_party_org_id is null 
+	  		 and main.cover_party_org_id is null
+	  		<if test="params.name != null and params.name != ''">
+	  			and main.name LIKE CONCAT(CONCAT('%',#{params.name}),'%')
+	  		</if>
+  		</where>
+  </select>
+  <select id="queryExportList" resultType="com.tf.base.socialorg.domain.SocialOrgExportBean">
+  	select * from social_org_info main 
+  	
+  	<include refid="queryWhere"></include>
+  	order by ${orderby}
+  </select>
+</mapper>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tf.base.unpublic.persistence.UnpublicOrgSponsorInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.tf.base.unpublic.domain.UnpublicOrgSponsorInfo" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="unpublic_org_info_id" property="unpublicOrgInfoId" jdbcType="INTEGER" />
+    <result column="sponsor_name" property="sponsorName" jdbcType="VARCHAR" />
+    <result column="sponsor_partymember_is" property="sponsorPartymemberIs" jdbcType="VARCHAR" />
+    <result column="sponsor_partyorg_secretary_is" property="sponsorPartyorgSecretaryIs" jdbcType="VARCHAR" />
+    <result column="sponsor_twodeputy_acommittee_is" property="sponsorTwodeputyAcommitteeIs" jdbcType="VARCHAR" />
+    <result column="sponsor_twodeputy_acommittee_type" property="sponsorTwodeputyAcommitteeType" jdbcType="VARCHAR" />
+    <result column="sponsor_twodeputy_acommittee_type_other" property="sponsorTwodeputyAcommitteeTypeOther" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="creator" property="creator" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    id, unpublic_org_info_id, sponsor_name, sponsor_partymember_is, sponsor_partyorg_secretary_is, 
+    sponsor_twodeputy_acommittee_is, sponsor_twodeputy_acommittee_type, sponsor_twodeputy_acommittee_type_other, 
+    create_time, creator
+  </sql>
+</mapper>

@@ -33,6 +33,7 @@ import com.tf.base.common.constants.CommonConstants.LOG_OPERATION_TYPE;
 import com.tf.base.common.domain.DataDictionary;
 import com.tf.base.common.domain.DataFile;
 import com.tf.base.common.domain.DictionaryRepository;
+import com.tf.base.common.excel.ExcelUtil;
 import com.tf.base.common.persistence.DataFileMapper;
 import com.tf.base.common.service.BaseService;
 import com.tf.base.common.service.LogService;
@@ -45,6 +46,7 @@ import com.tf.base.socialorg.domain.QueryPmbrParams;
 import com.tf.base.socialorg.domain.RemovePmbrParams;
 import com.tf.base.socialorg.domain.SocialOrgCancelRecord;
 import com.tf.base.socialorg.domain.SocialOrgChargeInfo;
+import com.tf.base.socialorg.domain.SocialOrgExportBean;
 import com.tf.base.socialorg.domain.SocialOrgInfo;
 import com.tf.base.socialorg.domain.SocialOrgInfoOtherCount;
 import com.tf.base.socialorg.domain.SocialOrgJobinCount;
@@ -758,5 +760,22 @@ public class OrgController {
 		result.put("status", status);
 		result.put("msg", msg);
 		return result;
+	}
+	
+	@RequestMapping(value = "/socialorg/exportUnpublicExcel")
+	private boolean exportUnpublicExcel(SocialOrgInfo params,HttpServletResponse response) {
+		String orderby = " main.status desc , main.create_time desc";
+		if (!baseService.isQuWeiDept()) {
+			params.setCreateOrg(baseService.getCurrentUserDeptId());
+		}
+		List<SocialOrgExportBean> list = socialOrgInfoMapper.queryExportList(params,orderby);
+		ExcelUtil<SocialOrgExportBean> excelUtils = new ExcelUtil<SocialOrgExportBean>(SocialOrgExportBean.class);
+		try {
+			excelUtils.writeToFile(list, response, "testexport");
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 }

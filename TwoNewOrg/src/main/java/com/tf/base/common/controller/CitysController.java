@@ -15,6 +15,8 @@ import com.tf.base.common.constants.CommonConstants;
 
 import net.sf.json.JSONObject;
 
+
+
 @Controller
 public class CitysController {
 
@@ -65,5 +67,20 @@ public class CitysController {
 			e.printStackTrace();
 		}
 		return new JSONObject();
+	}
+	
+	public static String getListByCity(){
+		
+		String cityPath = CommonConstants.ROOT_DIR + "/resources/data/city.json";
+		String str = "";
+		try {
+			str = FileUtils.readFileToString(new File(cityPath),"utf-8");
+			
+			return str.replace("{", "").replace("}", "");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

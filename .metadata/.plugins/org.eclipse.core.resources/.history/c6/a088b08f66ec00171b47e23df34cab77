@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tf.base.basemanage.persistence.PartyOrgInfoMapper">
+	
+   	<select id="getAllPartyOrgInfo" resultType="com.tf.base.basemanage.domain.PartyOrgInfo">
+    		SELECT t.id,
+					t.party_org_name as name,
+					t.parent_party_org as parentPartyOrg,
+					t.status
+		FROM party_org_info t
+		<where>
+			<if test="deptId != '' and deptId !=null ">  
+	           and t.create_org = #{deptId}  or (id = '30000')
+	        </if>
+		</where>
+  ORDER BY  t.id desc
+	</select>
+	
+	<select id="getPartyOrgInfosByNameLike" resultType="com.tf.base.basemanage.domain.PartyOrgInfo">
+    	SELECT t.id,
+					t.party_org_name as name,
+					t.parent_party_org as parentPartyOrg,
+					t.status
+		FROM party_org_info t
+ 		<where>
+ 			1=1
+	         <if test="name != '' and name!=null">  
+	           and t.party_org_name  LIKE  CONCAT('%',#{name},'%')
+	        </if>
+	        <if test="deptId != '' and deptId !=null ">  
+	           and t.create_org = #{deptId}  or (id = '30000')
+	        </if>
+	    </where>
+	</select>
+	<select id="getDepartmentInfosByName" resultType="com.tf.base.basemanage.domain.PartyOrgInfo">
+    	SELECT t.id,
+					t.party_org_name as name,
+					t.parent_party_org as parentPartyOrg,
+					t.status
+		FROM party_org_info t
+ 		<where>
+ 			1=1
+	         <if test="name != '' and name!=null">  
+	           and t.name = #{name}
+	        </if>
+	    </where>
+	</select>
+	<select id="getDepartmentInfosByNameAndNotEQID" resultType="com.tf.base.basemanage.domain.PartyOrgInfo">
+    	SELECT t.id,
+					t.party_org_name as name,
+					t.parent_party_org as parentPartyOrg,
+					t.status
+		FROM party_org_info t
+ 		<where>
+ 			1=1
+	         <if test="name != '' and name!=null">  
+	           and t.name = #{name}
+	        </if>
+	         <if test="id != '' and id!=null">  
+	           and t.id != #{id}
+	        </if>
+	    </where>
+	</select>
+	
+	<select id="getDepartmentInfoById" resultType="com.tf.base.basemanage.domain.PartyOrgInfo">
+		SELECT
+			t.id,
+					t.party_org_name as name,
+					t.parent_party_org as parentPartyOrg,
+					t.status
+		FROM party_org_info t
+		 <where> 
+		 	1=1
+	       <if test="id != ''  and id!=null ">  
+	           and t.id = #{id}  
+	        </if>
+	     </where>
+	</select>
+	<select id="getDepartmentInfoByParentId" resultType="com.tf.base.basemanage.domain.PartyOrgInfo">
+		SELECT
+			t.id,
+					t.party_org_name as name,
+					t.parent_party_org as parentPartyOrg,
+					t.status
+		FROM party_org_info t
+		 <where> 
+		 	1=1
+	       <if test="id != ''  and id!=null ">  
+	           and t.higherDepart = #{id}  
+	        </if>
+	     </where>
+	</select>
+</mapper>

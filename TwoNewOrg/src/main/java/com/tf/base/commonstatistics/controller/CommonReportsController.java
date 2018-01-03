@@ -22,7 +22,7 @@ import com.tf.base.common.constants.CommonConstants;
 import com.tf.base.common.domain.DataDictionary;
 import com.tf.base.common.domain.DictionaryRepository;
 import com.tf.base.common.excel.Demo;
-import com.tf.base.common.excel.ExcelUtils;
+import com.tf.base.common.excel.ExcelUtil;
 import com.tf.base.common.service.BaseService;
 import com.tf.base.common.utils.PageUtil;
 import com.tf.base.commonstatistics.domain.QueryParam;
@@ -93,7 +93,7 @@ public class CommonReportsController {
 		List<UnpublicWorkLedger> list = unpublicWorkLedgerMapper.queryList(params);
 		this.convertRows(list);
 		this.convertDict(list);
-		ExcelUtils excelUtils = new ExcelUtils(Demo.class);
+		ExcelUtil excelUtils = new ExcelUtil(Demo.class);
 		try {
 			excelUtils.writeToFile(list, 6, response, "unpublic");
 			return true;
@@ -150,7 +150,7 @@ public class CommonReportsController {
 		List<SocialWorkLedger> list = socialWorkLedgerMapper.queryList(params);
 		this.convertRowsBySocial(list);
 		this.convertDictBySocial(list);
-		ExcelUtils excelUtils = new ExcelUtils(Demo.class);
+		ExcelUtil excelUtils = new ExcelUtil(Demo.class);
 		try {
 			excelUtils.writeToFile(list, 6, response, "socialorg");
 			return true;

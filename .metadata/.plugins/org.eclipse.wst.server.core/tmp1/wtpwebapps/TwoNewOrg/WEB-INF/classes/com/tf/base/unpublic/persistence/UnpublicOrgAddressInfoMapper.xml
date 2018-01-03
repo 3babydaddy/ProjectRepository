@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tf.base.unpublic.persistence.UnpublicOrgAddressInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.tf.base.unpublic.domain.UnpublicOrgAddressInfo" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="unpublic_org_info_id" property="unpublicOrgInfoId" jdbcType="INTEGER" />
+    <result column="operate_address" property="operateAddress" jdbcType="VARCHAR" />
+    <result column="operate_address_level" property="operateAddressLevel" jdbcType="VARCHAR" />
+    <result column="operate_address_province" property="operateAddressProvince" jdbcType="VARCHAR" />
+    <result column="operate_address_city" property="operateAddressCity" jdbcType="VARCHAR" />
+    <result column="operate_address_district" property="operateAddressDistrict" jdbcType="VARCHAR" />
+    <result column="operate_address_street" property="operateAddressStreet" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    id, unpublic_org_info_id, operate_address, operate_address_level, operate_address_province, 
+    operate_address_city, operate_address_district, operate_address_street
+  </sql>
+</mapper>

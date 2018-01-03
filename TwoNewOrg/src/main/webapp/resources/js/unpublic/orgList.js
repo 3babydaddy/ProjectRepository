@@ -150,10 +150,12 @@ function loadData(){
 /**
  * 导出所有数据到excel
  */
+
+
 function exportExcel(){
-	debugger;
 	var params = getQueryParams();
-	window.location.href=ctx + "/unpublic/exportUnpublicExcel?params="+params;
+	window.location.href=ctx + "/unpublic/exportUnpublicExcel?creator="+params.creator+'&industryType='+params.industryType+
+							'&level='+params.level+'&name='+params.name+'&otherCondition='+params.otherCondition+'&status='+params.status;
 }
 
 function reloadData(){

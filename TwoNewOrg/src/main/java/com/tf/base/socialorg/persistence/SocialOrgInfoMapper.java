@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.tf.base.socialorg.domain.SocialOrgExportBean;
 import com.tf.base.socialorg.domain.SocialOrgInfo;
 import com.tf.base.unpublic.domain.QueryPmbrParams;
 
@@ -19,4 +20,6 @@ public interface SocialOrgInfoMapper extends MySqlMapper<SocialOrgInfo>, Mapper<
 	int updateOrgPartyOrgId(@Param("partyOrgId") String partyOrgId);
 	
 	List<SocialOrgInfo> getList(@Param("params") QueryPmbrParams params);
+	
+	List<SocialOrgExportBean> queryExportList(@Param("params") SocialOrgInfo params,@Param("orderby")String orderby);
 }
