@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<servers>
-  <server auto-publish-setting="2" auto-publish-time="1" configuration-id="/Servers/permissionCenter-config" deployDir="wtpwebapps" hostname="localhost" id="Tomcat v7.0 Server at localhost" jrebel.old-auto-publish-setting="2" name="permissionCenter" runtime-id="Apache Tomcat v7.0" server-type="org.eclipse.jst.server.tomcat.70" server-type-id="org.eclipse.jst.server.tomcat.70" start-timeout="4500" stop-timeout="1500" testEnvironment="true" timestamp="7">
-    <list key="modules" value0="PermissionCenter::org.eclipse.jst.jee.server:PermissionCenter::jst.web::2.5"/>
-  </server>
-  <server auto-publish-setting="1" auto-publish-time="1" configuration-id="/Servers/twoneworg-config" deployDir="wtpwebapps" hostname="localhost" id="Tomcat v7.0 Server at localhost (2)" jrebel.old-auto-publish-setting="2" modulesReloadableByDefault="false" name="twoneworg" runtime-id="Apache Tomcat v7.0" server-type="org.eclipse.jst.server.tomcat.70" server-type-id="org.eclipse.jst.server.tomcat.70" start-timeout="4500" stop-timeout="1500" testEnvironment="true" timestamp="12">
-    <list key="modules" value0="TwoNewOrg::org.eclipse.jst.jee.server:TwoNewOrg::jst.web::2.5"/>
-  </server>
-</servers>
