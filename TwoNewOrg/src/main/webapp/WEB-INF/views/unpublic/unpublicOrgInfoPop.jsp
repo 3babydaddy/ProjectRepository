@@ -104,10 +104,10 @@ function loadData(){
 
 function closePop(){
 	var row = getCheckedRow();
-	
-	if(row != null){
-		window.parent.$('#partyOrgDiv').append('<button class="btn btn-xs" value="'+row.id+'" name="btn_org_name">'+row.name+'<span class="glyphicon glyphicon-remove"></span></button>')
+	if(row == null){
+		parent.utils.e.closeWin('showOrgInfoPop');
 	}
+	window.parent.$('#partyOrgDiv').append('<button class="btn btn-xs" value="'+row.id+'" name="btn_org_name">'+row.name+'<span class="glyphicon glyphicon-remove"></span></button>')
 	parent.utils.e.closeWin('showOrgInfoPop');
 }
 
