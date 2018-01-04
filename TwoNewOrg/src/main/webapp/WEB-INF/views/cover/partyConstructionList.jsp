@@ -53,7 +53,6 @@
 	                	<td align="right">党组织名称：</td>
 	                    <td align= "left" >
 		                    <input type="text" id="createOrgTxt" class="easyui-textbox" size=15 readonly="readonly" onclick="showDept();"/>
-		                    <input type="hidden" id="createOrg" name="createOrg" />
 	                    </td>
 	                   <c:if test="${isQuWeiDept}">
 	                		<td align="right">填报单位：</td>

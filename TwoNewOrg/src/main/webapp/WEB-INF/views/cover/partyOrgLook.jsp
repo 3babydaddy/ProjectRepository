@@ -151,7 +151,7 @@
 		</div>
 		<div class="panel panel-info">
 			<div class="panel-heading">
-		      <h3 class="panel-title">党务副书记及委员</h3>
+		      <h3 class="panel-title">副书记及委员</h3>
 		   </div>
 		   <div class="panel-body" align="center">
 				<table class="table table-bordered" cellpadding="2" border="0" cellspacing="0" >

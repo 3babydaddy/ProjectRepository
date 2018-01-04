@@ -8,7 +8,7 @@
 <body>
 	<div class="easyui-layout" style="width:100%;height:100%;" >
 		<div data-options="region:'north'" class="easyui-panel" title="任务查询" style="width:100%;height: 140px;" align="center">
-		  <form id="queryForm" action="" name="queryForm" class="easyui-form" style="margin-top:10px;" method="post" >		
+		  <form id="queryForm" action="" name="queryForm" class="easyui-form" style="margin-top:5px;" method="post" >		
 				<table cellpadding="5" border="0" cellspacing="0">
 					<colgroup>
 				 		<col width="160"/>
@@ -79,7 +79,7 @@
                         </select>
                         <input class="easyui-textbox" type="number" id="partyInNum" name="partyInNum" style="float:right;width:90px;" size=15/>
                     </td>
-                    <td align="right">组织关系不在非公<br/>企业的党员总数：</td>
+                    <td align="right">非正式党员：</td>
                     <td align="left">
                          <select class="easyui-combobox" id="notinOperator" name="notinOperator" data-options="editable:false" style="float:left;width:60px;font-size:12px;margin-top:2px;">
                             <option value="" >请选择</option>
@@ -89,7 +89,20 @@
                         </select>
                         <input class="easyui-textbox" type="number" id="partyNotInNum" name="partyNotInNum" size=15 style="float:left;width:90px;" size=15/>
                     </td>
-                    <td align="right" colspan="2" style="margin-right: 15px;"><a href="javascript:void(0)"
+                    <td align="right">企业名称：</td>
+                    <td align="left"><input class="easyui-textbox" type="text" id="orgName" name="orgName" size=15/></td>
+                </tr>
+                <tr>
+                	<td align="right">是否成立党组织：</td>
+                    <td align="left">
+                         <select class="easyui-combobox" id="isSetUpPartyOrg" name="isSetUpPartyOrg" style="width:160px;" data-options="editable:false">
+                            <option value="" >--请选择--</option>
+                            <c:forEach var="it" items="${yesNoList}">
+                               <option value="${it.code}">${it.value}</option>
+                            </c:forEach>
+                        </select>
+                    </td>
+                	<td   align="right" colspan="4" style="margin-right: 15px;"><a href="javascript:void(0)"
                         class="easyui-linkbutton" icon="icon-search" id="searchBtn">查询</a></td>
                     <td align="right"></td>
                 </tr>

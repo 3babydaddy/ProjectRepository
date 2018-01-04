@@ -84,7 +84,7 @@
   </update>
   <select id="getList" resultMap="BaseResultMap">
   		select 
-  			
+  			main.*
   		from social_org_info main
   		<where>
 	  		 main.status = '2' 

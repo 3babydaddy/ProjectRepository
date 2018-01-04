@@ -167,10 +167,10 @@ public class CommonReportsController {
 	 */
 	private void editPage(Model model) {
 		List<DataDictionary> yesNoList = dict.findByDmm(CommonConstants.YES_NO);
-		Calendar cal = Calendar.getInstance(); 
-		String year = cal.get(Calendar.YEAR)+"";
+		//Calendar cal = Calendar.getInstance(); 
+		//String year = cal.get(Calendar.YEAR)+"";
 		model.addAttribute("yesNoList", yesNoList);
-		model.addAttribute("year", year);
+		//model.addAttribute("year", year);
 	}
 
 	/**

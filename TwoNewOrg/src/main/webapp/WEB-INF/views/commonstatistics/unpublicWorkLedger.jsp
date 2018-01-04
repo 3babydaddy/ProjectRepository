@@ -37,7 +37,7 @@
 	                <tr>
 	                	<td align="right">年度：</td>
 	                    <td align="left">
-	                    	<input type="text" class="form-control" name="year" style="width:160px;height:24px;" onClick="WdatePicker({dateFmt:'yyyy'})" value="${year }" />
+	                    	<input type="text" class="form-control" name="year" style="width:160px;height:24px;" onClick="WdatePicker({dateFmt:'yyyy'})" />
 	                    </td>
 	                    <td align="right" colspan="4" style="margin-right: 15px;">
 	                    	<a href="javascript:void(0)" class="easyui-linkbutton" icon="icon-search" id="searchBtn">查询</a>

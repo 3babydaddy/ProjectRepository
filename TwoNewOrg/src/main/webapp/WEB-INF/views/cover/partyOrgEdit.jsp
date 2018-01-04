@@ -151,8 +151,7 @@
 	                    </td>
 						<td style="text-align: right;"><font color="red">*</font>所在单位：</td>
 	                    <td align= "left" >
-		                    <input type="text" id="createOrgTxt1" name="secretaryCompanyTxt" value="${main.secretaryCompanyTxt }" onclick="showDept1();" class="form-control" />
-		                    <input type="hidden" id="secretaryCompany" name="secretaryCompany" value="${main.secretaryCompany }" />
+		                    <input class="form-control" type="text" id="secretaryCompany" name="secretaryCompany" value="${main.secretaryCompany }" />
 	                    </td>
 					</tr>
 				</table>
@@ -160,7 +159,7 @@
 		</div>
 		<div class="panel panel-info" id="divFour">
 			<div class="panel-heading">
-		      <h3 class="panel-title">党务副书记及委员</h3>
+		      <h3 class="panel-title">副书记及委员</h3>
 		   </div>
 		   <div class="panel-body" align="center">
 				<table class="table table-bordered" cellpadding="2" border="0" cellspacing="0" >

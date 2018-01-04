@@ -106,9 +106,9 @@
 								<div class="form-inline" style="margin-top:5px;">
 									<label>人员姓名：</label>
 									<input class="form-control" name="instructorName" value="" maxlength="20"/>
-									<label>职务：</label>
+									<label>单位及职务：</label>
 									<input class="form-control" name="instructorJob" value="" maxlength="20"/>
-									<label>单位：</label>
+									<label>指导单位：</label>
 				                       <select id="zhidaodanwei0" name="instructorUnitTxt" class="form-control"  multiple="multiple">
 										    <c:forEach var="it" items="${unitList}">
 										        <option value="${it.code }" >${it.value }</option>
@@ -284,7 +284,7 @@
 		</div>
 		<div class="panel panel-info">
 			<div class="panel-heading">
-		      <h3 class="panel-title">党务副书记及委员</h3>
+		      <h3 class="panel-title">副书记及委员</h3>
 		   </div>
 		   <div class="panel-body" align="center">
 				<table class="table table-bordered" cellpadding="2" border="0" cellspacing="0" >
@@ -494,7 +494,7 @@ $(function(){
 	}
 	function showPartyInfo(orgIds){
 		var url = ctx + '/unpublic/showPartyInfo?orgIds='+orgIds;
-		utils.e.openWin('showPartyInfoWin','党员基本信息',url,"80%","50%",function(){
+		utils.e.openWin('showPartyInfoWin','党员基本信息',url,"80%","40%",function(){
 			//reloadData()
 		});
 	}

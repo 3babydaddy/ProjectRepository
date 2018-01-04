@@ -87,6 +87,12 @@
   		<if test="params.status !=null and params.status !=''">
   			and p.status = #{params.status}
   		</if>
+  		<if test="params.orgName !=null and params.orgName !=''">
+  			and o.name like CONCAT('%', #{params.orgName}, '%')
+  		</if>
+  		<if test="params.isSetUpPartyOrg !=null and params.isSetUpPartyOrg !=''">
+  			and p.is_set_up_party_org = #{params.isSetUpPartyOrg}
+  		</if>
   		<if test="params.inOperator !=null and params.inOperator !='' and params.partyInNum !=null and params.partyInNum !=''">
   			and (select count(*) from unpublic_org_pmbr_info 
 				where unpublic_org_info_id = o.id and partymbr_in_unpublic_is = '1') ${params.inOperator} ${params.partyInNum}

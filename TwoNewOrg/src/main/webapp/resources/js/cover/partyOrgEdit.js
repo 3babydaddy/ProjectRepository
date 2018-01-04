@@ -368,7 +368,7 @@ function showUpload(obj, action){
 
 function showPartyInfo(partyOrgId){
 	var url = ctx + '/cover/showPartyInfo?partyOrgId='+partyOrgId;
-	utils.e.openWin('showPartyInfoWin','党员基本信息',url,"80%","50%",function(){
+	utils.e.openWin('showPartyInfoWin','党员基本信息',url,"80%","40%",function(){
 		//reloadData()
 	});
 }

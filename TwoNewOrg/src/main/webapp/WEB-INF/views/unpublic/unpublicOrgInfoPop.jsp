@@ -103,11 +103,24 @@ function loadData(){
 } 
 
 function closePop(){
+	var site = new Array();
 	var row = getCheckedRow();
 	if(row == null){
 		parent.utils.e.closeWin('showOrgInfoPop');
+	}	
+	window.parent.$('#partyOrgDiv').append('<button class="btn btn-xs" value='+row.id+' onclick="changeOrg(this)" name="btn_org_name" >'+row.name+'<span class="glyphicon glyphicon-remove"></span></button>');
+	window.parent.$('#belongUnit').append('<option value='+row.id+'>'+row.name+'</option>');
+	
+	var unitArray = window.parent.$("button[name='btn_org_name']");
+	if(unitArray.length > 0){
+		for(var r = 0; r < unitArray.length; r++){
+			site.push({
+	            label : unitArray[r].textContent,
+	            value : unitArray[r].value
+	        });
+		}
 	}
-	window.parent.$('#partyOrgDiv').append('<button class="btn btn-xs" value="'+row.id+'" name="btn_org_name">'+row.name+'<span class="glyphicon glyphicon-remove"></span></button>')
+	window.parent.$("select[name='instructorUnitTxt']").multiselect('dataprovider',site);
 	parent.utils.e.closeWin('showOrgInfoPop');
 }
 

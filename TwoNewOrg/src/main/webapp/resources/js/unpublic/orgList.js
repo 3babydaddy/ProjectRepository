@@ -153,6 +153,7 @@ function loadData(){
 
 
 function exportExcel(){
+	
 	var params = getQueryParams();
 	window.location.href=ctx + "/unpublic/exportUnpublicExcel?creator="+params.creator+'&industryType='+params.industryType+
 							'&level='+params.level+'&name='+params.name+'&otherCondition='+params.otherCondition+'&status='+params.status;

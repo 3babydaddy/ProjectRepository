@@ -22,7 +22,7 @@ $(function(){
 	 var s = 0;
 	 $("#add_operate_lowerParty").click(function(){
 		$(this).before($(this).prev().clone());
-		if(t == 0){
+		if(s == 0){
 			$(this).prev().append('<button type="button"  class="remove_operate_lowerParty btn btn-primary btn-sm glyphicon glyphicon-minus"></button>');
 		}
 		s++;
@@ -104,11 +104,6 @@ $(function(){
 		isSetUpPartyOrg();
 	});
 	isSetUpPartyOrg();
-	//是否选派指导员，隐藏或者显示指导员信息
-	$("#isInstructor").on('change', function(){
-		showInstructorInfo();
-	});
-	showInstructorInfo();
 	//党组织组建形式
 	$("#partyOrgForm").on('change', function(){
 		showChangInfo();
@@ -119,16 +114,43 @@ $(function(){
 		showLowerPartyInfo();
 	});
 	showLowerPartyInfo();
-	
+	//是否选派指导员，隐藏或者显示指导员信息
+	$("#isInstructor").on('change', function(){
+		showInstructorInfo();
+	});
+	showInstructorInfo();
 	//点击列表页上的上报按钮事件
 	if($("#clickSign").val() == 'clickSign'){
 		submitReport();
 	}
 	
-	$("button[name='btn_org_name']").on('click',function(){
-		$(this).remove();
-	});
 });
+
+function changeOrg(obj){
+	$(obj).remove();
+	//所在单位
+	$("#belongUnit").empty();
+	var orgIdArray = document.getElementsByName('btn_org_name');
+	$('#belongUnit').append('<option>--请选择--</option>');
+	if(orgIdArray.length > 0){
+		for(var t = 0; t < orgIdArray.length; t++){
+			$('#belongUnit').append('<option value="'+orgIdArray[t].value+'">'+orgIdArray[t].textContent+'</option>');
+		}
+	}
+	//指导单位
+	var site = new Array();
+	var unitArray = $("button[name='btn_org_name']");
+	window.parent.$("select[name='instructorUnitTxt']").empty();
+	if(unitArray.length > 0){
+		for(var r = 0; r < unitArray.length; r++){
+			site.push({
+	            label : unitArray[r].textContent,
+	            value : unitArray[r].value
+	        });
+		}
+	}
+	$("select[name='instructorUnitTxt']").multiselect('dataprovider',site);
+}
 
 function getQueryParams() {
 	var params = {};
@@ -181,9 +203,9 @@ function showChangInfo() {
 function showInstructorInfo(){
 	var setUpSign = $("#isInstructor").val();
 	if(setUpSign == 0 && setUpSign != ""){
-		document.getElementById("divOne").style.display='none';
+		$("#divOne").hide();
 	}else{
-		document.getElementById("divOne").style.display='';
+		$("#divOne").show();
 	}
 }
 
@@ -554,14 +576,14 @@ function showUpload(obj, action){
 
 function showPartyInfo(orgIds){
 	var url = ctx + '/unpublic/showPartyInfo?orgIds='+orgIds;
-	utils.e.openWin('showPartyInfoWin','党员基本信息',url,"80%","50%",function(){
+	utils.e.openWin('showPartyInfoWin','党员基本信息',url,"80%","30%",function(){
 		//reloadData()
 	});
 }
 
 function showOrgInfoPop(){
 	var url = ctx + '/unpublic/showOrgInfoPop';
-	utils.e.openWin('showOrgInfoPop','组织信息',url,"60%","20%",function(){
+	utils.e.openWin('showOrgInfoPop','组织信息',url,"60%","30%",function(){
 		//reloadData()
 	});
 }
