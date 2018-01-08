@@ -9,25 +9,29 @@
 </head>
 <body>
 <div class="easyui-layout" style="width:100%;height:100%;" >
-	<div data-options="region:'north'" class="easyui-panel" title="任务查询" style="width:100%;height: 140px;" align="center">
+	<div data-options="region:'north'" class="easyui-panel" title="任务查询" style="width:100%;height: 80px; margin-top: 20px" align="center">
 			<table cellpadding="5" border="0" cellspacing="0">
 				<colgroup>
-			 		<col width="120"/>
-			 		<col width="120"/>
-			 		<col width="120"/>
-			 		<col width="120"/>
-			 		<col width="120"/>
-			 		<col width="120"/>
-			 		<col width="120"/>
-			 		<col width="120"/>
-			 	</colgroup>
+					<col width="20%" />
+					<col width="5%" />
+					<col width="5%" />
+					<col width="5%" />
+					<col width="5%" />
+					<col width="5%" />
+					<col width="5%" />
+					<col width="5%" />
+					<col width="10%" />
+					<col width="10%" />
+				</colgroup>
 			 	<tr>
-					<td align="right">代码名称：</td>
+					<td align="right">数据字典名称：</td>
 					<td align="left"><input class="easyui-textbox" id="search_dmm" ></input></td>
-					<td align="right">键：</td>
+					<td align="right">代码：</td>
 					<td align="left"><input class="easyui-textbox" id="search_code" ></input></td>
 					<td align="right">值：</td>
 					<td align="left"><input class="easyui-textbox" id="search_value" ></input></td>
+					<td align="right">备注：</td>
+					<td align="left"><input class="easyui-textbox" id="search_remarks" ></input></td>
 					<td>
 						<a href="javascript:void(0)" class="easyui-linkbutton" icon="icon-search" id="searchBtn">查询</a>
 					</td>
