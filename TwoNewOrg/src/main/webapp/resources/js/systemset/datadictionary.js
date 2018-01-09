@@ -65,7 +65,8 @@ function getQueryParams() {
 	return {
 		dmm:$("#search_dmm").val(),
 		code:$("#search_code").val(),
-		value:$("#search_value").val()
+		value:$("#search_value").val(),
+		remarks:$("#search_remarks").val()
 	};
 }
 
