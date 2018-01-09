@@ -1,12 +1,17 @@
 package com.tf.base.socialorg.controller;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.tf.base.common.constants.CommonConstants;
@@ -36,6 +42,7 @@ import com.tf.base.common.domain.DictionaryRepository;
 import com.tf.base.common.excel.ExcelUtil;
 import com.tf.base.common.persistence.DataFileMapper;
 import com.tf.base.common.service.BaseService;
+import com.tf.base.common.service.ExportFileService;
 import com.tf.base.common.service.LogService;
 import com.tf.base.common.utils.ExcelUtils;
 import com.tf.base.common.utils.GeneralCalcUtils;
@@ -76,7 +83,8 @@ public class OrgController {
 	private BaseService baseService;
 	@Autowired
 	private LogService logService;
-	
+	@Autowired
+	private  ExportFileService exportFileService;
 	@Autowired
 	private DictionaryRepository dict;
 	
@@ -762,8 +770,10 @@ public class OrgController {
 		return result;
 	}
 	
-	@RequestMapping(value = "/socialorg/exportUnpublicExcel")
-	private boolean exportUnpublicExcel(SocialOrgInfo params,HttpServletResponse response) {
+	@RequestMapping(value = "/socialorg/exportSocialorgExcel")
+	@ResponseBody
+	private String exportUnpublicExcel(SocialOrgInfo params,HttpServletResponse response) {
+		String filePath = exportFileService.createFilePath();
 		String orderby = " main.status desc , main.create_time desc";
 		if (!baseService.isQuWeiDept()) {
 			params.setCreateOrg(baseService.getCurrentUserDeptId());
@@ -771,11 +781,21 @@ public class OrgController {
 		List<SocialOrgExportBean> list = socialOrgInfoMapper.queryExportList(params,orderby);
 		ExcelUtil<SocialOrgExportBean> excelUtils = new ExcelUtil<SocialOrgExportBean>(SocialOrgExportBean.class);
 		try {
-			excelUtils.writeToFile(list, response, "testexport");
-			return true;
-		} catch (IOException e) {
+			excelUtils.writeToFile(list, filePath);
+			return JSONObject.toJSONString(filePath);
+		} catch (Exception e) {
 			e.printStackTrace();
-			return false;
+			return JSONObject.toJSONString("1");
+		}
+	}
+	
+	@RequestMapping(value = "/socialorg/exportSocialorgExcelFile")
+	public void doDown(String filePath, HttpServletResponse response, 
+									HttpServletRequest request)throws Exception {
+		try{
+			exportFileService.doDown(filePath, "socialOrg.xlsx", response);
+		}catch(Exception e){
+			e.printStackTrace();
 		}
 	}
 }

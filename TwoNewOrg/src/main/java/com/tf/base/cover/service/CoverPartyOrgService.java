@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tf.base.common.service.BaseService;
+import com.tf.base.cover.domain.CoverOrgInfo;
 import com.tf.base.cover.domain.CoverOrgPmbrCount;
 import com.tf.base.cover.domain.CoverOrgPmbrInfo;
 import com.tf.base.cover.domain.CoverPartyOrgBuilding;
@@ -254,7 +255,7 @@ public class CoverPartyOrgService {
 	 * @param remarks
 	 */
 	@Transactional
-	public void saveCoverInfo(String mainId, String[] orgIdArray) {
+	public void saveCoverInfo(String mainId, List<CoverOrgInfo> orgIdList) {
 		//把原来的覆盖党组织清空
 		Example example = new Example(UnpublicOrgInfo.class);
 		example.createCriteria().andEqualTo("coverPartyOrgId", mainId);
@@ -271,14 +272,14 @@ public class CoverPartyOrgService {
 			socialOrgInfoMapper.updateByPrimaryKey(orgInfo);
 		}
 		//给组织赋予新的覆盖党组织
-		if(orgIdArray.length > 0 && !orgIdArray[0].trim().equals("")){
-			for(int i = 0; i < orgIdArray.length; i++){
-				UnpublicOrgInfo unpublicOrgInfo = unpublicOrgInfoMapper.selectByPrimaryKey(orgIdArray[i]);
-				if(unpublicOrgInfo == null){
-					SocialOrgInfo socialOrgInfo = socialOrgInfoMapper.selectByPrimaryKey(orgIdArray[i]);
+		if(orgIdList.size() > 0){
+			for(int i = 0; i < orgIdList.size(); i++){
+				if("1".equals(orgIdList.get(i).getOrgType())){
+					SocialOrgInfo socialOrgInfo = socialOrgInfoMapper.selectByPrimaryKey(orgIdList.get(i).getId());
 					socialOrgInfo.setCoverPartyOrgId(mainId);
 					socialOrgInfoMapper.updateByPrimaryKeySelective(socialOrgInfo);
-				}else{
+				}else if("0".equals(orgIdList.get(i).getOrgType())){
+					UnpublicOrgInfo unpublicOrgInfo = unpublicOrgInfoMapper.selectByPrimaryKey(orgIdList.get(i).getId());
 					unpublicOrgInfo.setCoverPartyOrgId(mainId);
 					unpublicOrgInfoMapper.updateByPrimaryKeySelective(unpublicOrgInfo);
 				}

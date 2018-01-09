@@ -32,7 +32,7 @@
 					<tr>
 						<td style="text-align: right;"><font color="red">*</font>党组织名称：</td>
 						<td style="text-align: left;">${main.partyOrgName }</td>
-						<td style="text-align: right;"><font color="red">*</font>党组织联系电话：</td>
+						<td style="text-align: right;"><font color="red">*</font>党组织联系电话(书记手机号)：</td>
 						<td style="text-align: left;">${main.partyOrgTel }</td>
 						<td style="text-align: right;"><font color="red">*</font>党组织组建形式：</td>
 						<td style="text-align: left;">
@@ -51,12 +51,7 @@
 							</select>
 						</td>
 						<td style="text-align: right;"><font color="red">*</font>隶属党组织名称：</td>
-						<td style="text-align: left;">
-	    					<input  type="text" id="higherDepart" class="form-control" value="" readonly style="background-color: white;"  onclick="showMenu();"></input>
-							<div id="parentPartyOrg" class="parentPartyOrg" style="display:none; position: absolute;background-color: #fff;border:1px solid #95B8E7;">
-								<ul id="parentDepartMent" class="ztree" style="margin-top:0; width:160px;"></ul>
-							</div>
-	    				</td>
+						<td style="text-align: left;">${main.subjectionPartyName }</td>
 						<td style="text-align: right;"><font color="red">*</font>党组织成立时间：</td>
 						<td style="text-align: left;">${main.partyOrgTimeTxt }</td>
 					</tr>
@@ -144,7 +139,7 @@
 							</select>
 	                    </td>
 						<td style="text-align: right;">所在单位：</td>
-	                    <td align= "left" >${main.secretaryCompanyTxt }</td>
+	                    <td style="text-align: left;" >${main.secretaryCompany }</td>
 					</tr>
 				</table>
 		   </div>
@@ -172,7 +167,7 @@
 										<label style="width:90px;text-align: right;"><font style="font-weight:normal;">姓名：</font></label>
 										<input class="form-control" style="width:100px;" disabled="disabled" name="deputySecretaryName${status.index }" value="${e.deputySecretaryName }"/>							  
 										<label style="width:90px;text-align: right;"><font style="font-weight:normal;">出生日期：</font></label>
-										<input class="form-control" style="width:100px;" disabled="disabled" type='date' name="deputySecretaryBirthdayTxt${status.index }" value="${e.deputySecretaryBirthdayTxt }"/>
+										<input class="form-control" style="width:100px;" disabled="disabled" name="deputySecretaryBirthdayTxt${status.index }" value="${e.deputySecretaryBirthdayTxt }"/>
 										<label style="width:90px;text-align: right;"><font style="font-weight:normal;">性别：</font></label>
 										<select  name="deputySecretarySex${status.index }" class="form-control" disabled="disabled" style="width:100px;">
 											<option value="">--请选择--</option>
@@ -297,7 +292,7 @@
 							<c:if test="${main.isOneself eq '1' }">是</c:if>
 							<c:if test="${main.isOneself eq '0' }">否</c:if>
 	                    </td>
-						<td style="text-align: right;"><font color="red">*</font>使用面积：</td>
+						<td style="text-align: right;"><font color="red">*</font>使用面积(m²)：</td>
 						<td style="text-align: left;">${main.stageArea }</td>
 					</tr>
 				</table>

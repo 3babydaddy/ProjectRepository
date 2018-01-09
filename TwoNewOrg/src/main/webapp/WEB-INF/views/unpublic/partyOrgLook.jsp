@@ -92,7 +92,34 @@
 				</table>
 		   </div>
 		</div>
-    	<div class="panel panel-info" id="instruct">
+		<div class="panel panel-info" id="divThree">
+		   <div class="panel-heading">
+		      <h3 class="panel-title">党组织基本信息</h3>
+		   </div>
+		   <div class="panel-body" align="center">
+				<table class="table table-bordered" cellpadding="2" border="0" cellspacing="0" >
+					<colgroup>
+				 		<col width="90" />
+				 		<col width="120"/>
+				 		<col width="100"/>
+				 		<col width="120"/>
+				 		<col width="90"/>
+				 		<col width="120"/>
+				 	</colgroup>
+					<tr>
+						<td style="text-align: right;"><font color="red">*</font>党组织名称：</td>
+						<td style="text-align: left;">${main.partyOrgName }</td>
+						
+						<td style="text-align: right;"><font color="red">*</font>党组织联系电话(书记手机号)：</td>
+						<td style="text-align: left;">${main.partyOrgTel }</td>
+						
+						<td style="text-align: right;"><font color="red">*</font>隶属党组织名称：</td>
+						<td style="text-align: left;">${main.subjectionPartyName }</td>
+					</tr>
+				</table>
+		   </div>
+		</div>
+    	<div class="panel panel-info" id="divOne">
 		   <div class="panel-heading">
 		      <h3 class="panel-title">指导员或联络员信息</h3>
 		   </div>
@@ -105,11 +132,11 @@
 							<c:if test="${instructList.size() == 0}">
 								<div class="form-inline" style="margin-top:5px;">
 									<label>人员姓名：</label>
-									<input class="form-control" name="instructorName" value="" maxlength="20"/>
+									<input class="form-control" name="instructorName" value="" maxlength="20" disabled="disabled"/>
 									<label>单位及职务：</label>
-									<input class="form-control" name="instructorJob" value="" maxlength="20"/>
+									<input class="form-control" name="instructorJob" value="" maxlength="20" disabled="disabled"/>
 									<label>指导单位：</label>
-				                       <select id="zhidaodanwei0" name="instructorUnitTxt" class="form-control"  multiple="multiple">
+				                       <select id="zhidaodanwei0" name="instructorUnitTxt" class="form-control" disabled="disabled">
 										    <c:forEach var="it" items="${unitList}">
 										        <option value="${it.code }" >${it.value }</option>
 										    </c:forEach>
@@ -120,11 +147,11 @@
 								<c:forEach items="${instructList }" var="e" varStatus="status">
 									<div class="form-inline" style="margin-top:5px;">
 										<label>人员姓名：</label>
-										<input class="form-control" name="instructorName" value="${e.instructorName }" maxlength="20"/>
+										<input class="form-control" name="instructorName" value="${e.instructorName }" maxlength="20" disabled="disabled"/>
 										<label>职务：</label>
-										<input class="form-control" name="instructorJob" value="${e.instructorJob }" maxlength="20"/>
+										<input class="form-control" name="instructorJob" value="${e.instructorJob }" maxlength="20" disabled="disabled"/>
 										<label>单位：</label>
-							               	<select id="zhidaodanwei${status.index }" name="instructorUnitTxt" class="form-control" multiple="multiple">
+							               	<select id="zhidaodanwei${status.index }" name="instructorUnitTxt" class="form-control" disabled="disabled">
 											    <c:forEach var="it" items="${unitList}">
 											        <c:set var="tmpInstructorUnit" value=""/>
 													   <c:forEach items="${e.orgIdList }" var="t">
@@ -158,16 +185,16 @@
 								<c:forEach items="${lowerPartyList }" var="e" >
 									<div class="form-inline" style="margin-top:5px;">
 										<label>名称：</label>
-										<input class="form-control" name="lowerPartyOrgName" value="${e.lowerPartyOrgName }" maxlength="20"/>
+										<input class="form-control" name="lowerPartyOrgName" value="${e.lowerPartyOrgName }" maxlength="20"/ disabled="disabled">
 										<label>类型：</label>
-										<select id="lowerPartyOrgType" name="lowerPartyOrgType" class="form-control">
+										<select id="lowerPartyOrgType" name="lowerPartyOrgType" class="form-control" disabled="disabled">
 											<option value="">--请选择--</option>
 											<c:forEach var="it" items="${partyOrgClassList}">
 												<option value="${it.code }" <c:if test="${e.lowerPartyOrgType == it.code }"> selected="selected"</c:if>>${it.value }</option>
 											</c:forEach>
 										</select>
 										<label>数量：</label>
-										<input class="form-control" name="lowerPartyOrgSum" value="${e.lowerPartyOrgSum}" maxlength="20"/>
+										<input class="form-control" name="lowerPartyOrgSum" value="${e.lowerPartyOrgSum}" maxlength="20"/ disabled="disabled">
 									</div>
 								</c:forEach>
 							</td>
@@ -176,9 +203,9 @@
 				</table>
 		   </div>
 		</div>
-		<div class="panel panel-info" >
+		<div class="panel panel-info" id="divTwo">
 		   <div class="panel-heading">
-		      <h3 class="panel-title">党组织换届信息(允许录入多次)</h3>
+		      <h3 class="panel-title">党组织换届信息</h3>
 		   </div>
 		   <div class="panel-body" align="center">
 				<table class="table table-bordered" cellpadding="2" border="0" cellspacing="0" >
@@ -208,34 +235,7 @@
 		   </div>
 		</div>
 		
-		<div class="panel panel-info">
-		   <div class="panel-heading">
-		      <h3 class="panel-title">党组织换届信息</h3>
-		   </div>
-		   <div class="panel-body" align="center">
-				<table class="table table-bordered" cellpadding="2" border="0" cellspacing="0" >
-					<colgroup>
-				 		<col width="90" />
-				 		<col width="120"/>
-				 		<col width="100"/>
-				 		<col width="120"/>
-				 		<col width="90"/>
-				 		<col width="120"/>
-				 	</colgroup>
-					<tr>
-						<td style="text-align: right;"><font color="red">*</font>党组织名称：</td>
-						<td style="text-align: left;">${main.partyOrgName }</td>
-						
-						<td style="text-align: right;"><font color="red">*</font>党组织联系电话：</td>
-						<td style="text-align: left;">${main.partyOrgTel }</td>
-						
-						<td style="text-align: right;"><font color="red">*</font>隶属党组织名称：</td>
-						<td style="text-align: left;">${main.subjectionPartyName }</td>
-					</tr>
-				</table>
-		   </div>
-		</div>
-		<div class="panel panel-info">
+		<div class="panel panel-info" id="divFour">
 			<div class="panel-heading">
 		      <h3 class="panel-title">书记信息</h3>
 		   </div>
@@ -277,12 +277,21 @@
 							</select>
 	                    </td>
 						<td style="text-align: right;">所在单位：</td>
-	                    <td align= "left" >${main.secretaryCompanyTxt }</td>
+	                    <td align= "left" >
+		                    <input class="form-control" type="text" id="secretaryCompanyOne" name="secretaryCompany" value="${main.secretaryCompany }" />
+	                    
+	                    	<select id="secretaryCompanyTwo" name="secretaryCompany" class="form-control">
+								<option value="">--请选择--</option>
+								<c:forEach var="it" items="${unitList}">
+									<option value="${it.code }" <c:if test="${main.secretaryCompany == it.code }"> selected="selected"</c:if>>${it.value }</option>
+								</c:forEach>
+							</select>
+	                    </td>
 					</tr>
 				</table>
 		   </div>
 		</div>
-		<div class="panel panel-info">
+		<div class="panel panel-info" id="divFive">
 			<div class="panel-heading">
 		      <h3 class="panel-title">副书记及委员</h3>
 		   </div>
@@ -305,7 +314,7 @@
 										<label style="width:90px;text-align: right;"><font style="font-weight:normal;">姓名：</font></label>
 										<input class="form-control" style="width:100px;" disabled="disabled" name="deputySecretaryName${status.index }" value="${e.deputySecretaryName }"/>							  
 										<label style="width:90px;text-align: right;"><font style="font-weight:normal;">出生日期：</font></label>
-										<input class="form-control" style="width:100px;" disabled="disabled" type='date' name="deputySecretaryBirthdayTxt${status.index }" value="${e.deputySecretaryBirthdayTxt }"/>
+										<input class="form-control" style="width:100px;" disabled="disabled"  name="deputySecretaryBirthdayTxt${status.index }" value="${e.deputySecretaryBirthdayTxt }"/>
 										<label style="width:90px;text-align: right;"><font style="font-weight:normal;">性别：</font></label>
 										<select  name="deputySecretarySex${status.index }" class="form-control" disabled="disabled" style="width:90px;">
 											<option value="">--请选择--</option>
@@ -386,7 +395,7 @@
 				</table>
 		   </div>
 		</div>
-		<div class="panel panel-info">
+		<div class="panel panel-info" id="divSix">
 			<div class="panel-heading">
 		      <h3 class="panel-title">其他党务工作者</h3>
 		   </div>
@@ -410,7 +419,7 @@
 				</table>
 		   </div>
 		</div>
-		<div class="panel panel-info">
+		<div class="panel panel-info" id="divSev">
 			<div class="panel-heading">
 		      <h3 class="panel-title">活动场所情况</h3>
 		   </div>
@@ -441,7 +450,7 @@
 							</select>
 	                    </td>
 	                    
-						<td style="text-align: right;"><font color="red">*</font>使用面积：</td>
+						<td style="text-align: right;"><font color="red">*</font>使用面积(m²)：</td>
 						<td style="text-align: left;">${main.stageArea }</td>
 					</tr>
 				</table>
@@ -461,22 +470,25 @@
 </body>
 <script type="text/javascript">
 
-$(function(){
-	
-	var set = {
-				nonSelectedText: '请选择',
-				numberDisplayed: 10,
-				allSelectedText:'全部'
-	 };
-	 var instructSize = $("#instructSize").val();
-	 for(var s = 0; s < instructSize; s++){
-		$("#zhidaodanwei"+s).multiselect(set);
-	 }
-	 if(instructSize == 0){
-			$("#instruct").hide();
-	 }
-
-});
+	$(function(){
+		
+		//页面的显示或隐藏顺序
+	 	var setUpSign = '${main.isSetUpPartyOrg}';
+		isSetUpPartyOrg(setUpSign);
+		if(setUpSign == 1 && setUpSign != ""){
+			var hiddenFlag = '${main.partyOrgForm}';
+			showChangInfo(hiddenFlag);
+			if(hiddenFlag != 3){
+				showLowerPartyInfo();
+				showInstructorInfo();
+			}
+		}
+		
+		//书记所在单位
+		var secretarySource = '${main.secretarySource}';
+		secretarySourceSelect(secretarySource);
+		
+	});
 
 	function showUpload(obj, action){
 		var id = $("#"+obj.id.replace('file','')).val();
@@ -497,6 +509,87 @@ $(function(){
 		utils.e.openWin('showPartyInfoWin','党员基本信息',url,"80%","40%",function(){
 			//reloadData()
 		});
+	}
+	
+	function isSetUpPartyOrg(setUpSign){
+		if(setUpSign == 0 && setUpSign != ""){
+			hiddenAllsign(setUpSign);
+		}else{
+			showAllsign(setUpSign);
+		}
+	}
+
+	/**
+	 * 不同的建立方式<br>
+	 * 党组织信息展示的控制
+	 */
+	function showChangInfo(hiddenFlag) {
+		if (hiddenFlag == 0 || hiddenFlag == 1 || hiddenFlag == 2) {
+			showAllsign(hiddenFlag);
+			$("#divTwo").show();
+			// 网格建 不显示换届信息
+			if (hiddenFlag == 2) {
+				$("#divTwo").hide();
+			}
+		} else {
+			hiddenAllsign(hiddenFlag);
+		}
+	}
+
+	function showInstructorInfo(){
+		var setUpSign = '${main.isInstructor}';
+		if(setUpSign == 0 && setUpSign != ""){
+			$("#divOne").hide();
+		}else{
+			$("#divOne").show();
+		}
+	}
+
+	function showLowerPartyInfo() {
+		var hiddenFlag = '${partyOrgType}';
+		if (hiddenFlag == 0 || hiddenFlag == 1) {
+			$("#divEight").show();
+		} else {
+			$("#divEight").hide();
+		}
+	}
+
+	function hiddenAllsign(flag){
+		if(flag != 0 && flag != ""){
+			document.getElementById("divOne").style.display='none';
+		}
+		document.getElementById("divTwo").style.display='none';
+		document.getElementById("divThree").style.display='none';
+		document.getElementById("divFour").style.display='none';
+		document.getElementById("divFive").style.display='none';
+		document.getElementById("divSix").style.display='none';
+		document.getElementById("divSev").style.display='none';
+		document.getElementById("divEight").style.display='none';
+	}
+
+	function showAllsign(flag){
+		showInstructorInfo();
+		document.getElementById("divTwo").style.display='';
+		document.getElementById("divThree").style.display='';
+		document.getElementById("divFour").style.display='';
+		document.getElementById("divFive").style.display='';
+		document.getElementById("divSix").style.display='';
+		document.getElementById("divSev").style.display='';
+		document.getElementById("divEight").style.display='';
+	}
+	
+	function secretarySourceSelect(secretarySource){
+		if(secretarySource == 2){
+			$("#secretaryCompanyOne").show();
+			$("#secretaryCompanyTwo").hide();
+			document.getElementById("secretaryCompanyOne").disabled=true;
+			document.getElementById("secretaryCompanyTwo").disabled=true;
+		}else{
+			$("#secretaryCompanyOne").hide();
+			$("#secretaryCompanyTwo").show();
+			document.getElementById("secretaryCompanyOne").disabled=true;
+			document.getElementById("secretaryCompanyTwo").disabled=true;
+		}
 	}
 </script>
 </html>

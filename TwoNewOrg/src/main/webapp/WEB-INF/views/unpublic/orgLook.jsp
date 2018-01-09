@@ -95,7 +95,7 @@
 									</c:forEach>
 								</select>
 								<c:if test="${main.registerAddressLevel == 1 }">
-								<span class="proclass"><span class="citys">
+								<span class="proclass"><span class="citys" province="${main.registerAddressProvince }" city="${ main.registerAddressCity }" area="${main.registerAddressDistrict }" town="${main.registerAddressStreet }">
 								<select name="province" class="form-control" disabled="disabled"></select>
 								<select name="city" class="form-control" disabled="disabled"></select>
 								<select name="area" class="form-control" disabled="disabled"></select>
@@ -103,14 +103,14 @@
 								</span></span>
 								</c:if>
 								<c:if test="${main.registerAddressLevel == 2 }">
-								<span class="proclass"><span class="citys">
+								<span class="proclass"><span class="citys" province="${main.registerAddressProvince }" city="${ main.registerAddressCity }" area="${main.registerAddressDistrict }" town="${main.registerAddressStreet }">
 								<select name="province" class="form-control" disabled="disabled"></select>
 								<select name="city" class="form-control" disabled="disabled"></select>
 								<select name="area" class="form-control" disabled="disabled"></select>
 								</span></span>
 								</c:if>
 								<c:if test="${main.registerAddressLevel == 3 }">
-								<span class="proclass"><span class="citys">
+								<span class="proclass"><span class="citys" province="${main.registerAddressProvince }" city="${ main.registerAddressCity }" area="${main.registerAddressDistrict }" town="${main.registerAddressStreet }">
 								<select name="province" class="form-control" disabled="disabled"></select>
 								<select name="city" class="form-control" disabled="disabled"></select>
 								</span></span>

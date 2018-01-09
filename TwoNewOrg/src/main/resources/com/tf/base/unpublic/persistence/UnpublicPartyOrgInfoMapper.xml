@@ -90,8 +90,11 @@
   		<if test="params.orgName !=null and params.orgName !=''">
   			and o.name like CONCAT('%', #{params.orgName}, '%')
   		</if>
-  		<if test="params.isSetUpPartyOrg !=null and params.isSetUpPartyOrg !=''">
-  			and p.is_set_up_party_org = #{params.isSetUpPartyOrg}
+  		<if test="params.isSetUpPartyOrg !=null and params.isSetUpPartyOrg !='' and params.isSetUpPartyOrg != '0'.toString()">
+  			and p.is_set_up_party_org is not null
+  		</if>
+  		<if test="params.isSetUpPartyOrg !=null and params.isSetUpPartyOrg !='' and params.isSetUpPartyOrg != '1'.toString()">
+  			and p.is_set_up_party_org is null
   		</if>
   		<if test="params.inOperator !=null and params.inOperator !='' and params.partyInNum !=null and params.partyInNum !=''">
   			and (select count(*) from unpublic_org_pmbr_info 

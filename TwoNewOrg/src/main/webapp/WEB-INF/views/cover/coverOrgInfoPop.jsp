@@ -35,7 +35,7 @@
 	</div>
 	<div data-options="region:'center'" id="gridPanel"  style="height: auto;width: 100%">
 	</div>
-	<div align="center" border="false" style="position:fixed;right:10px;bottom:10px;" id="returnDiv">
+	<div align="center" border="false" style="position:fixed;right:10px;bottom:20px;" id="returnDiv">
    		<div class="btn-group">
    		  <button type="button" class="btn btn-primary" onclick="javascript:save();" id="saveBtn">确认覆盖</button>
 		  <button type="button" class="btn btn-primary" onclick="javascript:parent.utils.e.closeWin('coverwin');">关闭窗口</button>
@@ -126,7 +126,7 @@ function save(){
 }
 
 function converData(orgIdArray){
-	var orgIds = "";
+	var orgArray = new Array();
 	var method = $("#method").val();
 	if(method == 'cover'){
 		if(orgIdArray.length < 1){
@@ -134,24 +134,31 @@ function converData(orgIdArray){
 			return;
 		}
 		for(var i = 0; i < orgIdArray.length; i++){
-			if(orgIds == ""){
-				orgIds = orgIdArray[i].id;
-			}else{
-				orgIds = orgIds + ',' + orgIdArray[i].id;
+			if(orgIdArray[i].industryType != null && orgIdArray[i].nature == ""){
+				orgArray.push(createConverModel(orgIdArray[i].id, '0'));
+			}else if(orgIdArray[i].industryType == "" && orgIdArray[i].nature != null){
+				orgArray.push(createConverModel(orgIdArray[i].id, '1'));
 			}
 		}
 	}else if(method == 'edit'){
 		if(orgIdArray.length > 0){
 			for(var i = 0; i < orgIdArray.length; i++){
-				if(orgIds == ""){
-					orgIds = orgIdArray[i].id;
-				}else{
-					orgIds = orgIds + ',' + orgIdArray[i].id;
+				if(orgIdArray[i].industryType != null && orgIdArray[i].nature == ""){
+					orgArray.push(createConverModel(orgIdArray[i].id, '0'));
+				}else if(orgIdArray[i].industryType == "" && orgIdArray[i].nature != null){
+					orgArray.push(createConverModel(orgIdArray[i].id, '1'));
 				}
 			}
 		}
 	}
-	return orgIds;
+	return JSON.stringify(orgArray);
+}
+
+function createConverModel(id, orgType){
+	var info = new Object();
+	info.id = id;
+	info.orgType = orgType;
+	return info;
 }
 
 function getCheckedRow(){

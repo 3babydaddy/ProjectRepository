@@ -33,8 +33,8 @@
 					<tr>
 						<td style="text-align: right;"><font color="red">*</font>党组织名称：</td>
 						<td style="text-align: left;"><input class="form-control" name="partyOrgName" value="${main.partyOrgName }"/></td>
-						<td style="text-align: right;"><font color="red">*</font>党组织联系电话：</td>
-						<td style="text-align: left;"><input class="form-control" name="partyOrgTel" value="${main.partyOrgTel }"/></td>
+						<td style="text-align: right;"><font color="red">*</font>党组织联系电话(书记手机号)：</td>
+						<td style="text-align: left;"><input class="form-control" name="partyOrgTel" value="${main.partyOrgTel }" maxlength="11" /></td>
 						<td style="text-align: right;"><font color="red">*</font>党组织组建形式：</td>
 						<td style="text-align: left;">
 							<input class="form-control" readonly="readonly" style="background-color: white;" value="覆盖建立" maxlength="20"/>
@@ -59,7 +59,7 @@
 							</div>
 	    				</td>
 	    				<td style="text-align: right;"><font color="red">*</font>党组织成立时间：</td>
-						<td style="text-align: left;"><input class="form-control" name="partyOrgTimeTxt" type="text" onClick="WdatePicker({maxDate:'%y-%M-%d'})" value="${main.partyOrgTimeTxt }" /></td>
+						<td style="text-align: left;"><input class="form-control" name="partyOrgTimeTxt" type="text" onClick="WdatePicker()" value="${main.partyOrgTimeTxt }" /></td>
 					</tr>
 					<tr>
 						<td style="text-align: right;"><font color="red">*</font>党组织成立相关附件：</td>
@@ -88,7 +88,7 @@
 						
 							<c:if test="${changeDateList.size() == 0}">
 								<div class="form-inline" style="margin-top:5px;">
-									<input class="form-control" type="text" onClick="WdatePicker({maxDate:'%y-%M-%d'})" id="partymbrInUnpublicNum0" name="partymbrInUnpublicNum" />
+									<input class="form-control" type="text" onClick="WdatePicker()" id="partymbrInUnpublicNum0" name="partymbrInUnpublicNum" />
 									<label>换届相关附件</label><input class="form-control" type="text" id="filepartymbrUnderThirtyfiveNum0" name="filepartymbrUnderThirtyfiveNum" onclick="showUpload(this,2)"/>
 									<input class="form-control" type="hidden" id="partymbrUnderThirtyfiveNum0" name="partymbrUnderThirtyfiveNum" />
 								</div>
@@ -96,7 +96,7 @@
 							<c:if test="${!empty main.id and changeDateList.size() > 0}">
 								<c:forEach items="${changeDateList }" var="e" varStatus="status">
 									<div class="form-inline" style="margin-top:5px;">
-										<input class="form-control" type="text" onClick="WdatePicker({maxDate:'%y-%M-%d'})" id="partymbrInUnpublicNum${status.index }" name="partymbrInUnpublicNum" value="${e.changeTimeTxt }"/>
+										<input class="form-control" type="text" onClick="WdatePicker()" id="partymbrInUnpublicNum${status.index }" name="partymbrInUnpublicNum" value="${e.changeTimeTxt }"/>
 										<label>换届相关附件</label><input class="form-control" type="text" id="filepartymbrUnderThirtyfiveNum${status.index }" name="filepartymbrUnderThirtyfiveNum" value="${e.changeAttachmentName }" onclick="showUpload(this,2)"/>
 										<input class="form-control" type="hidden" id="partymbrUnderThirtyfiveNum${status.index }" name="partymbrUnderThirtyfiveNum" value="${e.changeAttachmentId }"/>
 									</div>
@@ -276,7 +276,7 @@
 				 		<col width="120"/>
 				 	</colgroup>
 					<tr>
-						<td style="text-align: right;">从覆盖组织转入党员总数：</td>
+						<td style="text-align: right;">组织关系在非公　<br/>企业的党员总数：</td>
 						<td style="text-align: left;"><input class="form-control" disabled="disabled"  value="${copc.partymbrIncoverNum }"/></td>
 						<td style="text-align: right;">35岁以下：</td>
 						<td style="text-align: left;"><input class="form-control" disabled="disabled" value="${copc.partymbrUnderThirtyfiveNum }"/></td>
@@ -286,12 +286,12 @@
 					<tr>
 						<td style="text-align: right;">高中及以下学历：</td>
 						<td style="text-align: left;"><input class="form-control" disabled="disabled" value="${copc.partymbrUnderHighschoolNum }"/></td>
-						<td style="text-align: right;">不从覆盖组织转入党员总数：</td>
+						<td style="text-align: right;">组织关系不在非公<br/>企业的党员总数：</td>
 						<td style="text-align: left;"><input class="form-control" disabled="disabled" value="${copc.partymbrNotIncoverNum }"/></td>
 						<td align="right" colspan="2" style="margin-right: 15px;">
 							<div align="right" border="false" >
 					    		<div class="btn-group">
-								  <button type="button" class="btn btn-primary" onclick="showPartyInfo('${main.id}')">查看党员详情页面</button>
+								  <button type="button" class="btn btn-primary" onclick="showPartyInfo('${main.id }')">查看党员详情页面</button>
 								</div>
 					    	</div>
 						</td>
@@ -347,7 +347,7 @@
 								</c:forEach>
 							</select>
 	                    </td>
-						<td style="text-align: right;"><font color="red">*</font>使用面积：</td>
+						<td style="text-align: right;"><font color="red">*</font>使用面积(m²)：</td>
 						<td style="text-align: left;"><input class="form-control" name="stageArea" value="${main.stageArea }"/></td>
 					</tr>
 				</table>

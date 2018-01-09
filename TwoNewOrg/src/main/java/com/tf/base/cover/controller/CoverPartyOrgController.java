@@ -925,8 +925,8 @@ public class CoverPartyOrgController {
 	public Map<String, Object> saveCoverInfo(String mainId, String orgIds){
 		Map<String, Object> resultMap = new HashMap<>();
 		try{
-			String[] orgIdArray = orgIds.split(",");
-			coverPartyOrgService.saveCoverInfo(mainId, orgIdArray);
+			List<CoverOrgInfo> orgIdList = JSON.parseArray(orgIds, CoverOrgInfo.class);
+			coverPartyOrgService.saveCoverInfo(mainId, orgIdList);
 			resultMap.put("status", 1);
 			resultMap.put("msg", "提交成功");
 		}catch(Exception e){

@@ -738,7 +738,9 @@ public class PartyOrgController {
 	 */
 	@RequestMapping(value="/social/showOrgInfoPop",method=RequestMethod.POST)
 	public void showOrgInfoPop(HttpServletResponse response, int page, int rows, QueryPmbrParams params){
-		
+		if(!baseService.isQuWeiDept()){
+			params.setCreateOrg(baseService.getCurrentUserDeptId());
+		}
 		PageHelper.startPage(page, rows, true);
 		List<SocialOrgInfo> list = socialOrgInfoMapper.getList(params);
 		for (SocialOrgInfo socialOrgInfo : list) {

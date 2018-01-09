@@ -12,11 +12,11 @@ $(document).ready(function() {
 	/**
 	 * export Excel btn click
 	 */
-	$("#exportExcelBtn").click(function() {
-		$('#exportExcelBtn').linkbutton('disable');//设置变灰按钮  
-		window.location.href=ctx + "/file/exportUnpublicReport";
-		setTimeout("$('#exportExcelBtn').linkbutton('enable')",5000); //设置三秒后提交按钮 显示  
-	});
+//	$("#exportExcelBtn").click(function() {
+//		$('#exportExcelBtn').linkbutton('disable');//设置变灰按钮  
+//		window.location.href=ctx + "/file/exportUnpublicReport";
+//		setTimeout("$('#exportExcelBtn').linkbutton('enable')",5000); //设置三秒后提交按钮 显示  
+//	});
 });
 function getQueryParams() {
 	var params = {};
@@ -26,9 +26,7 @@ function getQueryParams() {
 	}); 
 
    return   params ; 
-	
 }
-
 
 function loadData(){
 	var options = {
@@ -158,6 +156,26 @@ function reloadData(){
 	$('#gridPanel').datagrid('options').queryParams = params;
 	
 	 $('#gridPanel').datagrid('reload');
+}
+
+function unpublicWorkExport(){
+	$('#exportExcelBtn').linkbutton('disable');
+	$('#exportExcelBtn').linkbutton({text:'正在导出...'});
+	$.ajax({
+		url:ctx + '/file/exportUnpublicReport',
+		data:getQueryParams(),
+		type:'post',
+		dataType:'json',
+		success:function(result){
+			if(result != '1'){
+				$('#exportExcelBtn').linkbutton({text:'导出Excel'});
+				$('#exportExcelBtn').linkbutton('enable');
+				window.location.href=ctx + "/file/exportUnpublicReportFile?filePath="+result;
+			}else{
+				layer.alert('导出失败');
+			}
+		}
+	});
 }
 
 function getCheckedRow(){

@@ -42,6 +42,7 @@
 <script type="text/javascript" src="<c:url value='/resources/plugins/jeasyui/jquery.easyui.min.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/plugins/jeasyui/jquery.jdirk.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/plugins/jeasyui/jeasyui.extensions.messager.alert.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/plugins/jeasyui/easyui-lang-zh_CN.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/plugins/bootstrap-multiselect-0.9.13/dist/js/bootstrap-multiselect.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/js/index/public.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/js/comm/jqueryValidateExt.js'/>"></script>

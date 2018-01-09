@@ -100,6 +100,7 @@ function loadData(){
 		},{
 			text:'导出Excel',
 			iconCls: 'icon-excel_report1',
+			id : 'export',
 			handler: function(){exportExcel();}
 		}];
 	}else{
@@ -153,10 +154,23 @@ function loadData(){
 
 
 function exportExcel(){
-	
-	var params = getQueryParams();
-	window.location.href=ctx + "/unpublic/exportUnpublicExcel?creator="+params.creator+'&industryType='+params.industryType+
-							'&level='+params.level+'&name='+params.name+'&otherCondition='+params.otherCondition+'&status='+params.status;
+	$('#export').linkbutton("disable");
+	$('#export').linkbutton({text:'正在导出...'});
+	$.ajax({
+		url:ctx + '/unpublic/exportUnpublicExcel',
+		data:getQueryParams(),
+		type:'post',
+		dataType:'json',
+		success:function(result){
+			if(result != '1'){
+				$('#export').linkbutton({text:'导出Excel'});
+				$('#export').linkbutton("enable");
+				window.location.href=ctx + "/unpublic/exportUnpublicExcelFile?filePath="+result;
+			}else{
+				layer.alert('导出失败');
+			}
+		}
+	});
 }
 
 function reloadData(){

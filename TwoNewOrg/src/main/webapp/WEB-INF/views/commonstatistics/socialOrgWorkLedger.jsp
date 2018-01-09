@@ -41,7 +41,7 @@
 	                    </td>
 	                    <td align="right" colspan="4" style="margin-right: 15px;">
 	                    	<a href="javascript:void(0)" class="easyui-linkbutton" icon="icon-search" id="searchBtn">查询</a>
-	                    	<a href="../file/exportSocialReport" class="easyui-linkbutton" icon="icon-excel_report1" id="exportExcelBtn">导出Excel</a>
+	                    	<a onClick="socialWorkExport()" class="easyui-linkbutton" icon="icon-excel_report1" id="exportExcelBtn">导出Excel</a>
 	                    </td>
 	                    <td align="right"></td>
 	                </tr>

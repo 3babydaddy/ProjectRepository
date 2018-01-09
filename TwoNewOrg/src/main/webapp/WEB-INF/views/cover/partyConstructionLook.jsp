@@ -116,9 +116,7 @@
 							
 							<td style="text-align: right;"><font color="red">*</font>党员总学时：</td>
 							<td style="text-align: left;"><input class="form-control" name="partyTotalTime" disabled="disabled" value="${main.partyTotalTime }"/></td>
-							
-							<td style="text-align: right;"><font color="red">*</font>党员平均学时：</td>
-							<td style="text-align: left;"><input class="form-control" name="partyAvgTime" disabled="disabled" value="${main.partyAvgTime }"/></td>
+							<td colspan="2"></td>
 						</tr>
 					</table>
 			   </div>

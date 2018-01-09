@@ -90,7 +90,7 @@
 							</select>
 						</td>
 						<td style="text-align: right;"><font color="red">*</font>党组织成立时间：</td>
-						<td style="text-align: left;"><input class="form-control" name="partyOrgTimeTxt" type="text" onClick="WdatePicker({maxDate:'%y-%M-%d'})" value="${main.partyOrgTimeTxt }" /></td>
+						<td style="text-align: left;"><input class="form-control" id="partyOrgTimeTxt" name="partyOrgTimeTxt" type="text" onClick="WdatePicker()" value="${main.partyOrgTimeTxt }" /></td>
 					</tr>
 					<tr>
 						<td style="text-align: right;"><font color="red">*</font>党组织成立相关附件：</td>
@@ -98,6 +98,38 @@
 							<input class="form-control" type="text" id="filepartyOrgAttachment" name="filepartyOrgAttachment" value="${main.filepartyOrgAttachment }" onclick="showUpload(this,4)"/>
 							<input class="form-control" type="hidden" id="partyOrgAttachment" name="partyOrgAttachment" value="${main.partyOrgAttachment }" />
 						</td>
+					</tr>
+				</table>
+		   </div>
+		</div>
+		<div class="panel panel-info" id="divThree">
+		   <div class="panel-heading">
+		      <h3 class="panel-title">党组织基本信息</h3>
+		   </div>
+		   <div class="panel-body" align="center">
+				<table class="table table-bordered" cellpadding="2" border="0" cellspacing="0" >
+					<colgroup>
+				 		<col width="90" />
+				 		<col width="120"/>
+				 		<col width="100"/>
+				 		<col width="120"/>
+				 		<col width="90"/>
+				 		<col width="120"/>
+				 	</colgroup>
+					<tr>
+						<td style="text-align: right;"><font color="red">*</font>党组织名称：</td>
+						<td style="text-align: left;"><input class="form-control" name="partyOrgName" value="${main.partyOrgName }"/></td>
+						
+						<td style="text-align: right;"><font color="red">*</font>党组织联系电话(书记手机号)：</td>
+						<td style="text-align: left;"><input class="form-control" name="partyOrgTel" value="${main.partyOrgTel }" maxlength="11" /></td>
+						
+						<td style="text-align: right;"><font color="red">*</font>隶属党组织名称：</td>
+						<td style="text-align: left;">
+	    					<input  type="text" id="higherDepart" class="form-control" value="" readonly style="background-color: white;"  onclick="showMenu();"></input>
+							<div id="parentPartyOrg" class="parentPartyOrg" style="display:none; position: absolute;background-color: #fff;border:1px solid #95B8E7;">
+								<ul id="parentDepartMent" class="ztree" style="margin-top:0; width:160px;"></ul>
+							</div>
+	    				</td>
 					</tr>
 				</table>
 		   </div>
@@ -119,11 +151,11 @@
 									<label>单位及职务：</label>
 									<input class="form-control" name="instructorJob" value="" maxlength="20"/>
 									<label>指导单位：</label>
-				                       <select id="zhidaodanwei0" name="instructorUnitTxt" class="form-control"  multiple="multiple">
-										    <c:forEach var="it" items="${unitList}">
-										        <option value="${it.code }" >${it.value }</option>
-										    </c:forEach>
-									    </select>
+			                        <select id="zhidaodanwei0" name="instructorUnitTxt" class="form-control" multiple="multiple">
+									    <c:forEach var="it" items="${unitList}">
+									        <option value="${it.code }" >${it.value }</option>
+									    </c:forEach>
+								    </select>
 								</div>
 							</c:if>
 							<c:if test="${!empty main.id and instructList.size() > 0}">
@@ -148,7 +180,7 @@
 									</div>
 								</c:forEach>
 							</c:if>
-							<button type="button" id="add_operate_instructor" class="btn btn-primary btn-sm glyphicon glyphicon-plus"></button>
+							<button type="button" id="add_operate_instructor" class="btn btn-primary btn-sm glyphicon glyphicon-plus" style="margin-top:5px;"></button>
 						</td>
 					</tr>
 				</table>
@@ -218,7 +250,7 @@
 						
 							<c:if test="${changeDateList.size() == 0}">
 								<div class="form-inline" style="margin-top:5px;">
-									<input class="form-control" type="text" onClick="WdatePicker({maxDate:'%y-%M-%d'})" id="partymbrInUnpublicNum0" name="partymbrInUnpublicNum" />
+									<input class="form-control" type="text" onClick="WdatePicker()" id="partymbrInUnpublicNum0" name="partymbrInUnpublicNum" />
 									<label>换届相关附件</label><input class="form-control" type="text" id="filepartymbrUnderThirtyfiveNum0" name="filepartymbrUnderThirtyfiveNum" onclick="showUpload(this,2)"/>
 									<input class="form-control" type="hidden" id="partymbrUnderThirtyfiveNum0" name="partymbrUnderThirtyfiveNum" />
 								</div>
@@ -226,7 +258,7 @@
 							<c:if test="${!empty main.id and changeDateList.size() > 0}">
 								<c:forEach items="${changeDateList }" var="e" varStatus="status">
 									<div class="form-inline" style="margin-top:5px;">
-										<input class="form-control" type="text" onClick="WdatePicker({maxDate:'%y-%M-%d'})" id="partymbrInUnpublicNum${status.index }" name="partymbrInUnpublicNum" value="${e.changeTimeTxt }"/>
+										<input class="form-control" type="text" onClick="WdatePicker()" id="partymbrInUnpublicNum${status.index }" name="partymbrInUnpublicNum" value="${e.changeTimeTxt }"/>
 										<label>换届相关附件</label><input class="form-control" type="text" id="filepartymbrUnderThirtyfiveNum${status.index }" name="filepartymbrUnderThirtyfiveNum" value="${e.changeAttachmentName }" onclick="showUpload(this,2)"/>
 										<input class="form-control" type="hidden" id="partymbrUnderThirtyfiveNum${status.index }" name="partymbrUnderThirtyfiveNum" value="${e.changeAttachmentId }"/>
 									</div>
@@ -239,38 +271,6 @@
 		   </div>
 		</div>
 		
-		<div class="panel panel-info" id="divThree">
-		   <div class="panel-heading">
-		      <h3 class="panel-title">党组织基本信息</h3>
-		   </div>
-		   <div class="panel-body" align="center">
-				<table class="table table-bordered" cellpadding="2" border="0" cellspacing="0" >
-					<colgroup>
-				 		<col width="90" />
-				 		<col width="120"/>
-				 		<col width="100"/>
-				 		<col width="120"/>
-				 		<col width="90"/>
-				 		<col width="120"/>
-				 	</colgroup>
-					<tr>
-						<td style="text-align: right;"><font color="red">*</font>党组织名称：</td>
-						<td style="text-align: left;"><input class="form-control" name="partyOrgName" value="${main.partyOrgName }"/></td>
-						
-						<td style="text-align: right;"><font color="red">*</font>党组织联系电话：</td>
-						<td style="text-align: left;"><input class="form-control" name="partyOrgTel" value="${main.partyOrgTel }"/></td>
-						
-						<td style="text-align: right;"><font color="red">*</font>隶属党组织名称：</td>
-						<td style="text-align: left;">
-	    					<input  type="text" id="higherDepart" class="form-control" value="" readonly style="background-color: white;"  onclick="showMenu();"></input>
-							<div id="parentPartyOrg" class="parentPartyOrg" style="display:none; position: absolute;background-color: #fff;border:1px solid #95B8E7;">
-								<ul id="parentDepartMent" class="ztree" style="margin-top:0; width:160px;"></ul>
-							</div>
-	    				</td>
-					</tr>
-				</table>
-		   </div>
-		</div>
 		<div class="panel panel-info" id="divFour">
 			<div class="panel-heading">
 		      <h3 class="panel-title">书记信息</h3>
@@ -314,7 +314,14 @@
 	                    </td>
 						<td style="text-align: right;"><font color="red">*</font>所在单位：</td>
 	                    <td align= "left" >
-		                    <input class="form-control" type="text" id="secretaryCompany" name="secretaryCompany" value="${main.secretaryCompany }" />
+		                    <input class="form-control" type="text" id="secretaryCompanyOne" name="secretaryCompany" value="${main.secretaryCompany }" />
+	                    
+	                    	<select id="secretaryCompanyTwo" name="secretaryCompany" class="form-control">
+								<option value="">--请选择--</option>
+								<c:forEach var="it" items="${unitList}">
+									<option value="${it.code }" <c:if test="${main.secretaryCompany == it.code }"> selected="selected"</c:if>>${it.value }</option>
+								</c:forEach>
+							</select>
 	                    </td>
 					</tr>
 				</table>
@@ -527,7 +534,7 @@
 							</select>
 	                    </td>
 	                    
-						<td style="text-align: right;"><font color="red">*</font>使用面积：</td>
+						<td style="text-align: right;"><font color="red">*</font>使用面积(m²)：</td>
 						<td style="text-align: left;"><input class="form-control" name="stageArea" value="${main.stageArea }"/></td>
 					</tr>
 				</table>

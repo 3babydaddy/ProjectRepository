@@ -302,9 +302,6 @@ function save(flag){
 			}
 		});
 	}
-	
-	
-	
 }
 
 function submit(flag){

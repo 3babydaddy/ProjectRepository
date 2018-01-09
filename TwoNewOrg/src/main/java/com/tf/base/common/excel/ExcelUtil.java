@@ -105,6 +105,15 @@ public class ExcelUtil<E> {
 		wb.write(out);
 		out.close();
 	}
+	
+	public <T> void writeToFile(List<T> list, String filePath) throws Exception {
+		// 创建并获取工作簿对象
+		Workbook wb = getWorkBook(list, null);
+		// 写入到文件
+		FileOutputStream out = new FileOutputStream(filePath);
+		wb.write(out);
+		out.close();
+	}
 
 	public <T> void writeToFile(List<T> list, HttpServletResponse response, String fileName) throws IOException {
 		// 写入到文件
@@ -128,7 +137,7 @@ public class ExcelUtil<E> {
 
 	public <T> void writeToFile(List<T> list, String filePath, int startRow) throws Exception {
 		// 创建并获取工作簿对象
-		Workbook wb = getWorkBook(list, startRow, "");
+		Workbook wb = getWorkBook(list, startRow, filePath);
 		// 写入到文件
 		FileOutputStream out = new FileOutputStream(filePath);
 		wb.write(out);
@@ -264,14 +273,9 @@ public class ExcelUtil<E> {
 	 * @return Workbook
 	 * @throws Exception
 	 */
-	public <T> Workbook getWorkBook(List<T> list, int startRow, String flag) throws Exception {
+	public <T> Workbook getWorkBook(List<T> list, int startRow, String filePath) throws Exception {
 		String path = ExcelUtil.class.getClassLoader().getResource("").getPath();
-		FileInputStream fis = null;
-		if ("unpublic".equals(flag)) {
-			fis = new FileInputStream(path + "/templet/unpublic.xlsx");
-		} else if ("socialorg".equals(flag)) {
-			fis = new FileInputStream(path + "/templet/social.xlsx");
-		}
+		FileInputStream fis = new FileInputStream(filePath);
 		// 创建工作簿
 		XSSFWorkbook wb = new XSSFWorkbook(fis);
 		// Workbook wb = new SXSSFWorkbook(xs);

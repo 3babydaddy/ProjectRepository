@@ -93,7 +93,7 @@
                     <td align="left"><input class="easyui-textbox" type="text" id="orgName" name="orgName" size=15/></td>
                 </tr>
                 <tr>
-                	<td align="right">是否成立党组织：</td>
+                	<td align="right">是否维护党组织：</td>
                     <td align="left">
                          <select class="easyui-combobox" id="isSetUpPartyOrg" name="isSetUpPartyOrg" style="width:160px;" data-options="editable:false">
                             <option value="" >--请选择--</option>

@@ -8,6 +8,7 @@ public class QueryPmbrParams extends UnpublicOrgPmbrInfo {
 	private String flag;
 	private String orgIds;
 	private String coverPartyOrgId;
+	private String createOrg;
 
 	public String getOtherCondition() {
 		return otherCondition;
@@ -47,5 +48,13 @@ public class QueryPmbrParams extends UnpublicOrgPmbrInfo {
 
 	public void setCoverPartyOrgId(String coverPartyOrgId) {
 		this.coverPartyOrgId = coverPartyOrgId;
+	}
+
+	public String getCreateOrg() {
+		return createOrg;
+	}
+
+	public void setCreateOrg(String createOrg) {
+		this.createOrg = createOrg;
 	}
 }

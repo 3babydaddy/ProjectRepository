@@ -1,13 +1,19 @@
 package com.tf.base.unpublic.controller;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
@@ -24,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.tf.base.common.constants.CommonConstants;
@@ -33,6 +40,7 @@ import com.tf.base.common.domain.DataDictionary;
 import com.tf.base.common.domain.DictionaryRepository;
 import com.tf.base.common.excel.ExcelUtil;
 import com.tf.base.common.service.BaseService;
+import com.tf.base.common.service.ExportFileService;
 import com.tf.base.common.service.LogService;
 import com.tf.base.common.utils.ExcelUtils;
 import com.tf.base.common.utils.GeneralCalcUtils;
@@ -71,7 +79,8 @@ public class UnPublicOrgController {
 
 	@Autowired
 	private DictionaryRepository dict;
-	
+	@Autowired
+	private  ExportFileService exportFileService;
 	@Autowired
 	private BaseService baseService;
 	@Autowired
@@ -826,7 +835,9 @@ public class UnPublicOrgController {
 	}
 	
 	@RequestMapping(value = "/unpublic/exportUnpublicExcel")
-	private boolean exportUnpublicExcel(UnpublicOrgInfo params,HttpServletResponse response) {
+	@ResponseBody
+	private String exportUnpublicExcel(UnpublicOrgInfo params,HttpServletResponse response) {
+		String filePath = exportFileService.createFilePath();
 		String orderby = " main.status desc , main.create_time desc";
 		if (!baseService.isQuWeiDept()) {
 			params.setCreateOrg(baseService.getCurrentUserDeptId());
@@ -845,11 +856,20 @@ public class UnPublicOrgController {
 		}
 		ExcelUtil<UnpublicOrgExportBean> excelUtils = new ExcelUtil<UnpublicOrgExportBean>(UnpublicOrgExportBean.class);
 		try {
-			excelUtils.writeToFile(list, response, "testexport");
-			return true;
-		} catch (IOException e) {
+			excelUtils.writeToFile(list, filePath);
+			return JSONObject.toJSONString(filePath);
+		} catch (Exception e) {
 			e.printStackTrace();
-			return false;
+			return JSONObject.toJSONString("1");
+		}
+	}
+	
+	@RequestMapping(value = "/unpublic/exportUnpublicExcelFile")
+	public void doDown(String filePath, HttpServletResponse response, HttpServletRequest request)throws Exception {
+		try {
+			exportFileService.doDown(filePath, "unpublicOrg.xlsx", response);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 }

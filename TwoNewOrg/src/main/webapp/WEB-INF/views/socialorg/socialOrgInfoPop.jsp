@@ -33,7 +33,7 @@
 	</div>
 	<div data-options="region:'center'" id="gridPanel"  style="height: auto;width: 100%">
 	</div>
-	<div align="center" border="false" style="position:fixed;right:10px;bottom:10px;" id="returnDiv">
+	<div align="center" border="false" style="position:fixed;right:10px;bottom:25px;" id="returnDiv">
    		<div class="btn-group">
    		  <button type="button" class="btn btn-primary" onclick="javascript:closePop();" id="saveBtn">确认</button>
    		  <button type="button" class="btn btn-primary" onclick="javascript:parent.utils.e.closeWin('showOrgInfoPop');;">关闭</button>
@@ -86,8 +86,8 @@ function loadData(){
 			columns : [ [
 			     {field :"id",hidden:true}
 			    ,{field :"ck",title :"选择",checkbox:true}
-				,{field :"name",title :"企业名称",width :"10%", align:"center"}
-	            ,{field :"createOrgTxt",title :"填报单位",width :"15%", align:"center"}
+				,{field :"name",title :"企业名称",width :"60%", align:"center"}
+	            ,{field :"createOrgTxt",title :"填报单位",width :"20%", align:"center"}
 	            ,{field :"creator",title :"创建人",width :"8%", align:"center"}
 	         ] ],
 	      onLoadSuccess : function(data) {
@@ -103,11 +103,21 @@ function loadData(){
 
 function closePop(){
 	var site = new Array();
+	var flag = true;
 	var row = getCheckedRow();
 	if(row == null){
 		parent.utils.e.closeWin('showOrgInfoPop');
 	}
-	window.parent.$('#partyOrgDiv').append('<button class="btn btn-xs" value="'+row.id+'" onClick="changeOrg(this)" name="btn_org_name">'+row.name+'<span class="glyphicon glyphicon-remove"></span></button>')
+	
+	var orgArray = window.parent.document.getElementsByName('btn_org_name');
+	for(var i = 0; i < orgArray.length; i++){
+		if(orgArray[i].value == row.id){
+			flag = false;
+		}
+	}
+	if(flag){
+		window.parent.$('#partyOrgDiv').append('<button class="btn btn-xs" value="'+row.id+'" onClick="changeOrg(this)" name="btn_org_name">'+row.name+'<span class="glyphicon glyphicon-remove"></span></button>')
+	}
 	
 	var unitArray = window.parent.$("button[name='btn_org_name']");
 	if(unitArray.length > 0){

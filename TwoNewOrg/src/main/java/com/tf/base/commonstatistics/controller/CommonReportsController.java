@@ -1,10 +1,11 @@
 package com.tf.base.commonstatistics.controller;
 
+import java.io.FileInputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
@@ -16,14 +17,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.tf.base.common.constants.CommonConstants;
 import com.tf.base.common.domain.DataDictionary;
 import com.tf.base.common.domain.DictionaryRepository;
-import com.tf.base.common.excel.Demo;
 import com.tf.base.common.excel.ExcelUtil;
 import com.tf.base.common.service.BaseService;
+import com.tf.base.common.service.ExportFileService;
 import com.tf.base.common.utils.PageUtil;
 import com.tf.base.commonstatistics.domain.QueryParam;
 import com.tf.base.commonstatistics.domain.SocialWorkLedger;
@@ -38,7 +40,8 @@ public class CommonReportsController {
 
 	@Autowired
 	private DictionaryRepository dict;
-
+	@Autowired
+	private ExportFileService exportFileService;
 	@Autowired
 	private BaseService baseService;
 	@Autowired
@@ -81,28 +84,39 @@ public class CommonReportsController {
 		PageUtil.returnPage(response, new PageInfo<UnpublicWorkLedger>(list));
 	}
 
-	@SuppressWarnings("static-access")
 	@RequestMapping(value = "/file/exportUnpublicReport")
 	@ResponseBody
-	public boolean exportUnpublicReport(HttpServletResponse response) {
-		String deptId = baseService.getCurrentUserDeptId();
-		QueryParam params = new QueryParam();
+	public String exportUnpublicReport(QueryParam params, HttpServletResponse response)throws Exception {
+		
+		String path = ExcelUtil.class.getClassLoader().getResource("").getPath();
+		FileInputStream fis = new FileInputStream(path + "/templet/unpublic.xlsx");;
+		String filePath = exportFileService.createFilePath(fis);
+		
 		if (!baseService.isQuWeiDept()) {
-			params.setCreateOrg(deptId);
+			params.setCreateOrg(baseService.getCurrentUserDeptId());
 		}
 		List<UnpublicWorkLedger> list = unpublicWorkLedgerMapper.queryList(params);
 		this.convertRows(list);
 		this.convertDict(list);
-		ExcelUtil excelUtils = new ExcelUtil(Demo.class);
+		ExcelUtil<UnpublicWorkLedger> excelUtils = new ExcelUtil<UnpublicWorkLedger>(UnpublicWorkLedger.class);
 		try {
-			excelUtils.writeToFile(list, 6, response, "unpublic");
-			return true;
+			excelUtils.writeToFile(list, filePath, 6);
+			return JSONObject.toJSONString(filePath);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return false;
+			return JSONObject.toJSONString("1");
 		}
 	}
 
+	@RequestMapping(value = "/file/exportUnpublicReportFile")
+	public void exportUnpublicReportFile(String filePath, HttpServletResponse response, HttpServletRequest request) {
+		try {
+			exportFileService.doDown(filePath, "unpublicWork.xlsx", response);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * 社会工作台账初始化页面
 	 * 
@@ -138,25 +152,34 @@ public class CommonReportsController {
 		PageUtil.returnPage(response, new PageInfo<SocialWorkLedger>(list));
 	}
 
-	@SuppressWarnings("static-access")
 	@RequestMapping(value = "/file/exportSocialReport")
 	@ResponseBody
-	public boolean exportSocialReport(HttpServletResponse response) {
-		String deptId = baseService.getCurrentUserDeptId();
-		QueryParam params = new QueryParam();
+	public String exportSocialReport(QueryParam params, HttpServletResponse response)throws Exception {
+		String path = ExcelUtil.class.getClassLoader().getResource("").getPath();
+		FileInputStream fis = new FileInputStream(path + "/templet/social.xlsx");
+		String filePath = exportFileService.createFilePath(fis);
 		if (!baseService.isQuWeiDept()) {
-			params.setCreateOrg(deptId);
+			params.setCreateOrg(baseService.getCurrentUserDeptId());
 		}
 		List<SocialWorkLedger> list = socialWorkLedgerMapper.queryList(params);
 		this.convertRowsBySocial(list);
 		this.convertDictBySocial(list);
-		ExcelUtil excelUtils = new ExcelUtil(Demo.class);
+		ExcelUtil<SocialWorkLedger> excelUtils = new ExcelUtil<SocialWorkLedger>(SocialWorkLedger.class);
 		try {
-			excelUtils.writeToFile(list, 6, response, "socialorg");
-			return true;
+			excelUtils.writeToFile(list, filePath, 6);
+			return JSONObject.toJSONString(filePath);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return false;
+			return JSONObject.toJSONString("1");
+		}
+	}
+	
+	@RequestMapping(value = "/file/exportSocialReportFile")
+	public void exportSocialReportFile(String filePath, HttpServletResponse response, HttpServletRequest request) {
+		try {
+			exportFileService.doDown(filePath, "socialWork.xlsx", response);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	

@@ -95,6 +95,7 @@ function loadData(){
 		},{
 			text:'导出Excel',
 			iconCls: 'icon-excel_report1',
+			id : 'export',
 			handler: function(){exportExcel();}
 		}];
 	}else{
@@ -155,8 +156,6 @@ function reloadData(){
 
 function addRow(){
 	var url = ctx + '/socialorg/orgedit?id=';
-	//openWin("编辑", url,"90%","90%",function(){reloadData()});
-	
 	utils.e.openWin('editwin','新增',url,"80%","80%",function(){
 		reloadData();
 	},true);
@@ -166,10 +165,23 @@ function addRow(){
  * 导出所有数据到excel
  */
 function exportExcel(){
-	var params = getQueryParams();
-	window.location.href=ctx + "/socialorg/exportUnpublicExcel?address="+params.address+'&category='+params.category+
-						'&creator='+params.creator+'&name='+params.name+'&nature='+params.nature+'&otherCondition='+params.otherCondition
-						+'&registerOrg='+params.registerOrg+'&status='+params.status;
+	$('#export').linkbutton("disable");
+	$('#export').linkbutton({text:'正在导出...'});
+	$.ajax({
+		url:ctx + '/socialorg/exportSocialorgExcel',
+		data:getQueryParams(),
+		type:'post',
+		dataType:'json',
+		success:function(result){
+			if(result != '1'){
+				$('#export').linkbutton({text:'导出Excel'});
+				$('#export').linkbutton("enable");
+				window.location.href=ctx + "/socialorg/exportSocialorgExcelFile?filePath="+result;
+			}else{
+				layer.alert('导出失败');
+			}
+		}
+	});
 }
 
 /**
