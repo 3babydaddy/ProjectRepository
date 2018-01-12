@@ -76,6 +76,8 @@ public class UserCreateController {
 			userInfo.setShowname(showName);
 			userInfo.setAvail(avail);
 			userInfo.setDepartment(depr);
+			// 默认密码
+			userInfo.setPassword(commonService.getInitUserPassword());
 			//默认密码123456
 			userInfo.setEncPassword(MD5Utils.md5(commonService.getInitUserPassword(),name));
 			userInfo.setTel(tel);
