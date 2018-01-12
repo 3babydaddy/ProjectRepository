@@ -1,17 +1,13 @@
 package com.tf.base.socialorg.controller;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -60,6 +56,7 @@ import com.tf.base.socialorg.domain.SocialOrgJobinCount;
 import com.tf.base.socialorg.domain.SocialOrgPmbrChangeInfo;
 import com.tf.base.socialorg.domain.SocialOrgPmbrCount;
 import com.tf.base.socialorg.domain.SocialOrgPmbrInfo;
+import com.tf.base.socialorg.domain.SocialOrgPmbrOtherCount;
 import com.tf.base.socialorg.persistence.SocialOrgCancelRecordMapper;
 import com.tf.base.socialorg.persistence.SocialOrgChargeInfoMapper;
 import com.tf.base.socialorg.persistence.SocialOrgInfoMapper;
@@ -68,6 +65,7 @@ import com.tf.base.socialorg.persistence.SocialOrgJobinCountMapper;
 import com.tf.base.socialorg.persistence.SocialOrgPmbrChangeInfoMapper;
 import com.tf.base.socialorg.persistence.SocialOrgPmbrCountMapper;
 import com.tf.base.socialorg.persistence.SocialOrgPmbrInfoMapper;
+import com.tf.base.socialorg.persistence.SocialOrgPmbrOtherCountMapper;
 import com.tf.base.socialorg.service.OrgService;
 
 import tk.mybatis.mapper.entity.Example;
@@ -109,6 +107,8 @@ public class OrgController {
 	private OrgService orgService;
 	@Autowired
 	private SocialOrgPmbrChangeInfoMapper socialOrgPmbrChangeInfoMapper;
+	@Autowired
+	private SocialOrgPmbrOtherCountMapper socialOrgPmbrOtherCountMapper;
 	
 	/**
 	 * 初始化页面
@@ -556,6 +556,7 @@ public class OrgController {
 			socialOrgPmbrInfo.setPartymbrGroupInSocialorgIs(dict.getValueByCode(CommonConstants.YES_NO, socialOrgPmbrInfo.getPartymbrGroupInSocialorgIs()));
 			socialOrgPmbrInfo.setPartymbrInSocialorgIs(dict.getValueByCode(CommonConstants.YES_NO, socialOrgPmbrInfo.getPartymbrInSocialorgIs()));
 			socialOrgPmbrInfo.setEducation(dict.getValueByCode(CommonConstants.FINAL_EDUCATION, socialOrgPmbrInfo.getEducation()));
+			socialOrgPmbrInfo.setType(dict.getValueByCode(CommonConstants.PARTY_MBR_CHANGE_TYPE, socialOrgPmbrInfo.getType()));
 		}
 		PageUtil.returnPage(response, new PageInfo<SocialOrgPmbrInfo>(list));
 	}
@@ -591,6 +592,60 @@ public class OrgController {
 		} catch (Exception e) {
 			logger.debug("新增社会组织党员信息时出现异常:{}", e.getMessage(),e);
 			return returnMsg(0, "添加党员失败：" + e.getMessage());
+		}
+		
+	}
+	
+	/**
+	 * 修改党员页面
+	 * @param mainId
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="/socialorg/editPartymbr",method=RequestMethod.GET)
+	public String addPartymbr(String mainId, String id, Model model){
+		partyMbrInit(model);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		this.partyMbrInit(model);
+		SocialOrgPmbrInfo pmbrInfo = socialOrgPmbrInfoMapper.selectByPrimaryKey(Integer.parseInt(id));
+		if(pmbrInfo.getBirthday() != null){
+			pmbrInfo.setBirthdayTxt(sdf.format(pmbrInfo.getBirthday()));
+		}
+		SocialOrgPmbrChangeInfo temChangeInfo = new SocialOrgPmbrChangeInfo();
+		temChangeInfo.setSocialOrgPartymbrInfoId(Integer.parseInt(id));
+		temChangeInfo.setSocialOrgInfoId(Integer.parseInt(mainId));
+		temChangeInfo.setStatus("1");
+		SocialOrgPmbrChangeInfo pmbrChangeInfo = socialOrgPmbrChangeInfoMapper.selectOne(temChangeInfo);
+		if(pmbrChangeInfo != null){
+			pmbrInfo.setType(pmbrChangeInfo.getType());
+		}
+		SocialOrgPmbrOtherCount pmbrOtherConut = new SocialOrgPmbrOtherCount();
+		pmbrOtherConut.setSocialOrgPartymbrInfoId(Integer.parseInt(id));
+		pmbrOtherConut.setSocialOrgInfoId(Integer.parseInt(mainId));
+		SocialOrgPmbrOtherCount temOtherCounts = socialOrgPmbrOtherCountMapper.selectOne(pmbrOtherConut);
+		model.addAttribute("main", pmbrInfo);
+		model.addAttribute("mainId", mainId);
+		model.addAttribute("temOtherCounts", temOtherCounts);
+		return "socialorg/editPartyMbr";
+	}
+	
+	/**
+	 * 修改党员
+	 * @param params
+	 * @return
+	 */
+	@RequestMapping(value="/socialorg/editPartymbr",method=RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> editPartymbrSave(AddPmbrParams params){
+
+		try {
+			
+			orgService.editPartymbr(params);
+			
+			return returnMsg(1, "修改党员成功!");
+		} catch (Exception e) {
+			logger.debug("修改社会组织党员信息时出现异常:{}", e.getMessage(),e);
+			return returnMsg(0, "修改党员失败：" + e.getMessage());
 		}
 		
 	}
@@ -793,6 +848,7 @@ public class OrgController {
 	public void doDown(String filePath, HttpServletResponse response, 
 									HttpServletRequest request)throws Exception {
 		try{
+			filePath = java.net.URLDecoder.decode(filePath,"UTF-8");
 			exportFileService.doDown(filePath, "socialOrg.xlsx", response);
 		}catch(Exception e){
 			e.printStackTrace();

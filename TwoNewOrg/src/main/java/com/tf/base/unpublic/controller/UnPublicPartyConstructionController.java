@@ -131,7 +131,7 @@ public class UnPublicPartyConstructionController {
 	 * @return
 	 */
 	@RequestMapping(value="/unpublic/partyconstructionedit",method=RequestMethod.GET)
-	public String orgedit(String id, String partyOrgId, String partyOrgName, Model model)throws Exception{
+	public String orgedit(String id, String partyOrgId, String partyOrgName, String clickSign, Model model)throws Exception{
 		
 		if(!StringUtils.isEmpty(id)){
 			Integer mainId = Integer.parseInt(id);
@@ -140,8 +140,10 @@ public class UnPublicPartyConstructionController {
 				AttachmentCommonInfo attachmentCommonInfo = attachmentCommonInfoMapper.selectByPrimaryKey(Integer.valueOf(main.getRectifyAtachementId()));
 				main.setRectifyAtachementIdTxt(attachmentCommonInfo.getFilename());
 			}
-			main.setPartyOrgName(new String(partyOrgName.getBytes("iso-8859-1"),"utf-8"));
+			UnpublicPartyOrgInfo info = unpublicPartyOrgInfoMapper.selectByPrimaryKey(main.getUnpublicPartyOrgId());
+			main.setPartyOrgName(info.getPartyOrgName());
 			model.addAttribute("main", main);
+			model.addAttribute("clickSign", clickSign);
 		}else{
 			UnpulicPartyOrgBuilding main = new UnpulicPartyOrgBuilding();
 			main.setUnpublicPartyOrgId(Integer.parseInt(partyOrgId));

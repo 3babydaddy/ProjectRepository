@@ -111,6 +111,7 @@ public class CommonReportsController {
 	@RequestMapping(value = "/file/exportUnpublicReportFile")
 	public void exportUnpublicReportFile(String filePath, HttpServletResponse response, HttpServletRequest request) {
 		try {
+			filePath = java.net.URLDecoder.decode(filePath,"UTF-8");
 			exportFileService.doDown(filePath, "unpublicWork.xlsx", response);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -177,6 +178,7 @@ public class CommonReportsController {
 	@RequestMapping(value = "/file/exportSocialReportFile")
 	public void exportSocialReportFile(String filePath, HttpServletResponse response, HttpServletRequest request) {
 		try {
+			filePath = java.net.URLDecoder.decode(filePath,"UTF-8");
 			exportFileService.doDown(filePath, "socialWork.xlsx", response);
 		} catch (Exception e) {
 			e.printStackTrace();

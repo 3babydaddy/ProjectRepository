@@ -170,7 +170,7 @@ function unpublicWorkExport(){
 			if(result != '1'){
 				$('#exportExcelBtn').linkbutton({text:'导出Excel'});
 				$('#exportExcelBtn').linkbutton('enable');
-				window.location.href=ctx + "/file/exportUnpublicReportFile?filePath="+result;
+				window.location.href=ctx + "/file/exportUnpublicReportFile?filePath="+encodeURIComponent(result);
 			}else{
 				layer.alert('导出失败');
 			}

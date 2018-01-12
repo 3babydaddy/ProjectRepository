@@ -119,7 +119,13 @@
   			ci.charge_partyorg_secretary_is as chargePartyorgSecretaryIs,
   			ci.charge_twodeputy_acommittee_is as chargeTwodeputyAcommitteeIs,
   			ci.charge_twodeputy_acommittee_type as chargeTwodeputyAcommitteeType,
-  			ci.charge_twodeputy_acommittee_type_other as chargeTwodeputyAcommitteeTypeOther
+  			ci.charge_twodeputy_acommittee_type_other as chargeTwodeputyAcommitteeTypeOther,
+  			(select count(*) from social_org_pmbr_info c 
+  				where c.social_org_info_id = main.id and c.status = '1') as partymbrNum,
+  			(select count(*) from social_org_pmbr_info c 
+  				where c.social_org_info_id = main.id and c.partymbr_group_in_socialorg_is = '1' and c.status = '1') as partymbrInSocielorgNum,
+  			(select count(*) from social_org_pmbr_info c 
+  				where c.social_org_info_id = main.id and c.partymbr_group_in_socialorg_is = '0' and c.status = '1') as partymbrNotInSocielorgNum
   		from social_org_info main 
   		LEFT JOIN social_org_jobin_count c on main.id = c.social_org_info_id
 		LEFT JOIN social_org_charge_info ci on main.id = ci.social_org_info_id

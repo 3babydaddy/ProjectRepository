@@ -17,7 +17,10 @@ $(function(){
 	      },
 	      education:{
 	    	  required: true
-	      }      
+	      },
+	      partymbrInUnpublicIs:{
+	    	  required: true
+	      }     
 	      
 	    },
 	    messages: {
@@ -33,6 +36,9 @@ $(function(){
 		    },
 		    education: {
 		    	required: "请选择最高学历"
+		    },
+		    partymbrInUnpublicIs: {
+		    	required: "请选择组织关系去处"
 		    }
 	    },
 	    submitHandler:function(form){

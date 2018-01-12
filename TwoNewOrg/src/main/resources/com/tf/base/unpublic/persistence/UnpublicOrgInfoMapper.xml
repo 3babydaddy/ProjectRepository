@@ -134,7 +134,13 @@
 			s.sponsor_twodeputy_acommittee_is AS sponsorTwodeputyAcommitteeIs,
 			l.has_sociaty AS hasSociaty,
 			l.has_women_league AS hasWomenLeague,
-			l.has_youth_league AS hasYouthLeague
+			l.has_youth_league AS hasYouthLeague,
+			(select count(*) from unpublic_org_pmbr_info c 
+				where c.unpublic_org_info_id = main.id and c.status = '1') as partymbrNum,
+			(select count(*) from unpublic_org_pmbr_info c 
+				where c.unpublic_org_info_id = main.id and c.partymbr_in_unpublic_is = '1' and c.status = '1') as partymbrInUnpublicNum,
+			(select count(*) from unpublic_org_pmbr_info c 
+				where c.unpublic_org_info_id = main.id and c.partymbr_in_unpublic_is = '0' and c.status = '1') as partymbrNotinUnpublicNum
 		FROM
 			unpublic_org_info main
 		LEFT JOIN unpublic_org_sponsor_info s ON main.id = s.unpublic_org_info_id

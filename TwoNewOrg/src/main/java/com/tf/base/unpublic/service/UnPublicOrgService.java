@@ -487,6 +487,72 @@ public class UnPublicOrgService {
 	}
 
 	/**
+	 * 修改党员
+	 * @param params
+	 */
+	@Transactional
+	public void editPartymbr(AddPmbrParams params) {
+
+		Date birthday = DateUtil.getDateFromString(params.getBirthday());
+		
+		UnpublicOrgPmbrInfo pmbrInfo = new UnpublicOrgPmbrInfo();
+		BeanUtils.copyProperties(params, pmbrInfo);
+		pmbrInfo.setBirthday(birthday);
+		unpublicOrgPmbrInfoMapper.updateByPrimaryKeySelective(pmbrInfo);
+		
+		UnpublicOrgPmbrChangeInfo pmbrChangeInfo = new UnpublicOrgPmbrChangeInfo();
+		pmbrChangeInfo.setUnpublicOrgInfoId(params.getUnpublicOrgInfoId());
+		pmbrChangeInfo.setUnpublicOrgPartymbrInfoId(pmbrInfo.getId());
+		pmbrChangeInfo.setStatus("1");
+		pmbrChangeInfo = unpublicOrgPmbrChangeInfoMapper.selectOne(pmbrChangeInfo);
+		pmbrChangeInfo.setType(params.getType());
+		unpublicOrgPmbrChangeInfoMapper.updateByPrimaryKey(pmbrChangeInfo);
+		
+		//其他特殊条件统计项
+		String otherCondition = params.getOtherCondition();
+		if(StringUtils.isNotEmpty(otherCondition)){
+			List<DataDictionary> otherConditionList = dictionaryRepository.findByDmm(CommonConstants.UNPUBLIC_PM_OTHER_CONDITION);
+			List<String> otherList = Arrays.asList(otherCondition.split(","));
+			
+			List<UnpublicOrgPmbrOtherCount> otherCountList = new ArrayList<>();
+			UnpublicOrgPmbrOtherCount otherCount = null;
+			for (DataDictionary dataDictionary : otherConditionList) {
+				otherCount = new UnpublicOrgPmbrOtherCount();
+				if(otherList.contains(dataDictionary.getCode())){
+					otherCount.setFieldName(dataDictionary.getCode());
+					otherCount.setFieldValue(1);
+				}else{
+					otherCount.setFieldName(dataDictionary.getCode());
+					otherCount.setFieldValue(0);
+				}
+				
+				otherCount.setUnpublicOrgInfoId(params.getUnpublicOrgInfoId());
+				otherCount.setUnpublicOrgPartymbrInfoId(pmbrInfo.getId());
+				UnpublicOrgPmbrOtherCount temOtherCount = new UnpublicOrgPmbrOtherCount();
+				temOtherCount.setUnpublicOrgInfoId(params.getUnpublicOrgInfoId());
+				temOtherCount.setUnpublicOrgPartymbrInfoId(pmbrInfo.getId());
+				unpublicOrgPmbrOtherCountMapper.delete(temOtherCount);
+				otherCountList.add(otherCount);
+			}
+			unpublicOrgPmbrOtherCountMapper.insertList(otherCountList);
+		}
+		
+		
+		try {
+			//新增党员日志
+			StringBuffer sb = new StringBuffer();
+			sb.append(LogInfoExtUtil.getAddLog(dictionaryRepository, pmbrInfo));
+			sb.append(LogInfoExtUtil.getAddLog(dictionaryRepository, pmbrChangeInfo));
+			logService.saveLog(LOG_OPERATION_TYPE.MODIFY.toString(), 
+					logService.getDetailInfo("log.unpublic.partymbr.edit",
+							baseService.getUserName(),pmbrInfo.getName(),
+							sb));
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+	
+	/**
 	 * 减少党员
 	 * @param params
 	 */

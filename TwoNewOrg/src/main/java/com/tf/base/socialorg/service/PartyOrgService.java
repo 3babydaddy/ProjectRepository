@@ -82,15 +82,19 @@ public class PartyOrgService {
 			//把主表中的id赋值到换届和附件中
 			AttachmentCommonInfo attachmentCommonInfo = attachmentCommonInfoMapper.selectByPrimaryKey(poci.getChangeAttachmentId());
 			poci.setSocialPartyOrgId(socialPartyOrgInfo.getId());
-			attachmentCommonInfo.setMainTableId(socialPartyOrgInfo.getId());
-			//更新换届的附件信息
-			attachmentCommonInfoMapper.updateByPrimaryKeySelective(attachmentCommonInfo);
+			if(attachmentCommonInfo != null){
+				attachmentCommonInfo.setMainTableId(socialPartyOrgInfo.getId());
+				//更新换届的附件信息
+				attachmentCommonInfoMapper.updateByPrimaryKeySelective(attachmentCommonInfo);
+			}
 		}
 		//更新主表中的附件信息
 		if(socialPartyOrgInfo.getPartyOrgAttachment() != null && socialPartyOrgInfo.getPartyOrgAttachment().length() > 0){
 			AttachmentCommonInfo aCInfo = attachmentCommonInfoMapper.selectByPrimaryKey(Integer.valueOf(socialPartyOrgInfo.getPartyOrgAttachment()));
-			aCInfo.setMainTableId(socialPartyOrgInfo.getId());
-			attachmentCommonInfoMapper.updateByPrimaryKeySelective(aCInfo);
+			if(aCInfo != null){
+				aCInfo.setMainTableId(socialPartyOrgInfo.getId());
+				attachmentCommonInfoMapper.updateByPrimaryKeySelective(aCInfo);
+			}
 		}
 		//批量插入换届信息
 		if(pociList.size() > 0){
@@ -152,15 +156,19 @@ public class PartyOrgService {
 			//把主表中的id赋值到换届和附件中
 			AttachmentCommonInfo attachmentCommonInfo = attachmentCommonInfoMapper.selectByPrimaryKey(poci.getChangeAttachmentId());
 			poci.setSocialPartyOrgId(socialPartyOrgInfo.getId());
-			attachmentCommonInfo.setMainTableId(socialPartyOrgInfo.getId());
-			//更新换届的附件信息
-			attachmentCommonInfoMapper.updateByPrimaryKeySelective(attachmentCommonInfo);
+			if(attachmentCommonInfo != null){
+				attachmentCommonInfo.setMainTableId(socialPartyOrgInfo.getId());
+				//更新换届的附件信息
+				attachmentCommonInfoMapper.updateByPrimaryKeySelective(attachmentCommonInfo);
+			}
 		}
 		//更新主表中的附件信息
 		if(socialPartyOrgInfo.getPartyOrgAttachment() != null && socialPartyOrgInfo.getPartyOrgAttachment().length() > 0){
 			AttachmentCommonInfo aCInfo = attachmentCommonInfoMapper.selectByPrimaryKey(Integer.valueOf(socialPartyOrgInfo.getPartyOrgAttachment()));
-			aCInfo.setMainTableId(socialPartyOrgInfo.getId());
-			attachmentCommonInfoMapper.updateByPrimaryKeySelective(aCInfo);
+			if(aCInfo != null){
+				aCInfo.setMainTableId(socialPartyOrgInfo.getId());
+				attachmentCommonInfoMapper.updateByPrimaryKeySelective(aCInfo);
+			}
 		}
 		
 		socialPartyOrgChangeInfoMapper.deleteChangeInfo(socialPartyOrgInfo.getId()+"");

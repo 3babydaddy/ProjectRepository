@@ -176,15 +176,21 @@ public class UnPublicPartyOrgController {
 		changeDateList = unpublicPartyOrgChangeInfoMapper.selectByExample(example);
 		for(UnpublicPartyOrgChangeInfo upocInfo : changeDateList){
 			AttachmentCommonInfo acInfo = attachmentCommonInfoMapper.selectByPrimaryKey(upocInfo.getChangeAttachmentId());
-			upocInfo.setChangeAttachmentName(acInfo.getFilename());
-			upocInfo.setChangeTimeTxt(sdf.format(upocInfo.getChangeTime()));
+			if(acInfo != null){
+				upocInfo.setChangeAttachmentName(acInfo.getFilename());
+			}
+			if(upocInfo.getChangeTime() != null){
+				upocInfo.setChangeTimeTxt(sdf.format(upocInfo.getChangeTime()));
+			}
 		}
 		//查询党副的相关信息
 		Example dsexample = new Example(DeputySecretaryInfo.class);
 		dsexample.createCriteria().andEqualTo("partyOrgId", mainId).andEqualTo("type", "2").andEqualTo("status", 1);
 		deputsecList = deputySecretaryInfoMapper.selectByExample(dsexample);
 		for(DeputySecretaryInfo dsInfo : deputsecList){
-			dsInfo.setDeputySecretaryBirthdayTxt(sdf.format(dsInfo.getDeputySecretaryBirthday()));
+			if(dsInfo.getDeputySecretaryBirthday() != null){
+				dsInfo.setDeputySecretaryBirthdayTxt(sdf.format(dsInfo.getDeputySecretaryBirthday()));
+			}
 		}
 		//组装建立党组织的单位字符串
 		String orgNames = "";
@@ -279,15 +285,21 @@ public class UnPublicPartyOrgController {
 			changeDateList = unpublicPartyOrgChangeInfoMapper.selectByExample(example);
 			for(UnpublicPartyOrgChangeInfo upocInfo : changeDateList){
 				AttachmentCommonInfo acInfo = attachmentCommonInfoMapper.selectByPrimaryKey(upocInfo.getChangeAttachmentId());
-				upocInfo.setChangeAttachmentName(acInfo.getFilename());
-				upocInfo.setChangeTimeTxt(sdf.format(upocInfo.getChangeTime()));
+				if(acInfo != null){
+					upocInfo.setChangeAttachmentName(acInfo.getFilename());
+				}
+				if(upocInfo.getChangeTime() != null){
+					upocInfo.setChangeTimeTxt(sdf.format(upocInfo.getChangeTime()));
+				}
 			}
 			//查询党副的相关信息
 			Example dsexample = new Example(DeputySecretaryInfo.class);
 			dsexample.createCriteria().andEqualTo("partyOrgId", mainId).andEqualTo("type", "2").andEqualTo("status", 1);
 			deputsecList = deputySecretaryInfoMapper.selectByExample(dsexample);
 			for(DeputySecretaryInfo dsInfo : deputsecList){
-				dsInfo.setDeputySecretaryBirthdayTxt(sdf.format(dsInfo.getDeputySecretaryBirthday()));
+				if(dsInfo.getDeputySecretaryBirthday() != null){
+					dsInfo.setDeputySecretaryBirthdayTxt(sdf.format(dsInfo.getDeputySecretaryBirthday()));
+				}
 			}
 			//组装建立党组织的单位字符串
 			String  orgNames1 = "";
@@ -389,7 +401,9 @@ public class UnPublicPartyOrgController {
 		if(!unpublicPartyOrgInfo.getChangeList().isEmpty()){
 			pociList = JSON.parseArray(unpublicPartyOrgInfo.getChangeList(), UnpublicPartyOrgChangeInfo.class);
 			for(int i = 0; i < pociList.size(); i++){
-				pociList.get(i).setChangeTime(sdf.parse(pociList.get(i).getChangeTimeTxt()));
+				if(pociList.get(i).getChangeTimeTxt() !=null && pociList.get(i).getChangeTimeTxt() != ""){
+					pociList.get(i).setChangeTime(sdf.parse(pociList.get(i).getChangeTimeTxt()));
+				}
 				pociList.get(i).setCreater(baseService.getUserName());
 				pociList.get(i).setCreateTime(new Date());
 				pociList.get(i).setStatus("1");
@@ -400,7 +414,9 @@ public class UnPublicPartyOrgController {
 		if(!unpublicPartyOrgInfo.getDeputySecretaryList().isEmpty()){
 			dsiList = JSON.parseArray(unpublicPartyOrgInfo.getDeputySecretaryList(), DeputySecretaryInfo.class);
 			for(int j = 0; j < dsiList.size(); j++){
-				dsiList.get(j).setDeputySecretaryBirthday(sdf.parse(dsiList.get(j).getDeputySecretaryBirthdayTxt()));
+				if(dsiList.get(j).getDeputySecretaryBirthdayTxt() != null && dsiList.get(j).getDeputySecretaryBirthdayTxt() != ""){
+					dsiList.get(j).setDeputySecretaryBirthday(sdf.parse(dsiList.get(j).getDeputySecretaryBirthdayTxt()));
+				}
 				dsiList.get(j).setCreateOrg(baseService.getCurrentUserDeptId());
 				dsiList.get(j).setCreater(baseService.getUserName());
 				dsiList.get(j).setCreateTime(new Date());

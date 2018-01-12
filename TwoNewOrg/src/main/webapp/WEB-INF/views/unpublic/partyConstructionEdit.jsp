@@ -164,6 +164,7 @@
 			<input type="hidden" id="unpublicPartyOrgId" name="unpublicPartyOrgId" value="${main.unpublicPartyOrgId }"/>
 			<input type="hidden" id="modular" name="modular" value="2" />
 			<input type="hidden" id="type" name="type" value="2" />
+			<input type="hidden" id="clickSign" name="clickSign" value="${clickSign}" />
 		</form>
 		<div align="center" border="false" style="position:fixed;right:10px;bottom:10px;" id="returnDiv">
     		<div class="btn-group">

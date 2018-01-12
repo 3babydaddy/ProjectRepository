@@ -60,9 +60,13 @@
 	                            </c:forEach>
 							</select>
 						</td>
-						<td style="text-align: right;"></td>
+						<td style="text-align: right;"><font color="red">*</font>组织关系是否在企业：</td>
 						<td style="text-align: left;">
-							
+							<select id="partymbrGroupInSocialorgIs" class="form-control" name="partymbrGroupInSocialorgIs">
+								<option value="" selected="selected">-请选择-</option>
+								<option value="1">是</option>
+								<option value="0">否</option>
+							</select>
 						</td>
 					</tr>
 				</table>
@@ -75,9 +79,6 @@
 	   <div class="panel-body" align="center">
 	    	<label class="checkbox-inline">
 			  <input type="checkbox" name="partymbrInSocialorgIs" value="1"> 纳入社会组织党组织管理
-			</label>
-	    	<label class="checkbox-inline">
-			  <input type="checkbox" name="partymbrGroupInSocialorgIs" value="1"> 组织关系在社会组织党组织
 			</label>
 	   </div>
 	   </div>

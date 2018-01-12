@@ -141,15 +141,21 @@ public class CoverPartyOrgController {
 		changeDateList = coverPartyOrgChangeInfoMapper.selectByExample(example);
 		for(CoverPartyOrgChangeInfo upocInfo : changeDateList){
 			AttachmentCommonInfo acInfo = attachmentCommonInfoMapper.selectByPrimaryKey(upocInfo.getChangeAttachmentId());
-			upocInfo.setChangeAttachmentName(acInfo.getFilename());
-			upocInfo.setChangeTimeTxt(sdf.format(upocInfo.getChangeTime()));
+			if(acInfo != null){
+				upocInfo.setChangeAttachmentName(acInfo.getFilename());
+			}
+			if(upocInfo.getChangeTime() != null){
+				upocInfo.setChangeTimeTxt(sdf.format(upocInfo.getChangeTime()));
+			}
 		}
 		//查询党副的相关信息
 		Example dsexample = new Example(DeputySecretaryInfo.class);
 		dsexample.createCriteria().andEqualTo("partyOrgId", mainId).andEqualTo("type", "3").andEqualTo("status", 1);
 		deputsecList = deputySecretaryInfoMapper.selectByExample(dsexample);
 		for(DeputySecretaryInfo dsInfo : deputsecList){
-			dsInfo.setDeputySecretaryBirthdayTxt(sdf.format(dsInfo.getDeputySecretaryBirthday()));
+			if(dsInfo.getDeputySecretaryBirthday() != null){
+				dsInfo.setDeputySecretaryBirthdayTxt(sdf.format(dsInfo.getDeputySecretaryBirthday()));
+			}
 		}
 		
 		//时间的类型转换
@@ -204,15 +210,21 @@ public class CoverPartyOrgController {
 			changeDateList = coverPartyOrgChangeInfoMapper.selectByExample(example);
 			for(CoverPartyOrgChangeInfo upocInfo : changeDateList){
 				AttachmentCommonInfo acInfo = attachmentCommonInfoMapper.selectByPrimaryKey(upocInfo.getChangeAttachmentId());
-				upocInfo.setChangeAttachmentName(acInfo.getFilename());
-				upocInfo.setChangeTimeTxt(sdf.format(upocInfo.getChangeTime()));
+				if(acInfo != null){
+					upocInfo.setChangeAttachmentName(acInfo.getFilename());
+				}
+				if(upocInfo.getChangeTime() != null){
+					upocInfo.setChangeTimeTxt(sdf.format(upocInfo.getChangeTime()));
+				}
 			}
 			//查询党副的相关信息
 			Example dsexample = new Example(DeputySecretaryInfo.class);
 			dsexample.createCriteria().andEqualTo("partyOrgId", mainId).andEqualTo("type", "3").andEqualTo("status", 1);
 			deputsecList = deputySecretaryInfoMapper.selectByExample(dsexample);
 			for(DeputySecretaryInfo dsInfo : deputsecList){
-				dsInfo.setDeputySecretaryBirthdayTxt(sdf.format(dsInfo.getDeputySecretaryBirthday()));
+				if(dsInfo.getDeputySecretaryBirthday() != null){
+					dsInfo.setDeputySecretaryBirthdayTxt(sdf.format(dsInfo.getDeputySecretaryBirthday()));
+				}
 			}
 			
 			if(coverPartyOrgInfo.getPartyOrgTime() != null){
@@ -260,7 +272,9 @@ public class CoverPartyOrgController {
 		if(!coverPartyOrgInfo.getChangeList().isEmpty()){
 			pociList = JSON.parseArray(coverPartyOrgInfo.getChangeList(), CoverPartyOrgChangeInfo.class);
 			for(int i = 0; i < pociList.size(); i++){
-				pociList.get(i).setChangeTime(sdf.parse(pociList.get(i).getChangeTimeTxt()));
+				if(pociList.get(i).getChangeTimeTxt() != null && pociList.get(i).getChangeTimeTxt() != ""){
+					pociList.get(i).setChangeTime(sdf.parse(pociList.get(i).getChangeTimeTxt()));
+				}
 				pociList.get(i).setCreater(baseService.getUserName());
 				pociList.get(i).setCreateTime(new Date());
 				pociList.get(i).setStatus("1");
@@ -271,7 +285,9 @@ public class CoverPartyOrgController {
 		if(!coverPartyOrgInfo.getDeputySecretaryList().isEmpty()){
 			dsiList = JSON.parseArray(coverPartyOrgInfo.getDeputySecretaryList(), DeputySecretaryInfo.class);
 			for(int j = 0; j < dsiList.size(); j++){
-				dsiList.get(j).setDeputySecretaryBirthday(sdf.parse(dsiList.get(j).getDeputySecretaryBirthdayTxt()));
+				if(dsiList.get(j).getDeputySecretaryBirthdayTxt() != null && dsiList.get(j).getDeputySecretaryBirthdayTxt() != "" ){
+					dsiList.get(j).setDeputySecretaryBirthday(sdf.parse(dsiList.get(j).getDeputySecretaryBirthdayTxt()));
+				}
 				dsiList.get(j).setCreateOrg(baseService.getCurrentUserDeptId());
 				dsiList.get(j).setCreater(baseService.getUserName());
 				dsiList.get(j).setCreateTime(new Date());
@@ -751,9 +767,49 @@ public class CoverPartyOrgController {
 			logger.debug("新增覆盖党组织党员信息时出现异常:{}", e.getMessage(),e);
 			return returnMsg(0, "添加党员失败：" + e.getMessage());
 		}
-		
-		
 	}
+	
+	/**
+	 * 修改党员页面
+	 * @param mainId
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="/cover/editPartymbr",method=RequestMethod.GET)
+	public String editPartymbr(String mainId, String id, Model model){
+		SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd" );
+		partyMbrInit(model);
+		CoverOrgPmbrInfo coverOrgPmbrInfo = new CoverOrgPmbrInfo();
+		coverOrgPmbrInfo.setCoverOrgInfoId(Integer.parseInt(mainId));
+		coverOrgPmbrInfo.setId(Integer.parseInt(id));
+		coverOrgPmbrInfo.setStatus("1");
+		coverOrgPmbrInfo = coverOrgPmbrInfoMapper.selectOne(coverOrgPmbrInfo);
+		if(coverOrgPmbrInfo.getBirthday() != null){
+			coverOrgPmbrInfo.setBirthdayTxt(sdf.format(coverOrgPmbrInfo.getBirthday()));
+		}
+		model.addAttribute("mainId", mainId);
+		model.addAttribute("main", coverOrgPmbrInfo);
+		return "cover/editPartyMbr";
+	}
+	/**
+	 * 修改党员信息
+	 * @param params
+	 * @return
+	 */
+	@RequestMapping(value="/cover/editPartymbr",method=RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> editPartymbrSave(CoverOrgPmbrInfo coverOrgPmbrInfo){
+		SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd" );
+		try {
+			coverOrgPmbrInfo.setBirthday(sdf.parse(coverOrgPmbrInfo.getBirthdayTxt()));
+			coverOrgPmbrInfoMapper.updateByPrimaryKeySelective(coverOrgPmbrInfo);
+			return returnMsg(1, "修改党员成功!");
+		} catch (Exception e) {
+			logger.debug("修改覆盖党组织党员信息时出现异常:{}", e.getMessage(),e);
+			return returnMsg(0, "修改党员失败：" + e.getMessage());
+		}
+	}
+	
 	/**
 	 * 减少党员页面
 	 * @param id

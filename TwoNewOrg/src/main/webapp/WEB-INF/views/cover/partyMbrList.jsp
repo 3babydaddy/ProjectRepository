@@ -119,6 +119,12 @@ function loadData(){
 				add();
 			}
 		},{
+			text:'修改',
+			iconCls: 'icon-edit',
+			handler: function(){
+				edit();
+			}
+		},{
 			text:'减少',
 			iconCls: 'icon-remove',
 			handler: function(){
@@ -182,6 +188,21 @@ function importForm(){
 function add(){
 	var url = ctx + "/cover/addPartymbr?mainId="+mainId;
 	utils.e.openWin('addpartymbrWin','增加',url,"80%","80%",function(){
+		reloadData();
+	},false);
+}
+
+function edit(){
+	var row = getCheckedRow();
+	if(row == null){
+		layer.alert('请选择一条记录！')
+		return;
+	}
+	var id = row.id;
+	if(id == undefined)
+		return;
+	var url = ctx + "/cover/editPartymbr?id="+id+'&mainId='+mainId;
+	utils.e.openWin('editpartymbrWin','修改',url,"80%","80%",function(){
 		reloadData();
 	},false);
 }

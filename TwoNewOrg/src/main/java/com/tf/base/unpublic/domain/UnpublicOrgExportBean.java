@@ -1,5 +1,6 @@
 package com.tf.base.unpublic.domain;
 
+
 import com.tf.base.common.constants.CommonConstants;
 import com.tf.base.common.excel.Excel;
 
@@ -35,13 +36,13 @@ public class UnpublicOrgExportBean {
 	/**
 	 * 企业坐落地
 	 */
-	@Excel(name = "企业坐落地",dictCode=CommonConstants.ENTERPRISE_BELOCATED_ADDRESS)
+	@Excel(name = "企业坐落地", content = "{0:其他,1:园区,2:楼宇,3:园区及楼宇}")
 	private String belocatedAddress;
 
 	/**
 	 * 园区级别
 	 */
-	@Excel(name = "园区等级",dictCode=CommonConstants.ZONE_LEVEL)
+	@Excel(name = "园区等级", content = "{1:国家级,2:市级,3:区级及以下}")
 	private String level;
 
 	/**
@@ -53,7 +54,7 @@ public class UnpublicOrgExportBean {
 	/**
 	 * 是否为亿元楼宇
 	 */
-	@Excel(name = "是否为亿元楼宇", dictCode = CommonConstants.YES_NO)
+	@Excel(name = "是否为亿元楼宇", content = "{0:否,1:是}")
 	private String millionBuildingIs;
 
 	/**
@@ -83,19 +84,19 @@ public class UnpublicOrgExportBean {
 	/**
 	 * 是否规模以上企业
 	 */
-	@Excel(name = "是否规模以上企业", dictCode = CommonConstants.YES_NO)
+	@Excel(name = "是否规模以上企业", content = "{0:否,1:是}")
 	private String onScaleIs;
 
 	/**
 	 * 企业注册地
 	 */
-	@Excel(name = "企业注册地",dictCode=CommonConstants.ENTERPRISE_BELOCATED_ADDRESS)
+	@Excel(name = "企业注册地")
 	private String registerAddress;
 
 	/**
 	 * 企业注册地:地区等级
 	 */
-	@Excel(name = "企业注册地",dictCode=CommonConstants.ADDRESS_LEVEL)
+	@Excel(name = "注册地-地区等级", content = "{1:新区内,2:天津市内,3:天津市外}")
 	private String registerAddressLevel;
 
 	/**
@@ -133,14 +134,14 @@ public class UnpublicOrgExportBean {
 	/**
 	 * 是否存在企业经营地
 	 */
-	@Excel(name = "是否存在企业经营地", dictCode = CommonConstants.YES_NO)
+	@Excel(name = "是否存在企业经营地", content = "{0:否,1:是}")
 	private String isHaveAddress;
 
 	/**
 	 * 企业经营地
 	 */
-	//@Excel(name = "企业经营地")
-	//private String operateAddress;
+	@Excel(name = "企业经营地")
+	private String operateAddress;
 
 	/**
 	 * 企业出资人姓名
@@ -151,19 +152,19 @@ public class UnpublicOrgExportBean {
 	/**
 	 * 企业出资人是否党员
 	 */
-	@Excel(name = "是否党员", dictCode = CommonConstants.YES_NO)
+	@Excel(name = "是否党员", content = "{0:否,1:是}")
 	private String sponsorPartymemberIs;
 
 	/**
 	 * 企业出资人是否兼任党组织书记
 	 */
-	@Excel(name = "是否兼任党组织书记", dictCode = CommonConstants.YES_NO)
+	@Excel(name = "是否兼任党组织书记", content = "{0:否,1:是}")
 	private String sponsorPartyorgSecretaryIs;
 
 	/**
 	 * 企业出资人是否担任区县级以上（含区县）“两代表一委员
 	 */
-	@Excel(name = "是否担任区县级以上（含区县）“两代表一委员", dictCode = CommonConstants.YES_NO)
+	@Excel(name = "是否担任区县级以上（含区县）“两代表一委员", content = "{0:否,1:是}")
 	private String sponsorTwodeputyAcommitteeIs;
 
 	/**
@@ -181,19 +182,36 @@ public class UnpublicOrgExportBean {
 	/**
 	 * 工会 1.有 0 无
 	 */
-	@Excel(name = "工会", dictCode = CommonConstants.HAS_NOT)
+	@Excel(name = "工会", content = "{0:无,1:有}")
 	private String hasSociaty;
 
 	/**
 	 * 共青团 1 有 0.无
 	 */
-	@Excel(name = "共青团", dictCode = CommonConstants.HAS_NOT)
+	@Excel(name = "共青团", content = "{0:无,1:有}")
 	private String hasYouthLeague;
 
 	/**
 	 * 妇联 1.有 0.无
 	 */
-	@Excel(name = "妇联", dictCode = CommonConstants.HAS_NOT)
+	@Excel(name = "妇联", content = "{0:无,1:有}")
 	private String hasWomenLeague;
 
+	
+	@Excel(name = "党员数统计")
+    private Integer partymbrNum;
+	@Excel(name = "组织关系在企业内的党员数统计")
+    private Integer partymbrInUnpublicNum;
+	@Excel(name = "组织关系在企业外的党员数统计")
+    private Integer partymbrNotinUnpublicNum;
+
+	public String getOperateAddress() {
+		return operateAddress;
+	}
+
+	public void setOperateAddress(String operateAddress) {
+		this.operateAddress = operateAddress;
+	}
+
+	
 }

@@ -22,6 +22,7 @@
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="creator" property="creator" jdbcType="VARCHAR" />
     <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     <!--
@@ -32,7 +33,10 @@
     partymbr_in_village_is, create_time, creator, status
   </sql>
   <select id="queryList" resultMap="BaseResultMap">
-  	select * from unpublic_org_pmbr_info a
+  	select 
+  		(select type from unpublic_org_pmbr_change_info where status='1' and unpublic_org_partymbr_info_id=a.id) as type,
+  		a.* 
+  	from unpublic_org_pmbr_info a
   	<where>
   		and a.status ='1'
   		<if test="params.name != null and params.name != ''">

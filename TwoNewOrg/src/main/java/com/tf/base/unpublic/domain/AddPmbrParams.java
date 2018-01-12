@@ -5,6 +5,7 @@ package com.tf.base.unpublic.domain;
 
 public class AddPmbrParams {
 
+	private Integer id;
     private Integer unpublicOrgInfoId;
 
     private String name;
@@ -33,6 +34,12 @@ public class AddPmbrParams {
 	private String type;
 	private String otherCondition;
 	
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
 	public Integer getUnpublicOrgInfoId() {
 		return unpublicOrgInfoId;
 	}

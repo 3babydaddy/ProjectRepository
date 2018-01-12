@@ -47,7 +47,7 @@ function loadData(){
 	            ,{field :"statusTxt",title :"状态",width :"10%", align:"center",formatter:ifNullShowHeng}
 	            ,{field : 'statusAndDo',title : '操作',width : "6%" ,align:'center',
 					formatter:function(value,row,index){
-						if(row.status == '1'){
+						if(row.status == '1' && !isQuWeiDept){
 							return '<a href="javascript:void(0)" class="easyui-linkbutton" name="editBtn" onclick="reportHigherOption(\''+ row.id  + '\',\'clickSign\')">上报</a>';
 						}
 		            }	
@@ -176,7 +176,7 @@ function exportExcel(){
 			if(result != '1'){
 				$('#export').linkbutton({text:'导出Excel'});
 				$('#export').linkbutton("enable");
-				window.location.href=ctx + "/socialorg/exportSocialorgExcelFile?filePath="+result;
+				window.location.href=ctx + "/socialorg/exportSocialorgExcelFile?filePath="+encodeURIComponent(result);
 			}else{
 				layer.alert('导出失败');
 			}
@@ -426,7 +426,7 @@ function reportHigherRow(){
 	}
 	
 	for(var i = 0; i < row.length; i++){
-		if(row[i].status == 5){
+		if(row[i].status == 5 || row[i].status == 1){
 			if(partyOrgIds == ""){
 				partyOrgIds = row[i].id;
 			}else{

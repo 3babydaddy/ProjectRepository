@@ -47,7 +47,14 @@ function loadData(){
 	            ,{field :"annualSurveyTxt",title :"年检结果",width :"8%", align:"center",formatter:ifNullShowHeng}   
 	            ,{field :"year",title :"年度",width :"8%", align:"center",formatter:ifNullShowHeng}   
 	            ,{field :"creater",title :"创建人",width :"8%", align:"center",formatter:ifNullShowHeng}   
-	            ,{field :"statusTxt",title :"状态",width :"8%", align:"center",formatter:ifNullShowHeng}   
+	            ,{field :"statusTxt",title :"状态",width :"8%", align:"center",formatter:ifNullShowHeng}
+	            ,{field : 'statusAndDo',title : '操作',width : "6%" ,align:'center',
+					formatter:function(value,row,index){
+						if(row.status == '1' && !isQuWeiDept){
+							return '<a href="javascript:void(0)" class="easyui-linkbutton" name="editBtn" onclick="reportHigherOption(\''+ row.id + '\',\'clickSign\',\''+ row.nature + '\')">上报</a>';
+						}
+		            }	
+	             }
 	         ] ],
 	      onLoadSuccess : function(data) {
 
@@ -417,7 +424,7 @@ function reportHigherRow(){
 		return;
 	}
 	for(var i = 0; i < row.length; i++){
-		if(row[i].status == 5){
+		if(row[i].status == 5 || row[i].status == 1){
 			if(partyOrgIds == ""){
 				partyOrgIds = row[i].id;
 			}else{
@@ -444,6 +451,18 @@ function reportHigherRow(){
 			else
 				layer.alert(result.msg);
 		}
+	});
+}
+
+/**
+ * 列表页上的上报功能
+ * @param id
+ * @returns
+ */
+function reportHigherOption(id, sign, nature){
+	var url = ctx + '/socialorg/partyconstructionedit?id='+id+'&clickSign='+sign+'&nature='+nature;
+	utils.e.openWin('editwin','编辑',url,"80%","80%",function(){
+		reloadData();
 	});
 }
 

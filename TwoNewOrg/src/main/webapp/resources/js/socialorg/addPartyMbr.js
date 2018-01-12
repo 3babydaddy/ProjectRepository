@@ -17,6 +17,9 @@ $(function(){
 	      },
 	      education:{
 	    	  required: true
+	      },
+	      partymbrGroupInSocialorgIs:{
+	    	  required: true
 	      }      
 	      
 	    },
@@ -33,6 +36,9 @@ $(function(){
 		    },
 		    education: {
 		    	required: "请选择最高学历"
+		    },
+		    partymbrGroupInSocialorgIs: {
+		    	required: "请选择组织关系去处"
 		    }
 	    },
 	    submitHandler:function(form){

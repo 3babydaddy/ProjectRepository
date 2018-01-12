@@ -60,9 +60,13 @@
 	                            </c:forEach>
 							</select>
 						</td>
-						<td style="text-align: right;"></td>
+						<td style="text-align: right;"><font color="red">*</font>组织关系是否在企业：</td>
 						<td style="text-align: left;">
-							
+							<select id="partymbrInUnpublicIs" class="form-control" name="partymbrInUnpublicIs">
+								<option value="" selected="selected">-请选择-</option>
+								<option value="1">是</option>
+								<option value="0">否</option>
+							</select>
 						</td>
 					</tr>
 				</table>
@@ -74,9 +78,6 @@
 	   </div>
 	   <div class="panel-body" align="center">
 	    	<label class="checkbox-inline">
-			  <input type="checkbox" name="partymbrInUnpublicIs" value="1"> 组织关系在非公企业
-			</label>
-	    	<label class="checkbox-inline">
 			  <input type="checkbox" name="partymbrMiddleManagerIs" value="1"> 中层管理人员
 			</label>
 	    	<label class="checkbox-inline">
@@ -84,9 +85,6 @@
 			</label>
 	    	<label class="checkbox-inline">
 			  <input type="checkbox" name="partymbrFrontlineIs" value="1"> 生产经营一线职工
-			</label>
-	    	<label class="checkbox-inline">
-			  <input type="checkbox" name="partymbrNotinUnpublicIs" value="1"> 组织关系不在非公企业
 			</label>
 	    	<label class="checkbox-inline">
 			  <input type="checkbox" name="partymbrInVillageIs" value="1"> 农村党员

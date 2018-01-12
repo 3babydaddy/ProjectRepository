@@ -217,6 +217,69 @@ public class OrgService {
 			// TODO: handle exception
 		}
 	}
+	
+	@Transactional
+	public void editPartymbr(AddPmbrParams params) {
+
+		Date birthday = DateUtil.getDateFromString(params.getBirthday());
+				
+		SocialOrgPmbrInfo pmbrInfo = new SocialOrgPmbrInfo();
+		BeanUtils.copyProperties(params, pmbrInfo);
+		pmbrInfo.setBirthday(birthday);
+		socialOrgPmbrInfoMapper.updateByPrimaryKeySelective(pmbrInfo);
+		
+		SocialOrgPmbrChangeInfo pmbrChangeInfo = new SocialOrgPmbrChangeInfo();
+		pmbrChangeInfo.setSocialOrgInfoId(params.getSocialOrgInfoId());
+		pmbrChangeInfo.setSocialOrgPartymbrInfoId(pmbrInfo.getId());
+		pmbrChangeInfo.setStatus("1");
+		pmbrChangeInfo = socialOrgPmbrChangeInfoMapper.selectOne(pmbrChangeInfo);
+		pmbrChangeInfo.setType(params.getType());
+		socialOrgPmbrChangeInfoMapper.updateByPrimaryKey(pmbrChangeInfo);
+		
+		//其他特殊条件统计项
+		String otherCondition = params.getOtherCondition();
+		if(StringUtils.isNotEmpty(otherCondition)){
+			List<DataDictionary> otherConditionList = dictionaryRepository.findByDmm(CommonConstants.SOCIAL_PM_OTHER_CONDITION);
+			List<String> otherList = Arrays.asList(otherCondition.split(","));
+			
+			List<SocialOrgPmbrOtherCount> otherCountList = new ArrayList<>();
+			SocialOrgPmbrOtherCount otherCount = null;
+			for (DataDictionary dataDictionary : otherConditionList) {
+				otherCount = new SocialOrgPmbrOtherCount();
+				if(otherList.contains(dataDictionary.getCode())){
+					otherCount.setFieldName(dataDictionary.getCode());
+					otherCount.setFieldValue(1);
+				}else{
+					otherCount.setFieldName(dataDictionary.getCode());
+					otherCount.setFieldValue(0);
+				}
+				
+				otherCount.setSocialOrgInfoId(params.getSocialOrgInfoId());
+				otherCount.setSocialOrgPartymbrInfoId(pmbrInfo.getId());
+				SocialOrgPmbrOtherCount temOtherCount = new SocialOrgPmbrOtherCount();
+				temOtherCount.setSocialOrgInfoId(params.getSocialOrgInfoId());
+				temOtherCount.setSocialOrgPartymbrInfoId(pmbrInfo.getId());
+				socialOrgPmbrOtherCountMapper.delete(temOtherCount);
+				otherCountList.add(otherCount);
+			}
+			socialOrgPmbrOtherCountMapper.insertList(otherCountList);
+		}
+		
+		
+		try {
+			//新增党员日志
+			StringBuffer sb = new StringBuffer();
+			sb.append(LogInfoExtUtil.getAddLog(dictionaryRepository, pmbrInfo));
+			sb.append(LogInfoExtUtil.getAddLog(dictionaryRepository, pmbrChangeInfo));
+			logService.saveLog(LOG_OPERATION_TYPE.CREATE.toString(), 
+					logService.getDetailInfo("log.socialorg.partymbr.create",
+							baseService.getUserName(),pmbrInfo.getName(),
+							sb));
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+	
 	@Transactional
 	public void delPartymbr(RemovePmbrParams params) {
 		SocialOrgPmbrInfo oldPmbrInfo = socialOrgPmbrInfoMapper.selectByPrimaryKey(params.getPmbrInfoId());

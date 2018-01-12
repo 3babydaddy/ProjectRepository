@@ -105,6 +105,7 @@ function loadData(){
 	            ,{field :"gender",title :"性别",width :"5%", align:"center"}   
 	            ,{field :"birthday",title :"出生日期",width :"10%", align:"center",formatter:Common.DateFormatter}
 	            ,{field :"education",title :"学历",width :"10%", align:"center"}
+	            ,{field :"type",title :"类型",width :"10%", align:"center"}
 	            ,{field :"partymbrInSocialorgIs",title :"纳入社会组织党组织管理",width :"12%", align:"center"}   
 	            ,{field :"partymbrGroupInSocialorgIs",title :"组织关系在社会组织党组织",width :"15%", align:"center"}   
 	         ] ],
@@ -126,6 +127,12 @@ function loadData(){
 			iconCls: 'icon-add',
 			handler: function(){
 				add();
+			}
+		},{
+			text:'修改',
+			iconCls: 'icon-edit',
+			handler: function(){
+				edit();
 			}
 		},{
 			text:'减少',
@@ -196,6 +203,23 @@ function importForm(){
 function add(){
 	var url = ctx + "/socialorg/addPartymbr?mainId="+mainId;
 	utils.e.openWin('addpartymbrWin','增加',url,"80%","80%",function(){
+		reloadData();
+	},false);
+}
+
+function edit(){
+	var row = getCheckedRow();
+	if(row == null){
+		layer.alert('请选择一条记录！')
+		return;
+	}
+	var id = row.id;
+	
+	if(id == undefined)
+		return;
+	
+	var url = ctx + "/socialorg/editPartymbr?id="+id+'&mainId='+mainId;
+	utils.e.openWin('editpartymbrWin','修改',url,"80%","80%",function(){
 		reloadData();
 	},false);
 }

@@ -45,10 +45,17 @@ function loadData(){
 	            //,{field :"isDevelopDiscussionsTxt",title :"是否按规定每年开展民主评议党员",width :"12%", align:"center",formatter:ifNullShowHeng}   
 	            ,{field :"isChangeEveryyearTxt",title :"党组织是否按规定进行换届",width :"10%", align:"center",formatter:ifNullShowHeng}
 	            //,{field :"isRectifyPartyTxt",title :"是否完成整顿相对后进基层党组织",width :"12%", align:"center",formatter:ifNullShowHeng}
-	            ,{field :"partyAvgTime",title :"党员(平均学时)",width :"8%", align:"center",formatter:ifNullShowHeng}
+	            //,{field :"partyAvgTime",title :"党员(平均学时)",width :"8%", align:"center",formatter:ifNullShowHeng}
 	            ,{field :"year",title :"年度",width :"6%", align:"center",formatter:ifNullShowHeng}
 	            ,{field :"creater",title :"创建人",width :"6%", align:"center",formatter:ifNullShowHeng}
 	            ,{field :"statusTxt",title :"状态",width :"8%", align:"center",formatter:ifNullShowHeng}
+	            ,{field : 'statusAndDo',title : '操作',width : "6%" ,align:'center',
+					formatter:function(value,row,index){
+						if(row.status == '1' && !isQuWeiDept){
+							return '<a href="javascript:void(0)" class="easyui-linkbutton" name="editBtn" onclick="reportHigherOption(\''+ row.id  + '\',\'clickSign\')">上报</a>';
+						}
+		            }	
+	             }
 	         ] ],
 	      onLoadSuccess : function(data) {
 
@@ -433,7 +440,7 @@ function reportHigherRow(){
 		return;
 	}
 	for(var i = 0; i < row.length; i++){
-		if(row[i].status == 5){
+		if(row[i].status == 5 || row[i].status == 1){
 			if(partyOrgIds == ""){
 				partyOrgIds = row[i].id;
 			}else{
@@ -459,6 +466,18 @@ function reportHigherRow(){
 			else
 				layer.alert(result.msg);
 		}
+	});
+}
+
+/**
+ * 列表页上的上报功能
+ * @param id
+ * @returns
+ */
+function reportHigherOption(id, sign){
+	var url = ctx + '/unpublic/partyconstructionedit?id='+id+'&clickSign='+sign;
+	utils.e.openWin('editwin','编辑',url,"80%","80%",function(){
+		reloadData();
 	});
 }
 

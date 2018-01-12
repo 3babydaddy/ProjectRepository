@@ -1,5 +1,6 @@
 package com.tf.base.socialorg.domain;
 
+
 import com.tf.base.common.constants.CommonConstants;
 import com.tf.base.common.excel.Excel;
 
@@ -13,7 +14,7 @@ public class SocialOrgExportBean {
 	@Excel(name="性质",dictCode=CommonConstants.ORG_NATURE)
     private String nature;
 
-	@Excel(name="类别",dictCode=CommonConstants.ORG_CATEGORY)
+	@Excel(name="类别", content = "{1:其他}")
     private String category;
 
 	@Excel(name = "登记机构")
@@ -25,9 +26,9 @@ public class SocialOrgExportBean {
 	@Excel(name="住地")
     private String address;
 
-    @Excel(name = "是否设立思想政治教育工作机构",dictCode=CommonConstants.YES_NO)
+    @Excel(name = "是否设立思想政治教育工作机构", content = "{0:否,1:是}")
     private String isIdeologicalPoliticalOrg;
-    @Excel(name = "是否设立德育工作机构",dictCode=CommonConstants.YES_NO)
+    @Excel(name = "是否设立德育工作机构", content = "{0:否,1:是}")
     private String isMoralEducationOrg;
     
     //从业人员
@@ -49,13 +50,21 @@ public class SocialOrgExportBean {
     private String chargeName;
     @Excel(name="负责人是否党员")
     private String chargePartymemberIs;
-    @Excel(name="负责人是否兼任党组织书记",dictCode=CommonConstants.YES_NO)
+    @Excel(name="负责人是否兼任党组织书记", content = "{0:否,1:是}")
     private String chargePartyorgSecretaryIs;
-    @Excel(name="负责人是否担任区县级以上（含区县）“两代表一委员”",dictCode=CommonConstants.YES_NO)
+    @Excel(name="负责人是否担任区县级以上（含区县）“两代表一委员”", content = "{0:否,1:是}")
     private String chargeTwodeputyAcommitteeIs;
-    @Excel(name="负责人是否担任区县级以上（含区县）“两代表一委员”类型",dictCode=CommonConstants.YES_NO)
+    @Excel(name="负责人是否担任区县级以上（含区县）“两代表一委员”类型", content = "{0:否,1:是}")
     private String chargeTwodeputyAcommitteeType;
     @Excel(name="内容")
     private String chargeTwodeputyAcommitteeTypeOther;
 
+    @Excel(name = "党员数统计")
+    private Integer partymbrNum;
+    @Excel(name = "组织关系在组织内的党员数统计")
+    private Integer partymbrInSocielorgNum;
+    @Excel(name = "组织关系在组织外的党员数统计")
+    private Integer partymbrNotInSocielorgNum;
+
+    
 }

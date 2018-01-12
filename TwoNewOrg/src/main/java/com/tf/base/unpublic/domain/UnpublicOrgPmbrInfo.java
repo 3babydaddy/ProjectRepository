@@ -97,6 +97,10 @@ public class UnpublicOrgPmbrInfo {
     private Date createTime;
 
     private String creator;
+    @Transient
+    private String type;
+    @Transient
+    private String birthdayTxt;
 
     /**
      * 1 有效 0.无效
@@ -407,5 +411,21 @@ public class UnpublicOrgPmbrInfo {
 
 	public void setWorkunitAndAddress(String workunitAndAddress) {
 		this.workunitAndAddress = workunitAndAddress;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getBirthdayTxt() {
+		return birthdayTxt;
+	}
+
+	public void setBirthdayTxt(String birthdayTxt) {
+		this.birthdayTxt = birthdayTxt;
 	}
 }

@@ -5,6 +5,7 @@ import java.util.Date;
 
 public class AddPmbrParams {
 
+	private Integer id;
     private Integer socialOrgInfoId;
 
     private String name;
@@ -88,6 +89,12 @@ public class AddPmbrParams {
 	}
 	public void setOtherCondition(String otherCondition) {
 		this.otherCondition = otherCondition;
+	}
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	

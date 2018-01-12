@@ -64,6 +64,10 @@ public class SocialOrgPmbrInfo {
 
     private String creator;
     private String status;
+    @Transient
+    private String type;
+    @Transient
+    private String birthdayTxt;
 
     /**
      * @return id
@@ -274,5 +278,21 @@ public class SocialOrgPmbrInfo {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getBirthdayTxt() {
+		return birthdayTxt;
+	}
+
+	public void setBirthdayTxt(String birthdayTxt) {
+		this.birthdayTxt = birthdayTxt;
 	}
 }

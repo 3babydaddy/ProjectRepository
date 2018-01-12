@@ -36,6 +36,7 @@ import com.tf.base.socialorg.persistence.SocialPartyOrgInfoMapper;
 import com.tf.base.socialorg.service.PartyConstructionService;
 import com.tf.base.unpublic.domain.AttachmentCommonInfo;
 import com.tf.base.unpublic.domain.CancelReasonInfo;
+import com.tf.base.unpublic.domain.UnpublicPartyOrgInfo;
 import com.tf.base.unpublic.persistence.AttachmentCommonInfoMapper;
 import com.tf.base.unpublic.persistence.CancelReasonInfoMapper;
 import tk.mybatis.mapper.entity.Example;
@@ -138,15 +139,17 @@ public class PartyConstructionController {
 	 * @throws Exception
 	 */
 	@RequestMapping(value="/socialorg/partyconstructionedit",method=RequestMethod.GET)
-	public String orgedit(String id, String nature, String partyOrgId, String partyOrgName, Model model)throws Exception{
+	public String orgedit(String id, String nature, String partyOrgId, String partyOrgName, String clickSign, Model model)throws Exception{
 		
 		if(!StringUtils.isEmpty(id)){
 			Integer mainId = Integer.parseInt(id);
 			SocialPartyOrgBuilding main = socialPartyOrgBuildingMapper.selectByPrimaryKey(mainId);
-			main.setPartyOrgId(Integer.parseInt(partyOrgId)+"");
-			main.setPartyOrgName(new String(partyOrgName.getBytes("iso-8859-1"),"utf-8"));
+			main.setPartyOrgId(main.getSocialPartyOrgId()+"");
+			SocialPartyOrgInfo info = socialPartyOrgInfoMapper.selectByPrimaryKey(main.getSocialPartyOrgId());
+			main.setPartyOrgName(info.getPartyOrgName());
 			model.addAttribute("main", main);
 			model.addAttribute("nature", nature);
+			model.addAttribute("clickSign", clickSign);
 		}else{
 			SocialPartyOrgBuilding main = new SocialPartyOrgBuilding();
 			main.setPartyOrgId(Integer.parseInt(partyOrgId)+"");

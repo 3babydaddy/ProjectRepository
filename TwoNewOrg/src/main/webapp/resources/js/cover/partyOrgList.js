@@ -49,7 +49,7 @@ function loadData(){
 	            {field : 'statusAndDo',title : '操作',width : "6%" ,align:'center',
 					formatter:function(value,row,index){
 						var str = "";
-						if(row.status == '1'){
+						if(row.status == '1' && !isQuWeiDept){
 							str = '<a href="javascript:void(0)" class="easyui-linkbutton" name="editBtn" onclick="reportHigherOption(\''+ row.id  + '\',\'clickSign\')">上报&nbsp&nbsp</a>';
 						}else{
 							str = '<span>上报&nbsp&nbsp</span>';
@@ -413,7 +413,7 @@ function reportHigherRow(){
 		return;
 	}
 	for(var i = 0; i < row.length; i++){
-		if(row[i].status == 5){
+		if(row[i].status == 5 || row[i].status == 1){
 			if(partyOrgIds == ""){
 				partyOrgIds = row[i].id;
 			}else{

@@ -53,10 +53,9 @@
 						<td style="text-align: right;"><font color="red">*</font>是否从覆盖组织转入：</td>
 						<td style="text-align: left;">
 							<select id="education" class="form-control" name="isFromCoverOrg">
-								<option value="">-请选择-</option>
-								<c:forEach var="it" items="${yesOrNoList}">
-	                               <option value="${it.code}">${it.value}</option>
-	                            </c:forEach>
+								<option value="" selected="selected">-请选择-</option>
+								<option value="1">是</option>
+								<option value="0">否</option>
 							</select>
 						</td>
 					</tr>

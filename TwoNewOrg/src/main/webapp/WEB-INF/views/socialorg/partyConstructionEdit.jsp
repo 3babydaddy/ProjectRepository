@@ -149,6 +149,7 @@
 		<input type="hidden" id="reportHigher" name="reportHigher"/>
 		<input type="hidden" id="id" name="id" value="${main.id }"/>
 		<input type="hidden" id="partyOrgId" name="partyOrgId" value="${main.partyOrgId }"/>
+		<input type="hidden" id="clickSign" name="clickSign" value="${clickSign }"/>
 		</form>
 		<div align="center" border="false" style="position:fixed;right:10px;bottom:10px;" id="returnDiv">
     		<div class="btn-group">

@@ -1,18 +1,13 @@
 package com.tf.base.unpublic.controller;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -58,6 +53,7 @@ import com.tf.base.unpublic.domain.UnpublicOrgLeagueInfo;
 import com.tf.base.unpublic.domain.UnpublicOrgPmbrChangeInfo;
 import com.tf.base.unpublic.domain.UnpublicOrgPmbrCount;
 import com.tf.base.unpublic.domain.UnpublicOrgPmbrInfo;
+import com.tf.base.unpublic.domain.UnpublicOrgPmbrOtherCount;
 import com.tf.base.unpublic.domain.UnpublicOrgSponsorInfo;
 import com.tf.base.unpublic.persistence.UnpublicOrgAddressInfoMapper;
 import com.tf.base.unpublic.persistence.UnpublicOrgCancelRecordMapper;
@@ -67,6 +63,7 @@ import com.tf.base.unpublic.persistence.UnpublicOrgLeagueInfoMapper;
 import com.tf.base.unpublic.persistence.UnpublicOrgPmbrChangeInfoMapper;
 import com.tf.base.unpublic.persistence.UnpublicOrgPmbrCountMapper;
 import com.tf.base.unpublic.persistence.UnpublicOrgPmbrInfoMapper;
+import com.tf.base.unpublic.persistence.UnpublicOrgPmbrOtherCountMapper;
 import com.tf.base.unpublic.persistence.UnpublicOrgSponsorInfoMapper;
 import com.tf.base.unpublic.service.UnPublicOrgService;
 
@@ -106,6 +103,8 @@ public class UnPublicOrgController {
 	private UnPublicOrgService unPublicOrgService;
 	@Autowired
 	private UnpublicOrgPmbrChangeInfoMapper unpublicOrgPmbrChangeInfoMapper;
+	@Autowired
+	private UnpublicOrgPmbrOtherCountMapper unpublicOrgPmbrOtherCountMapper;
 	
 	
 	/**
@@ -512,8 +511,7 @@ public class UnPublicOrgController {
 	@RequestMapping(value="/unpublic/partyMbrList",method=RequestMethod.GET)
 	public String topartyMbrList(String id,String method,Model model){
 		
-		//UnpublicOrgInfo main = unpublicOrgInfoMapper.selectByPrimaryKey(id);
-		UnpublicOrgInfo main = new UnpublicOrgInfo();
+		UnpublicOrgInfo main = unpublicOrgInfoMapper.selectByPrimaryKey(id);
 		List<DataDictionary> otherConditionList = dict.findByDmm(CommonConstants.UNPUBLIC_PM_OTHER_CONDITION);
 		
 		model.addAttribute("id", id);
@@ -542,9 +540,10 @@ public class UnPublicOrgController {
 			unpublicOrgPmbrInfo.setPartymbrInUnpublicIs(dict.getValueByCode(CommonConstants.YES_NO, unpublicOrgPmbrInfo.getPartymbrInUnpublicIs()));
 			unpublicOrgPmbrInfo.setPartymbrInVillageIs(dict.getValueByCode(CommonConstants.YES_NO, unpublicOrgPmbrInfo.getPartymbrInVillageIs()));
 			unpublicOrgPmbrInfo.setPartymbrMiddleManagerIs(dict.getValueByCode(CommonConstants.YES_NO, unpublicOrgPmbrInfo.getPartymbrMiddleManagerIs()));
-			unpublicOrgPmbrInfo.setPartymbrNotinUnpublicIs(dict.getValueByCode(CommonConstants.YES_NO, unpublicOrgPmbrInfo.getPartymbrNotinUnpublicIs()));
+			unpublicOrgPmbrInfo.setPartymbrNotinUnpublicIs(dict.getValueByCode(CommonConstants.YES_NO, unpublicOrgPmbrInfo.getPartymbrInUnpublicIs() == "0" ? "1" : "0"));
 			unpublicOrgPmbrInfo.setPartymbrOnMiddletechIs(dict.getValueByCode(CommonConstants.YES_NO, unpublicOrgPmbrInfo.getPartymbrOnMiddletechIs()));
 			unpublicOrgPmbrInfo.setEducation(dict.getValueByCode(CommonConstants.FINAL_EDUCATION, unpublicOrgPmbrInfo.getEducation()));
+			unpublicOrgPmbrInfo.setType(dict.getValueByCode(CommonConstants.PARTY_MBR_CHANGE_TYPE, unpublicOrgPmbrInfo.getType()));
 		}
 		PageUtil.returnPage(response, new PageInfo<UnpublicOrgPmbrInfo>(list));
 	}
@@ -578,6 +577,55 @@ public class UnPublicOrgController {
 		} catch (Exception e) {
 			logger.debug("新增非公组织党员信息时出现异常:{}", e.getMessage(),e);
 			return returnMsg(0, "添加党员失败：" + e.getMessage());
+		}
+		
+		
+	}
+	/**
+	 * 修改党员页面
+	 * @param mainId
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="/unpublic/editPartymbr",method=RequestMethod.GET)
+	public String editPartymbr(String mainId,String id, Model model){
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		this.partyMbrInit(model);
+		UnpublicOrgPmbrInfo pmbrInfo = unpublicOrgPmbrInfoMapper.selectByPrimaryKey(Integer.parseInt(id));
+		if(pmbrInfo.getBirthday() != null){
+			pmbrInfo.setBirthdayTxt(sdf.format(pmbrInfo.getBirthday()));
+		}
+		UnpublicOrgPmbrChangeInfo temChangeInfo = new UnpublicOrgPmbrChangeInfo();
+		temChangeInfo.setUnpublicOrgPartymbrInfoId(Integer.parseInt(id));
+		temChangeInfo.setUnpublicOrgInfoId(Integer.parseInt(mainId));
+		temChangeInfo.setStatus("1");
+		UnpublicOrgPmbrChangeInfo pmbrChangeInfo = unpublicOrgPmbrChangeInfoMapper.selectOne(temChangeInfo);
+		if(pmbrChangeInfo != null){
+			pmbrInfo.setType(pmbrChangeInfo.getType());
+		}
+		UnpublicOrgPmbrOtherCount pmbrOtherConut = new UnpublicOrgPmbrOtherCount();
+		pmbrOtherConut.setUnpublicOrgPartymbrInfoId(Integer.parseInt(id));
+		pmbrOtherConut.setUnpublicOrgInfoId(Integer.parseInt(mainId));
+		UnpublicOrgPmbrOtherCount temOtherCounts = unpublicOrgPmbrOtherCountMapper.selectOne(pmbrOtherConut);
+		model.addAttribute("main", pmbrInfo);
+		model.addAttribute("orgId", mainId);
+		model.addAttribute("temOtherCounts", temOtherCounts);
+		return "unpublic/editPartyMbr";
+	}
+	/**
+	 * 修改党员信息
+	 * @param params
+	 * @return
+	 */
+	@RequestMapping(value="/unpublic/editPartymbr",method=RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> editPartymbrSave(AddPmbrParams params){
+		try {
+			unPublicOrgService.editPartymbr(params);
+			return returnMsg(1, "修改党员成功!");
+		} catch (Exception e) {
+			logger.debug("修改非公组织党员信息时出现异常:{}", e.getMessage(),e);
+			return returnMsg(0, "修改党员失败：" + e.getMessage());
 		}
 		
 		
@@ -654,7 +702,7 @@ public class UnPublicOrgController {
 				params.setPartymbrNotinUnpublicIs(dict.getCodeByValue(CommonConstants.YES_NO, map.get("组织关系不在非公企业")));
 				params.setPartymbrInVillageIs(dict.getCodeByValue(CommonConstants.YES_NO, map.get("农村党员")));
 				
-				unPublicOrgService.addPartymbr(params);;
+				unPublicOrgService.addPartymbr(params);
 				
 				succ ++;
 			}
@@ -852,6 +900,11 @@ public class UnPublicOrgController {
 						info.setRegisterAddressCity(cityStr[i].substring(cityStr[i].indexOf(":")+1));
 					}
 				}
+				//获取企业经营地
+				if(info.getOperateAddress().contains("^")){
+					String temp = info.getOperateAddress().substring(info.getOperateAddress().lastIndexOf("^")+1);
+					info.setOperateAddress(temp);
+				}
 			}
 		}
 		ExcelUtil<UnpublicOrgExportBean> excelUtils = new ExcelUtil<UnpublicOrgExportBean>(UnpublicOrgExportBean.class);
@@ -867,6 +920,7 @@ public class UnPublicOrgController {
 	@RequestMapping(value = "/unpublic/exportUnpublicExcelFile")
 	public void doDown(String filePath, HttpServletResponse response, HttpServletRequest request)throws Exception {
 		try {
+			filePath = java.net.URLDecoder.decode(filePath,"UTF-8");
 			exportFileService.doDown(filePath, "unpublicOrg.xlsx", response);
 		} catch (Exception e) {
 			e.printStackTrace();

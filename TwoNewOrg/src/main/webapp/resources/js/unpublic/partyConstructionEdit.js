@@ -2,6 +2,11 @@
 $(function(){
 	
 	validate();
+	
+	//点击列表页上的上报按钮事件
+	if($("#clickSign").val() == 'clickSign'){
+		submitReport();
+	}
 });
 
 function save(flag){
